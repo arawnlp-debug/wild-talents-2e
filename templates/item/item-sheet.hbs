@@ -1,0 +1,622 @@
+<div class="wt-item-root">
+  <header class="item-header flexrow">
+    <img src="{{item.img}}" data-action="editImage" title="{{item.name}}" class="profile-img item-profile-img"/>
+    <div class="header-details">
+      <input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'WT.ItemName'}}"/>
+      <span class="item-type-label">{{item.type}}</span>
+    </div>
+  </header>
+
+  {{!-- TAB NAVIGATION --}}
+  <nav class="sheet-tabs tabs wt-sheet-tabs">
+    <a class="item {{tabs.details}}" data-action="changeTab" data-tab="details">Item Details</a>
+    <a class="item {{tabs.effects}}" data-action="changeTab" data-tab="effects">Active Effects</a>
+  </nav>
+
+  <section class="item-body sheet-body wt-scroll-y">
+    
+    {{!-- ========================================== --}}
+    {{!-- DETAILS TAB --}}
+    {{!-- ========================================== --}}
+    <div class="tab {{tabs.details}}" data-tab="details">>
+      
+      {{!-- WEAPON ITEM UI --}}
+      {{#if isWeapon}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.DamageFormula'}}</label>
+          <input type="text" name="system.damage" value="{{system.damage}}" placeholder="{{localize 'WT.SpellDamagePlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          {{!-- ITEM-9: Structured skill binding. When non-empty, the roller uses this directly
+               instead of parsing the Attack Pool text. Choosing "— (use Attack Pool text) —"
+               preserves existing behaviour for all weapons created before this was added. --}}
+          <label>{{localize 'WT.SkillBinding'}}</label>
+          <select name="system.skillKey" class="cm-w100">
+            {{selectOptions weaponSkillOptions selected=system.skillKey}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.AttackPool'}} <span class="wt-text-muted wt-text-small">(display / fallback)</span></label>
+          <input type="text" name="system.pool" value="{{system.pool}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.RangeReach'}}</label>
+          <input type="text" name="system.range" value="{{system.range}}"/>
+        </div>
+      </div>
+      
+      <div class="form-group wt-box-weapon">
+        <label class="wt-bold">{{localize 'WT.WeaponQualities'}}</label>
+        <div class="checkbox-group">
+          <label><input type="number" name="system.qualities.armorPiercing" value="{{system.qualities.armorPiercing}}" class="cm-input-small"/> {{localize 'WT.ArmorPiercing'}}</label>
+          <label><input type="number" name="system.qualities.slow" value="{{system.qualities.slow}}" class="cm-input-small"/> {{localize 'WT.Slow'}}</label>
+          <label><input type="checkbox" name="system.qualities.twoHanded" {{checked system.qualities.twoHanded}}/> {{localize 'WT.TwoHanded'}}</label>
+          {{!-- Massive requires two-handed — disabled and auto-clears if twoHanded is not set --}}
+          {{#if system.qualities.twoHanded}}
+          <label title="{{localize 'WT.MassiveTooltip'}}">
+            <input type="checkbox" name="system.qualities.massive" {{checked system.qualities.massive}}/>
+            {{localize 'WT.Massive'}}
+          </label>
+          {{else}}
+          <label class="wt-quality-locked" title="{{localize 'WT.MassiveRequiresTwoHanded'}}">
+            <input type="checkbox" disabled/>
+            {{localize 'WT.Massive'}} <i class="fas fa-lock wt-quality-lock-icon"></i>
+          </label>
+          {{/if}}
+          <label><input type="checkbox" name="system.qualities.unarmed" {{checked system.qualities.unarmed}}/> {{localize 'WT.Unarmed'}}</label>
+          <label><input type="number" name="system.qualities.area" value="{{system.qualities.area}}" class="cm-input-small"/> {{localize 'WT.AreaSplash'}}</label>
+        </div>
+      </div>
+
+      {{!-- G2: Weapon Poison Integration --}}
+      <div class="form-group wt-box-weapon">
+        <label class="wt-bold">{{localize 'WT.PoisonedWeapon'}}</label>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.isPoisoned" {{checked system.isPoisoned}}/>
+            <strong class="item-equipped-label">{{localize 'WT.PoisonedWeapon'}}</strong>
+          </label>
+        </div>
+        {{#if system.isPoisoned}}
+        <div class="form-group" style="margin-top: 8px;">
+          <label>Linked Poison (UUID)</label>
+          <input type="text" name="system.poisonRef" value="{{system.poisonRef}}" placeholder="Drag a poison item here or paste UUID"/>
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.NotesEffects'}}</label>
+        {{editor system.notes target="system.notes" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- ARMOR ITEM UI --}}
+      {{#if isArmor}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.ArmorWeight'}} <span class="wt-text-muted wt-text-small">(cosmetic)</span></label>
+          <select name="system.armorWeight" class="cm-w100">
+            {{selectOptions armorWeightOptions selected=system.armorWeight localize=true}}
+          </select>
+          {{!-- ISSUE-037: Show RAW-derived weight computed from coverage + AR. Encumbrance uses this. --}}
+          <div class="wt-derived-weight-row wt-text-small {{#if armorWeightMismatch}}wt-text-warning{{else}}wt-text-muted{{/if}}">
+            <i class="fas fa-{{#if armorWeightMismatch}}exclamation-triangle{{else}}check-circle{{/if}}"></i>
+            RAW-derived: <strong>{{derivedWeight}}</strong>
+            {{#if armorWeightMismatch}}
+              — encumbrance uses <strong>{{derivedWeight}}</strong>, not the label above
+            {{/if}}
+          </div>
+        </div>
+        <div class="form-group">
+          <label>HAR <span class="wt-text-muted wt-text-small">(Heavy Armor)</span></label>
+          <input type="number" name="system.har" value="{{system.har}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>LAR <span class="wt-text-muted wt-text-small">(Light Armor)</span></label>
+          <input type="number" name="system.lar" value="{{system.lar}}" min="0"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group cm-mt5">
+          <label title="📖 WT Ch4 p.65: Hardened armor ignores Penetration from weapons and powers">
+            <input type="checkbox" name="system.isHardened" {{checked system.isHardened}}/>
+            <strong>Hardened</strong> <span class="wt-text-muted wt-text-small">(ignores Penetration)</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <label class="wt-bold">{{localize 'WT.ProtectedLocations'}}</label>
+        <div class="checkbox-group cm-mt5">
+          <label><input type="checkbox" name="system.protectedLocations.head" {{checked system.protectedLocations.head}}/> {{localize 'WT.LocHead'}}</label>
+          <label><input type="checkbox" name="system.protectedLocations.torso" {{checked system.protectedLocations.torso}}/> {{localize 'WT.LocTorso'}}</label>
+          <label><input type="checkbox" name="system.protectedLocations.armR" {{checked system.protectedLocations.armR}}/> {{localize 'WT.LocRightArm'}}</label>
+          <label><input type="checkbox" name="system.protectedLocations.armL" {{checked system.protectedLocations.armL}}/> {{localize 'WT.LocLeftArm'}}</label>
+          <label><input type="checkbox" name="system.protectedLocations.legR" {{checked system.protectedLocations.legR}}/> {{localize 'WT.LocRightLeg'}}</label>
+          <label><input type="checkbox" name="system.protectedLocations.legL" {{checked system.protectedLocations.legL}}/> {{localize 'WT.LocLeftLeg'}}</label>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.equipped" {{checked system.equipped}}/> 
+            <strong class="item-equipped-label">{{localize 'WT.Equipped'}}</strong>
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.NotesEffects'}}</label>
+        {{editor system.notes target="system.notes" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- SHIELD ITEM UI (Airtight RAW Update) --}}
+      {{#if isShield}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.ShieldSize'}}</label>
+          <select name="system.shieldSize">
+            {{selectOptions shieldSizeOptions selected=system.shieldSize localize=true}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Material'}}</label>
+          <select name="system.material">
+            {{selectOptions shieldMaterialOptions selected=system.material localize=true}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.ShieldArm'}}</label>
+          <select name="system.shieldArm">
+            {{selectOptions shieldArmOptions selected=system.shieldArm localize=true}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.ParryBonus'}} (+d)</label>
+          <input type="number" name="system.parryBonus" value="{{system.parryBonus}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.CoverAR'}}</label>
+          <input type="number" name="system.coverAR" value="{{system.coverAR}}"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.equipped" {{checked system.equipped}}/> 
+            <strong class="item-equipped-label">{{localize 'WT.Equipped'}}</strong>
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.NotesEffects'}}</label>
+        {{editor system.notes target="system.notes" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- SPELL ITEM UI --}}
+      {{#if isSpell}}
+      <div class="form-group-grid">
+        <div class="form-group cm-col-span-2">
+          <label>{{localize 'WT.School'}}</label>
+          <input type="text" name="system.school" value="{{system.school}}" placeholder="{{localize 'WT.SchoolNamePlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Intensity'}}</label>
+          <input type="number" name="system.intensity" value="{{system.intensity}}" min="1" max="10"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.CastingTime'}}</label>
+          <input type="number" name="system.castingTime" value="{{system.castingTime}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>Slow (rounds)</label>
+          <input type="number" name="system.slow" value="{{system.slow}}" min="0"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.CastingStat'}}</label>
+          <select name="system.castingStat">
+            {{selectOptions attributeOptions selected=system.castingStat localize=true}}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.SpellPool'}}</label>
+          <input type="text" name="system.pool" value="{{system.pool}}" placeholder="{{localize 'WT.SpellPoolPlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>Duration</label>
+          <input type="text" name="system.duration" value="{{system.duration}}" placeholder="e.g. Concentration, 1 hour, Permanent"/>
+        </div>
+        <div class="form-group cm-col-span-2">
+          <label>{{localize 'WT.SpellDamageLabel'}}</label>
+          <input type="text" name="system.damage" value="{{system.damage}}" placeholder="{{localize 'WT.SpellDamagePlaceholderHint'}}"/>
+        </div>
+        <div class="form-group cm-col-span-2">
+          <label>{{localize 'WT.Page'}}</label>
+          <input type="text" name="system.page" value="{{system.page}}"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <label class="wt-bold">Attunement</label>
+        <div class="checkbox-group">
+          <label title="Casting this spell requires active attunement — characters without it see the lock icon">
+            <input type="checkbox" name="system.attunementRequired" {{checked system.attunementRequired}}/>
+            Attunement Required
+          </label>
+          <label title="This spell itself grants or establishes attunement">
+            <input type="checkbox" name="system.isAttunementSpell" {{checked system.isAttunementSpell}}/>
+            Is Attunement Spell
+          </label>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <label class="wt-bold">Defence Interactions</label>
+        <div class="checkbox-group">
+          <label title="Targets may attempt to dodge this spell">
+            <input type="checkbox" name="system.dodgeable" {{checked system.dodgeable}}/>
+            Dodgeable
+          </label>
+          <label title="Targets may attempt to parry this spell">
+            <input type="checkbox" name="system.parriable" {{checked system.parriable}}/>
+            Parriable
+          </label>
+          <label title="Armour reduces damage from this spell">
+            <input type="checkbox" name="system.armorBlocks" {{checked system.armorBlocks}}/>
+            Armour Blocks
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.Effect'}}</label>
+        {{editor system.effect target="system.effect" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- MARTIAL TECHNIQUE ITEM UI --}}
+      {{#if isTechnique}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.Path'}}</label>
+          <input type="text" name="system.path" value="{{system.path}}" placeholder="{{localize 'WT.TechniquePathPlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Rank'}}</label>
+          <input type="number" name="system.rank" value="{{system.rank}}" min="1" max="5"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.DicePool'}}</label>
+          <input type="text" name="system.pool" value="{{system.pool}}" placeholder="{{localize 'WT.TechniquePoolPlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Page'}}</label>
+          <input type="text" name="system.page" value="{{system.page}}"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.isPassive" {{checked system.isPassive}}/> 
+            <strong class="item-equipped-label">{{localize 'WT.PassiveStance'}}</strong>
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.Effect'}}</label>
+        {{editor system.effect target="system.effect" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- ESOTERIC DISCIPLINE ITEM UI --}}
+      {{#if isDiscipline}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.Path'}}</label>
+          <input type="text" name="system.path" value="{{system.path}}" placeholder="{{localize 'WT.DisciplinePathPlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Rank'}}</label>
+          <input type="number" name="system.rank" value="{{system.rank}}" min="1" max="5"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.DicePool'}}</label>
+          <input type="text" name="system.pool" value="{{system.pool}}" placeholder="{{localize 'WT.DisciplinePoolPlaceholder'}}"/>
+        </div>
+        <div class="form-group">
+          <label>{{localize 'WT.Page'}}</label>
+          <input type="text" name="system.page" value="{{system.page}}"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.isPassive" {{checked system.isPassive}}/> 
+            <strong class="item-equipped-label">{{localize 'WT.PassiveStance'}}</strong>
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.Effect'}}</label>
+        {{editor system.effect target="system.effect" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- POWER ITEM UI --}}
+      {{#if isPower}}
+      <div class="wt-power-sheet">
+
+        {{!-- Power Type & Linked Stat/Skill --}}
+        <div class="form-group-grid">
+          <div class="form-group">
+            <label>Power Type</label>
+            <select name="system.powerType">
+              <option value="miracle" {{#if (eq system.powerType "miracle")}}selected{{/if}}>Miracle</option>
+              <option value="hyperstat" {{#if (eq system.powerType "hyperstat")}}selected{{/if}}>Hyperstat</option>
+              <option value="hyperskill" {{#if (eq system.powerType "hyperskill")}}selected{{/if}}>Hyperskill</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Linked Stat</label>
+            <input type="text" name="system.linkedStat" value="{{system.linkedStat}}" placeholder="e.g. Body"/>
+          </div>
+          <div class="form-group">
+            <label>Linked Skill</label>
+            <input type="text" name="system.linkedSkill" value="{{system.linkedSkill}}" placeholder="e.g. Brawling"/>
+          </div>
+        </div>
+
+        {{!-- Dice Pool --}}
+        <div class="form-group wt-mb10">
+          <label>Dice Pool</label>
+          <div class="wt-stat-dice">
+            <div class="wt-dice-input-group">
+              <label class="wt-dice-badge wt-dice-normal">N</label>
+              <input type="number" name="system.dice.normal" value="{{system.dice.normal}}" min="0" max="10" class="wt-stat-input"/>
+            </div>
+            <div class="wt-dice-input-group">
+              <label class="wt-dice-badge wt-dice-hard">HD</label>
+              <input type="number" name="system.dice.hard" value="{{system.dice.hard}}" min="0" max="10" class="wt-stat-input"/>
+            </div>
+            <div class="wt-dice-input-group">
+              <label class="wt-dice-badge wt-dice-wiggle">WD</label>
+              <input type="number" name="system.dice.wiggle" value="{{system.dice.wiggle}}" min="0" max="10" class="wt-stat-input"/>
+            </div>
+          </div>
+        </div>
+
+        {{!-- Cost Summary --}}
+        <div class="wt-power-cost-summary wt-mb10">
+          <strong>Cost:</strong>
+          <span class="wt-cost-value">{{system.costPerDie}} pts/die</span>
+          ×
+          <span class="wt-cost-dice">
+            {{system.dice.normal}}d
+            {{#if system.dice.hard}}+ {{system.dice.hard}}hd (×2){{/if}}
+            {{#if system.dice.wiggle}}+ {{system.dice.wiggle}}wd (×4){{/if}}
+          </span>
+          =
+          <span class="wt-cost-total wt-text-large"><strong>{{system.totalCost}} pts</strong></span>
+        </div>
+
+        {{!-- Activation Costs --}}
+        <div class="form-group-grid">
+          <div class="form-group">
+            <label>Willpower Cost</label>
+            <input type="number" name="system.willpowerCost" value="{{system.willpowerCost}}" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Base Will Cost</label>
+            <input type="number" name="system.baseWillCost" value="{{system.baseWillCost}}" min="0"/>
+          </div>
+        </div>
+
+        {{!-- Power Qualities --}}
+        <div class="wt-qualities-section wt-mb10">
+          <div class="list-header flexrow">
+            <h3>Power Qualities</h3>
+            <a class="control-btn" data-action="addQuality" title="Add Quality"><i class="fas fa-plus"></i></a>
+          </div>
+
+          {{#each system.qualities as |qual index|}}
+          <div class="wt-quality-block" data-quality-index="{{index}}">
+            <div class="wt-quality-header">
+              <select name="system.qualities.{{index}}.type">
+                <option value="attacks" {{#if (eq qual.type "attacks")}}selected{{/if}}>Attacks</option>
+                <option value="defends" {{#if (eq qual.type "defends")}}selected{{/if}}>Defends</option>
+                <option value="useful" {{#if (eq qual.type "useful")}}selected{{/if}}>Useful</option>
+              </select>
+              <div class="form-group wt-inline">
+                <label>Level</label>
+                <input type="number" name="system.qualities.{{index}}.level" value="{{qual.level}}" min="0" max="10" class="wt-tiny-input"/>
+              </div>
+              <div class="form-group wt-inline">
+                <label>Capacity</label>
+                <select name="system.qualities.{{index}}.capacity">
+                  <option value="mass" {{#if (eq qual.capacity "mass")}}selected{{/if}}>Mass</option>
+                  <option value="range" {{#if (eq qual.capacity "range")}}selected{{/if}}>Range</option>
+                  <option value="speed" {{#if (eq qual.capacity "speed")}}selected{{/if}}>Speed</option>
+                  <option value="touch" {{#if (eq qual.capacity "touch")}}selected{{/if}}>Touch</option>
+                  <option value="self" {{#if (eq qual.capacity "self")}}selected{{/if}}>Self</option>
+                </select>
+              </div>
+              <a class="control-btn" data-action="removeQuality" data-quality-index="{{index}}" title="Remove"><i class="fas fa-trash"></i></a>
+            </div>
+
+            {{!-- Extras for this Quality --}}
+            <div class="wt-modifiers-row">
+              <div class="wt-extras-list">
+                <span class="wt-modifier-label">Extras:</span>
+                {{#each qual.extras as |extra eIdx|}}
+                <span class="wt-modifier-tag wt-tag-extra">
+                  {{extra.name}} (+{{extra.costPerDie}}{{#if (gt extra.quantity 1)}}×{{extra.quantity}}{{/if}})
+                  <a data-action="removeExtra" data-quality-index="{{index}}" data-extra-index="{{eIdx}}"><i class="fas fa-times"></i></a>
+                </span>
+                {{/each}}
+                <a class="wt-add-modifier" data-action="addExtra" data-quality-index="{{index}}"><i class="fas fa-plus"></i> Add</a>
+              </div>
+              <div class="wt-flaws-list">
+                <span class="wt-modifier-label">Flaws:</span>
+                {{#each qual.flaws as |flaw fIdx|}}
+                <span class="wt-modifier-tag wt-tag-flaw">
+                  {{flaw.name}} (−{{flaw.discountPerDie}})
+                  <a data-action="removeFlaw" data-quality-index="{{fIdx}}" data-flaw-index="{{fIdx}}"><i class="fas fa-times"></i></a>
+                </span>
+                {{/each}}
+                <a class="wt-add-modifier" data-action="addFlaw" data-quality-index="{{index}}"><i class="fas fa-plus"></i> Add</a>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+
+        {{!-- Notes --}}
+        <div class="form-group-stacked">
+          <label>Effect Description</label>
+          {{editor system.effect target="system.effect" button=true}}
+        </div>
+        <div class="form-group-stacked">
+          <label>Notes</label>
+          {{editor system.notes target="system.notes" button=true}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- GENERAL GEAR ITEM UI --}}
+      {{#if isGear}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.Qty'}}</label>
+          <input type="number" name="system.quantity" value="{{system.quantity}}"/>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.NotesEffects'}}</label>
+        {{editor system.notes target="system.notes" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- ADVANTAGE ITEM UI --}}
+      {{#if isAdvantage}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.CostXP'}}</label>
+          <input type="number" name="system.cost" value="{{system.cost}}" min="0"/>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.Effect'}}</label>
+        {{editor system.effect target="system.effect" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- PROBLEM ITEM UI --}}
+      {{#if isProblem}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.BonusXP'}}</label>
+          <input type="number" name="system.bonus" value="{{system.bonus}}" min="0"/>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.Effect'}}</label>
+        {{editor system.effect target="system.effect" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- NEW: COMPANY ASSET ITEM UI --}}
+      {{#if isAsset}}
+      <div class="wt-box-weapon">
+        <span class="wt-box-weapon-title">Company Asset Details</span>
+        <div class="form-group wt-checkbox-row">
+            <label class="wt-bold">XP Cost:</label>
+            <input type="number" name="system.cost" value="{{system.cost}}" class="wt-weapon-ap" title="RAW: Assets typically cost 10 XP" />
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>Description & Requirements</label>
+        {{editor system.description target="system.description" button=true}}
+      </div>
+      {{/if}}
+
+      {{!-- G2: POISON ITEM UI --}}
+      {{#if isPoison}}
+      <div class="form-group-grid">
+        <div class="form-group">
+          <label>{{localize 'WT.Potency'}}</label>
+          <input type="number" name="system.potency" value="{{system.potency}}" min="1" max="15"/>
+        </div>
+        <div class="form-group">
+          <label>Resist Difficulty</label>
+          <input type="number" name="system.difficulty" value="{{system.difficulty}}" min="0" max="10"/>
+        </div>
+        <div class="form-group">
+          <label>Wealth Cost</label>
+          <input type="number" name="system.wealthCost" value="{{system.wealthCost}}" min="0"/>
+        </div>
+      </div>
+      <div class="form-group wt-box-weapon">
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" name="system.retainedDelivery" {{checked system.retainedDelivery}}/>
+            <strong class="item-equipped-label">{{localize 'WT.RetainedDelivery'}}</strong>
+            <span class="wt-text-small wt-text-muted">(weapon stays in wound — unchecked = –4 Potency)</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.MajorEffect'}} (on matched set)</label>
+        {{editor system.majorEffect target="system.majorEffect" button=true}}
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.MinorEffect'}} (always applies)</label>
+        {{editor system.minorEffect target="system.minorEffect" button=true}}
+      </div>
+      <div class="form-group-stacked">
+        <label>{{localize 'WT.NotesEffects'}}</label>
+        {{editor system.notes target="system.notes" button=true}}
+      </div>
+      {{/if}}
+      
+    </div>
+
+    {{!-- ========================================== --}}
+    {{!-- ACTIVE EFFECTS TAB --}}
+    {{!-- ========================================== --}}
+    <div class="tab {{tabs.effects}}" data-tab="effects">
+      <div class="wt-effects-container">
+        <h3 class="item-effects-header wt-mt-0">
+          <span>{{localize 'WT.ActiveEffects'}}</span>
+          <a data-action="createEffect" title="{{localize 'WT.CreateEffect'}}" class="item-effects-add-btn">
+            <i class="fas fa-plus"></i> {{localize 'WT.Add'}}
+          </a>
+        </h3>
+        
+        <p class="wt-text-sm wt-text-muted">
+          Effects listed here will automatically apply to the character when this item is placed in their inventory (or Equipped, if applicable).
+        </p>
+        
+        {{#if effects.length}}
+          <div class="cm-flex-col cm-gap5">
+            {{#each effects as |effect|}}
+              <div class="effect-item item-effect-row" data-effect-id="{{effect.id}}">
+                <div class="item-effect-info {{#if effect.disabled}}item-effect-disabled{{/if}}">
+                  <img src="{{effect.img}}" class="item-effect-icon"/>
+                  <span class="item-effect-name">{{effect.name}}</span>
+                </div>
+                <div class="effect-controls item-effect-controls">
+                  <a data-action="toggleEffect" title="{{localize 'WT.ToggleActive'}}" class="item-control-btn"><i class="fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}"></i></a>
+                  <a data-action="editEffect" title="Quick Builder" class="item-control-btn"><i class="fas fa-edit"></i></a>
+                  <a data-action="advancedEditEffect" title="Advanced Editor" class="item-control-btn"><i class="fas fa-cogs"></i></a>
+                  <a data-action="deleteEffect" title="{{localize 'WT.DeleteEffect'}}" class="item-control-btn-delete"><i class="fas fa-trash"></i></a>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="item-effects-empty">No Active Effects currently attached.</p>
+        {{/if}}
+      </div>
+    </div>
+
+  </section>
+</div>

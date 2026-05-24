@@ -1,0 +1,37 @@
+<header class="sheet-header">
+  <div class="header-top">
+    <div class="portrait-wrap {{#if system.isGMC}}portrait-wrap--gmc{{/if}}">
+      <img src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" class="profile-img"/>
+      <button type="button" data-action="toggleGMC"
+              class="gmc-toggle {{#if system.isGMC}}gmc-toggle--active{{/if}}"
+              title="{{#if system.isGMC}}GMC — click to mark as PC{{else}}PC — click to mark as GMC{{/if}}">
+        <i class="fas {{#if system.isGMC}}fa-user-secret{{else}}fa-user{{/if}}"></i>
+        {{#if system.isGMC}}GMC{{else}}PC{{/if}}
+      </button>
+    </div>
+    <div class="header-fields">
+      <div class="title-row">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="CHARACTER NAME"/>
+        <button type="button" data-action="openCrucible" class="crucible-launch-btn"
+                title="Open The Crucible — character builder">
+          <i class="fas fa-fire"></i> The Crucible
+        </button>
+      </div>
+      <div class="narrative-row">
+        <div class="narrative-box"><label>Archetype</label><input type="text" name="system.archetype" value="{{system.archetype}}" placeholder="Archetype"/></div>
+        <div class="narrative-box"><label>Source</label><input type="text" name="system.source" value="{{system.source}}" placeholder="Source" readonly/></div>
+        <div class="narrative-box"><label>Permission</label><input type="text" name="system.permission" value="{{system.permission}}" placeholder="Permission" readonly/></div>
+      </div>
+      <div class="wt-cost-row">
+        <span class="wt-cost-label" title="Stats {{characterCost.breakdown.stats}} · Skills {{characterCost.breakdown.skills}} · Archetype {{characterCost.breakdown.archetype}} · Powers {{characterCost.breakdown.powers}} · Base Will {{characterCost.breakdown.baseWill}}">
+          <i class="fas fa-coins"></i> {{characterCost.total}} pts
+        </span>
+        {{#if hasPointBudget}}
+          <span class="wt-cost-budget {{#if overBudget}}wt-text-danger{{else}}wt-text-success{{/if}}">
+            / {{pointBudget}} budget ({{pointsRemaining}} remaining)
+          </span>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</header>

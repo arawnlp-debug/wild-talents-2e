@@ -1,0 +1,270 @@
+/* ====================================================
+   WT: 2ND EDITION 
+   Item Sheet Styling (Weapons, Spells, Gear, etc.)
+==================================================== */
+
+.wt-item-root { 
+    padding: 10px; 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+}
+
+/* -----------------------------------------
+    HEADER
+----------------------------------------- */
+.wt .item-header { 
+    border-bottom: 3px solid var(--wt-bg-iron); 
+    padding-bottom: 10px; 
+    margin-bottom: 15px; 
+    display: flex; 
+    gap: 15px; 
+}
+
+.wt .item-header .header-details { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    flex: 1; 
+}
+
+.wt .item-header input[name="name"] {
+    font-size: 1.8em; 
+    font-weight: bold; 
+    color: var(--wt-color-blood); 
+    border: none;
+    border-bottom: 2px solid var(--wt-bg-iron); 
+    border-radius: 0; 
+    background: transparent;
+    font-family: var(--wt-font-flavor); 
+    margin-bottom: 5px; 
+    transition: background 0.2s;
+}
+
+.wt .item-header input[name="name"]:hover, 
+.wt .item-header input[name="name"]:focus { 
+    background: rgba(0,0,0,0.03); 
+}
+
+.wt .item-type-label { 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    color: var(--wt-text-muted); 
+    letter-spacing: 2px; 
+    font-size: 0.85em; 
+}
+
+/* -----------------------------------------
+    BODY & FORMS
+----------------------------------------- */
+.wt .item-body { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    overflow-y: auto; 
+}
+
+.wt .form-group-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px; 
+}
+
+.wt .form-group label, 
+.wt .form-group-stacked label {
+    font-weight: bold; 
+    text-transform: uppercase; 
+    font-size: 0.85em; 
+    color: var(--wt-text-dark); 
+    display: block; 
+    margin-bottom: 3px;
+}
+
+.wt .form-group input, 
+.wt .form-group select {
+    width: 100%; 
+    border: var(--wt-border-light); 
+    background: var(--wt-bg-paper); 
+    border-radius: 3px; 
+    padding: 6px; 
+    font-family: var(--wt-font-flavor); 
+    box-shadow: var(--wt-shadow-inset); 
+    color: var(--wt-text-dark);
+}
+
+.wt .form-group-stacked textarea {
+    border: var(--wt-border-light); 
+    background: var(--wt-bg-paper); 
+    height: 150px; 
+    padding: 8px; 
+    border-radius: 3px; 
+    box-shadow: var(--wt-shadow-inset); 
+    font-family: var(--wt-font-flavor); 
+    color: var(--wt-text-dark);
+}
+
+/* -----------------------------------------
+    WEAPON-SPECIFIC BOXES
+----------------------------------------- */
+.wt-box-weapon { 
+    border: var(--wt-border-light); 
+    padding: 12px; 
+    background: var(--wt-bg-paper); 
+    margin-bottom: 15px; 
+    border-radius: 4px; 
+    box-shadow: var(--wt-shadow-drop); 
+}
+
+.wt-box-weapon-title { 
+    border-bottom: var(--wt-border-light); 
+    padding-bottom: 5px; 
+    margin-bottom: 10px; 
+    display: block; 
+    font-weight: bold; 
+    font-size: 0.85em; 
+    text-transform: uppercase; 
+    color: var(--wt-text-muted); 
+}
+
+.wt-weapon-ap { 
+    width: 50px; 
+    text-align: center; 
+    border: var(--wt-border-light); 
+    border-radius: 3px; 
+    font-family: var(--wt-font-data); 
+    background: var(--wt-bg-paper); 
+    color: var(--wt-text-dark); 
+}
+
+.wt-weapon-chk { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    font-size: 0.85em; 
+    font-weight: bold; 
+    cursor: pointer; 
+    color: var(--wt-text-dark); 
+}
+
+.wt-weapon-chk input[type="checkbox"] { 
+    accent-color: var(--wt-color-blood); 
+}
+
+/* -----------------------------------------
+    ACTIVE EFFECTS (Item Sheet)
+----------------------------------------- */
+.wt .item-effect-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border: var(--wt-border-light);
+    border-left: 4px solid var(--wt-color-blood);
+    background: var(--wt-bg-paper);
+    border-radius: 4px;
+    box-shadow: var(--wt-shadow-drop);
+}
+
+.wt .item-effect-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.wt .item-effect-info.item-effect-disabled {
+    opacity: 0.5;
+}
+
+.wt .item-effect-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    border: 1px solid var(--wt-bg-iron);
+    object-fit: contain;
+}
+
+.wt .item-effect-name {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: var(--wt-text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wt .item-effect-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.wt .item-effect-controls a {
+    cursor: pointer;
+    color: var(--wt-text-muted);
+    transition: color 0.2s;
+}
+
+.wt .item-effect-controls a:hover {
+    color: var(--wt-color-blood);
+}
+
+.wt .item-control-btn-delete:hover {
+    color: var(--wt-color-danger);
+}
+/* ═══════════════════════════════════════════════════════════════════════════
+   WILD TALENTS 2E — Power Item Sheet
+   ═══════════════════════════════════════════════════════════════════════════ */
+.wt-power-sheet { padding: 4px 0; }
+.wt-power-cost-summary {
+  background: var(--wt-bg-vellum, #f5f0e8);
+  border: var(--wt-border-light, 1px solid #ddd);
+  border-radius: var(--wt-radius-md, 4px);
+  padding: 8px 12px;
+  font-family: var(--wt-font-mono, monospace);
+}
+.wt-cost-total { color: var(--wt-color-primary, #1a237e); }
+
+.wt-quality-block {
+  border: 1px solid #ccc; border-radius: 4px;
+  padding: 6px 8px; margin-bottom: 6px;
+  background: rgba(255,255,255,0.5);
+}
+.wt-quality-header {
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+}
+.wt-quality-header select { max-width: 120px; }
+.wt-inline { display: flex; align-items: center; gap: 3px; }
+.wt-tiny-input { width: 40px !important; text-align: center; }
+
+.wt-modifiers-row {
+  display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap;
+}
+.wt-extras-list, .wt-flaws-list {
+  display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+  flex: 1;
+}
+.wt-modifier-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  color: #888;
+}
+.wt-modifier-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 6px; border-radius: 3px;
+  font-size: 12px; font-weight: 600;
+}
+.wt-tag-extra { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.wt-tag-flaw  { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+.wt-modifier-tag a { cursor: pointer; color: inherit; opacity: 0.6; }
+.wt-modifier-tag a:hover { opacity: 1; }
+.wt-add-modifier {
+  font-size: 11px; cursor: pointer; color: #888;
+  padding: 2px 4px;
+}
+.wt-add-modifier:hover { color: #333; }
+
+.wt-qualities-section .list-header h3 { flex: 1; }

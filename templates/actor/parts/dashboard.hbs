@@ -1,0 +1,387 @@
+{{!--
+  Dashboard view — Comic-theme play surface for the character sheet.
+
+  Sprint 1.2: Header strip + 3-column body grid with placeholder
+  panels. The detail editor (the existing 5 tabs) remains the
+  primary editor; this view is the at-a-glance play surface.
+
+  Subsequent sprints fill the three body cells:
+    - Sprint 2.2: Left ORE column (stats + skill chips)
+    - Sprint 3.x:  Centre figure (hit-location silhouette + badges)
+    - Sprint 4.x:  Right rail (active miracle cards)
+    - Sprint 5.x:  Combat actions bar above the figure
+--}}
+
+<div class="wt-dashboard">
+
+  {{!-- ═══ HEADER STRIP ═══════════════════════════════════════════════════ --}}
+  <header class="wt-dash-header wt-panel-ink">
+
+    {{!-- Portrait + GMC/PC badge --}}
+    <div class="wt-dash-portrait">
+      <img src="{{actor.img}}"
+           data-action="editImage"
+           title="{{actor.name}}"
+           alt="{{actor.name}} portrait"
+           class="wt-dash-portrait-img"/>
+      <button type="button"
+              data-action="toggleGMC"
+              class="wt-dash-gmc-badge {{#if system.isGMC}}wt-dash-gmc-active{{/if}}"
+              title="{{#if system.isGMC}}Game-Mastered Character (click for PC){{else}}Player Character (click for GMC){{/if}}">
+        {{#if system.isGMC}}GMC{{else}}PC{{/if}}
+      </button>
+    </div>
+
+    {{!-- Identity strip: name + archetype chips + point cost --}}
+    <div class="wt-dash-identity">
+      <div class="wt-dash-name-row">
+        <input type="text"
+               name="name"
+               value="{{actor.name}}"
+               placeholder="CHARACTER NAME"
+               class="wt-dash-name-input cm-numeric"
+               aria-label="Character name"/>
+        <button type="button"
+                data-action="openCrucible"
+                class="wt-btn-burst wt-btn-burst--sm"
+                title="Open the Crucible — character builder">
+          <i class="fas fa-fire" aria-hidden="true"></i> CRUCIBLE
+        </button>
+        <button type="button"
+                data-action="toggleView"
+                class="wt-btn-burst wt-btn-burst--sm wt-btn-burst--ghost"
+                title="Switch to Detail view"
+                aria-label="Switch to Detail view">
+          <i class="fas fa-list" aria-hidden="true"></i> DETAIL
+        </button>
+      </div>
+
+      <div class="wt-dash-meta-row">
+        <span class="wt-chip wt-chip--accent" title="Archetype">
+          {{#if system.archetype}}{{system.archetype}}{{else}}NO ARCHETYPE{{/if}}
+        </span>
+        {{#if system.source}}
+          <span class="wt-chip" title="Source">{{system.source}}</span>
+        {{/if}}
+        {{#if system.permission}}
+          <span class="wt-chip" title="Permission">{{system.permission}}</span>
+        {{/if}}
+        <span class="wt-dash-pts-badge {{#if overBudget}}wt-dash-pts-over{{/if}}"
+              title="Stats {{characterCost.breakdown.stats}} · Skills {{characterCost.breakdown.skills}} · Archetype {{characterCost.breakdown.archetype}} · Powers {{characterCost.breakdown.powers}} · Base Will {{characterCost.breakdown.baseWill}}">
+          <span class="cm-numeric">{{characterCost.total}}</span>{{#if hasPointBudget}}<span class="wt-dash-pts-sep">/</span><span class="cm-numeric">{{pointBudget}}</span>{{/if}}
+          <span class="wt-dash-pts-label">PTS</span>
+        </span>
+      </div>
+    </div>
+
+    {{!-- Willpower gauge --}}
+    <div class="wt-dash-wp">
+      <div class="wt-dash-wp-label-row">
+        <span class="wt-dash-wp-title">WILLPOWER</span>
+        <span class="wt-dash-wp-base"
+              title="Base Will = Charm + Command. {{!-- 📖 WT Rulebook Ch3 — Base Will derivation --}}">
+          BW <span class="cm-numeric">{{system.willpower.base}}</span>
+        </span>
+      </div>
+      <div class="wt-dash-wp-gauge {{#if (eq system.willpower.current 0)}}wt-dash-wp-empty{{/if}}"
+           role="progressbar"
+           aria-label="Willpower"
+           aria-valuemin="0"
+           aria-valuemax="{{system.willpower.max}}"
+           aria-valuenow="{{system.willpower.current}}">
+        <div class="wt-dash-wp-fill" style="width: {{wpPercent}}%"></div>
+        <div class="wt-dash-wp-readout">
+          <input type="number"
+                 name="system.willpower.current"
+                 value="{{system.willpower.current}}"
+                 min="0"
+                 class="wt-dash-wp-input cm-numeric"
+                 aria-label="Current Willpower"/>
+          <span class="wt-dash-wp-sep">/</span>
+          <input type="number"
+                 name="system.willpower.max"
+                 value="{{system.willpower.max}}"
+                 min="0"
+                 class="wt-dash-wp-input cm-numeric"
+                 aria-label="Maximum Willpower"/>
+        </div>
+      </div>
+    </div>
+
+  </header>
+
+  {{!-- ═══ BODY GRID — three placeholder panels for Sprints 2.x–4.x ═══════ --}}
+  <div class="wt-dash-body">
+
+    {{!-- LEFT: ORE Stats Column (Sprint 2.1) --}}
+    <section class="wt-dash-stats wt-panel-ink" aria-label="ORE Stats">
+      <div class="wt-panel-header-slant">
+        <i class="fas fa-dice-d10" aria-hidden="true"></i>
+        ORE Stats
+      </div>
+      <div class="wt-dash-panel-body wt-dash-stats-body">
+        {{#each wtStatBlocks as |block|}}
+          <div class="wt-dash-stat-row{{#unless block.total}} wt-dash-stat-zero{{/unless}}" data-stat-key="{{block.key}}">
+
+            {{!-- Stat name + icon (clickable to roll) --}}
+            <a class="wt-dash-stat-name rollable"
+               data-action="rollStat"
+               data-type="attribute"
+               data-key="{{block.key}}"
+               data-label="{{block.label}}"
+               title="Roll {{block.label}} — Normal {{block.normal}} · Hard {{block.hard}} · Wiggle {{block.wiggle}}{{#if block.hyperBonus}} · Hyperstat +{{block.hyperBonus}}d ({{block.hyperLabel}}){{/if}}">
+              <span class="wt-dash-stat-icon wt-stat-icon-{{block.key}}" aria-hidden="true">
+                {{#if (eq block.key "body")}}<i class="fas fa-arrow-up"></i>{{/if}}
+                {{#if (eq block.key "coordination")}}<i class="fas fa-running"></i>{{/if}}
+                {{#if (eq block.key "sense")}}<i class="fas fa-eye"></i>{{/if}}
+                {{#if (eq block.key "mind")}}<i class="fas fa-brain"></i>{{/if}}
+                {{#if (eq block.key "charm")}}<i class="fas fa-heart"></i>{{/if}}
+                {{#if (eq block.key "command")}}<i class="fas fa-users"></i>{{/if}}
+              </span>
+              <span class="wt-dash-stat-label">{{block.label}}</span>
+              {{#if block.hyperBonus}}
+                {{!-- 📖 WT Rulebook Ch6 p.104 — Hyperstat bonus dice --}}
+                <span class="wt-dash-hyper-chip" title="Hyperstat: {{block.hyperLabel}}">
+                  <i class="fas fa-bolt" aria-hidden="true"></i>+{{block.hyperBonus}}
+                </span>
+              {{/if}}
+              <span class="wt-dash-stat-total cm-numeric">
+                <span class="wt-dash-stat-total-num">{{block.total}}</span><span class="wt-dash-stat-total-d">d</span>
+              </span>
+            </a>
+
+            {{!--
+              Skill chips beneath this stat.
+              📖 WT Rulebook Ch2 — Skills are bound to attributes; clicking
+              a chip rolls Attribute + Skill via the same rollStat handler
+              the detail view uses.
+              The visibleSkills array and moreSkillCount are pre-computed
+              in _prepareContext to avoid needing extra Handlebars helpers.
+            --}}
+            {{#if block.visibleSkills.length}}
+              <div class="wt-dash-stat-skills">
+                {{#each block.visibleSkills as |skill|}}
+                  <a class="wt-dash-skill-chip rollable"
+                     data-action="rollStat"
+                     data-type="skill"
+                     data-key="{{skill.key}}"
+                     data-label="{{skill.label}}"
+                     title="Roll {{skill.label}} ({{../block.label}} {{../block.total}}d + {{skill.label}} {{skill.total}}d{{#if skill.hyperBonus}} + Hyperskill +{{skill.hyperBonus}}d ({{skill.hyperLabel}}){{/if}})">
+                    <span class="wt-dash-skill-name">{{skill.label}}</span>
+                    {{#if skill.hyperBonus}}
+                      <span class="wt-dash-hyper-chip wt-dash-hyper-chip--sm" title="Hyperskill: {{skill.hyperLabel}}">
+                        <i class="fas fa-bolt" aria-hidden="true"></i>+{{skill.hyperBonus}}
+                      </span>
+                    {{/if}}
+                    <span class="wt-dash-skill-val cm-numeric">{{skill.total}}d</span>
+                  </a>
+                {{/each}}
+                {{#if block.moreSkillCount}}
+                  <button type="button"
+                          class="wt-dash-skill-more"
+                          data-action="toggleSkillPopover"
+                          aria-expanded="false"
+                          aria-haspopup="true"
+                          title="Show all {{block.skills.length}} {{block.label}} skills">
+                    +{{block.moreSkillCount}} MORE
+                  </button>
+                {{/if}}
+              </div>
+
+              {{!-- Popover: full skill list for this stat (Sprint 2.2 fix).
+                   Hidden by default; revealed when row has class
+                   .wt-dash-stat-row--expanded. Click outside or Esc to close. --}}
+              {{#if block.moreSkillCount}}
+                <div class="wt-dash-skill-popover" role="dialog" aria-label="All {{block.label}} skills">
+                  <div class="wt-dash-skill-popover-header">
+                    <span class="wt-dash-skill-popover-title">All {{block.label}} Skills</span>
+                    <button type="button"
+                            class="wt-dash-skill-popover-close"
+                            data-action="toggleSkillPopover"
+                            title="Close"
+                            aria-label="Close skill list">
+                      <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="wt-dash-skill-popover-body">
+                    {{#each block.visibleSkills as |skill|}}
+                      <a class="wt-dash-skill-chip rollable"
+                         data-action="rollStat"
+                         data-type="skill"
+                         data-key="{{skill.key}}"
+                         data-label="{{skill.label}}"
+                         title="Roll {{skill.label}} ({{../block.label}} {{../block.total}}d + {{skill.label}} {{skill.total}}d{{#if skill.hyperBonus}} + Hyperskill +{{skill.hyperBonus}}d{{/if}})">
+                        <span class="wt-dash-skill-name">{{skill.label}}</span>
+                        {{#if skill.hyperBonus}}
+                          <span class="wt-dash-hyper-chip wt-dash-hyper-chip--sm" title="Hyperskill: {{skill.hyperLabel}}">
+                            <i class="fas fa-bolt" aria-hidden="true"></i>+{{skill.hyperBonus}}
+                          </span>
+                        {{/if}}
+                        <span class="wt-dash-skill-val cm-numeric">{{skill.total}}d</span>
+                      </a>
+                    {{/each}}
+                    {{#each block.hiddenSkills as |skill|}}
+                      <a class="wt-dash-skill-chip rollable"
+                         data-action="rollStat"
+                         data-type="skill"
+                         data-key="{{skill.key}}"
+                         data-label="{{skill.label}}"
+                         title="Roll {{skill.label}} ({{../block.label}} {{../block.total}}d + {{skill.label}} {{skill.total}}d{{#if skill.hyperBonus}} + Hyperskill +{{skill.hyperBonus}}d{{/if}})">
+                        <span class="wt-dash-skill-name">{{skill.label}}</span>
+                        {{#if skill.hyperBonus}}
+                          <span class="wt-dash-hyper-chip wt-dash-hyper-chip--sm" title="Hyperskill: {{skill.hyperLabel}}">
+                            <i class="fas fa-bolt" aria-hidden="true"></i>+{{skill.hyperBonus}}
+                          </span>
+                        {{/if}}
+                        <span class="wt-dash-skill-val cm-numeric">{{skill.total}}d</span>
+                      </a>
+                    {{/each}}
+                  </div>
+                </div>
+              {{/if}}
+            {{/if}}
+
+          </div>
+        {{/each}}
+
+        {{!-- ── Quick-Skill Row (Sprint 2.2) ──────────────────────────
+             Player-curated favourite skills for one-click rolling.
+             Default: first 3 alphabetical skills the character owns.
+             Each chip shows skill name + total (Stat + Skill +
+             any Hyperstat/Hyperskill dice). The pencil icon opens
+             a picker dialog.
+             📖 No new rule. Same rollStat handler as detail view.
+        --}}
+        <div class="wt-dash-quick-skills">
+          <div class="wt-dash-quick-skills-header">
+            <span class="wt-dash-quick-skills-title">FAVOURITES</span>
+            <button type="button"
+                    class="wt-dash-quick-skills-edit"
+                    data-action="editFavouriteSkills"
+                    title="Edit favourite skills"
+                    aria-label="Edit favourite skills">
+              <i class="fas fa-pen" aria-hidden="true"></i>
+            </button>
+          </div>
+          {{#if hasQuickSkills}}
+            <div class="wt-dash-quick-skills-row">
+              {{#each quickSkillBlocks as |q|}}
+                <a class="wt-dash-quick-chip rollable"
+                   data-action="rollStat"
+                   data-type="skill"
+                   data-key="{{q.key}}"
+                   data-label="{{q.label}}"
+                   title="{{q.breakdown}}">
+                  <span class="wt-dash-quick-chip-name">{{q.label}}</span>
+                  <span class="wt-dash-quick-chip-val cm-numeric">{{q.total}}d</span>
+                </a>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="wt-dash-quick-skills-empty">
+              No favourites picked.
+              <button type="button"
+                      class="wt-dash-quick-skills-link"
+                      data-action="editFavouriteSkills">Choose some →</button>
+            </p>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+
+    {{!-- CENTER: Hit-Location Figure (Sprint 3.1) --}}
+    <section class="wt-dash-figure wt-panel-ink" aria-label="Hit Locations">
+      <div class="wt-panel-header-slant wt-panel-header-slant--accent">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        Hit Locations
+      </div>
+      <div class="wt-dash-panel-body wt-dash-figure-body">
+        {{!-- Reuse the existing combat-health partial — it provides:
+             * The damage-silhouette SVG (already click-wired)
+             * The per-location data list (used here as badges around the figure)
+             * Shield / armor indicators
+             📖 Click semantics handled by _handleSilhouetteClick:
+             L-click = +Shock, R-click = +Kill, Shift-click = remove
+             (📖 WT Rulebook Ch4 p.61 — hit-location damage application)
+        --}}
+        {{> "systems/wild-talents-2e/templates/actor/parts/combat-health.hbs"}}
+      </div>
+    </section>
+
+    {{!-- RIGHT: Active Miracles Rail (Sprint 4.1) --}}
+    <section class="wt-dash-miracles wt-panel-ink" aria-label="Active Miracles">
+      <div class="wt-panel-header-slant wt-panel-header-slant--yellow">
+        <i class="fas fa-bolt" aria-hidden="true"></i>
+        Active Miracles
+      </div>
+      <div class="wt-dash-panel-body wt-dash-miracles-body">
+        {{#if hasDashMiracles}}
+          <div class="wt-dash-miracle-list">
+            {{#each dashMiracles as |m|}}
+              {{!-- 📖 WT Rulebook Ch6 — power card. Roll wiring reuses the
+                   detail view's rollStat/power action verbatim. --}}
+              <div class="wt-dash-miracle-card wt-miracle-{{m.type}}" data-power-id="{{m.id}}">
+
+                {{!-- Header: icon + name + type badge --}}
+                <div class="wt-dash-miracle-head">
+                  <img src="{{m.img}}" class="wt-dash-miracle-icon" alt="" aria-hidden="true"/>
+                  <span class="wt-dash-miracle-name" title="{{m.name}}">{{m.name}}</span>
+                  <span class="wt-dash-miracle-type wt-miracle-type-{{m.type}}">
+                    {{#if m.isHyper}}<i class="fas fa-bolt" aria-hidden="true"></i>{{/if}}
+                    {{m.typeLabel}}{{#if m.linkLabel}} · {{m.linkLabel}}{{/if}}
+                  </span>
+                </div>
+
+                {{!-- Quality chips (A/D/U with level) --}}
+                {{#if m.hasQualities}}
+                  <div class="wt-dash-miracle-qualities">
+                    {{#each m.qualities as |q|}}
+                      <span class="wt-dash-quality-chip wt-quality-{{q.type}}"
+                            title="{{q.type}}{{#if q.level}} level {{q.level}}{{/if}}{{#if q.capacity}} · {{q.capacity}}{{/if}}">
+                        {{q.short}}{{#if q.level}}<span class="cm-numeric">{{q.level}}</span>{{/if}}
+                      </span>
+                    {{/each}}
+                  </div>
+                {{/if}}
+
+                {{!-- Footer: dice pool + roll button --}}
+                <div class="wt-dash-miracle-foot">
+                  <span class="wt-dash-miracle-pool cm-numeric" title="Dice pool">{{m.poolLabel}}</span>
+                  <div class="wt-dash-miracle-actions">
+                    <a class="wt-dash-miracle-edit"
+                       data-action="itemEdit"
+                       data-item-id="{{m.id}}"
+                       title="Edit {{m.name}}"
+                       aria-label="Edit {{m.name}}">
+                      <i class="fas fa-pen" aria-hidden="true"></i>
+                    </a>
+                    <a class="wt-dash-miracle-roll rollable"
+                       data-action="rollStat"
+                       data-type="power"
+                       data-key="{{m.id}}"
+                       data-label="{{m.name}}"
+                       title="Roll {{m.name}} ({{m.poolLabel}})"
+                       aria-label="Roll {{m.name}}">
+                      <i class="fas fa-dice-d10" aria-hidden="true"></i>
+                      <span>ROLL</span>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="wt-dash-placeholder">
+            <p class="wt-dash-placeholder-text">No powers yet.</p>
+            <p class="wt-dash-placeholder-hint">
+              Add powers in <strong>Detail</strong> view — they'll appear here as cards.
+            </p>
+          </div>
+        {{/if}}
+      </div>
+    </section>
+
+  </div>
+
+</div>

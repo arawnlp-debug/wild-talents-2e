@@ -1,0 +1,852 @@
+/* ====================================================
+   WT: 2ND EDITION 
+   Base Styles & Utility Classes
+==================================================== */
+
+/* -----------------------------------------
+    CORE SHEET STYLING
+----------------------------------------- */
+.wt.sheet.actor, .wt.sheet.item {
+  background: var(--wt-bg-parchment);
+  background-image: var(--wt-parchment-surface);
+  box-shadow: var(--wt-shadow-parchment);
+  color: var(--wt-text-dark);
+  font-family: var(--wt-font-flavor);
+}
+
+.wt * {
+  box-sizing: border-box;
+}
+
+.wt-sheet-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  padding: 5px 10px;
+}
+
+.wt.sheet .window-content {
+  padding: 0;
+  overflow: hidden;
+  background: var(--wt-bg-parchment);
+}
+
+.wt.sheet form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* -----------------------------------------
+    STRUCTURAL UTILITY CLASSES
+----------------------------------------- */
+.wt-p10 { padding: 10px; }
+.wt-p15 { padding: 15px; }
+.wt-p8-15 { padding: 8px 15px; }
+.wt-p5-15 { padding: 5px 15px; }
+.wt-pb10 { padding-bottom: 10px; }
+.wt-mb5 { margin-bottom: 5px; }
+.wt-mb10 { margin-bottom: 10px; }
+.wt-mb20 { margin-bottom: 20px; }
+.wt-mt5 { margin-top: 5px; }
+.wt-mt10 { margin-top: 10px; }
+.wt-mt20 { margin-top: 20px; }
+.wt-ml15 { margin-left: 15px; }
+.wt-mr10 { margin-right: 10px; }
+.wt-m0 { margin: 0; }
+.wt-pt5 { padding-top: 5px; }
+
+/* Colors & Backgrounds */
+.bg-white, .wt-bg-white { background: var(--wt-bg-paper); }
+.bg-crimson { background: var(--wt-color-blood); color: var(--wt-text-light); }
+.bg-teal { background: var(--wt-color-teal); color: var(--wt-text-light); }
+
+/* Typography */
+.wt-bold { font-weight: bold; }
+.wt-text-center { text-align: center; }
+.wt-text-xl { font-size: 1.5em; }
+.wt-text-lg { font-size: 1.1em; }
+.wt-text-sm { font-size: 0.9em; }
+.wt-item-subtext { font-size: 0.85em; color: var(--wt-text-muted); }
+.wt-text-muted { color: var(--wt-text-muted); font-style: italic; }
+.wt-text-light { color: var(--wt-text-light) !important; }
+.wt-capitalize { text-transform: capitalize; }
+.wt-color-success { color: var(--wt-color-emerald); }
+
+/* Flexbox Layouts */
+.wt-flex-center { display: flex; align-items: center; justify-content: center; }
+.wt-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.wt-flex-around { display: flex; align-items: center; justify-content: space-around; gap: 20px; padding: 15px; }
+.wt-flex-gap5 { display: flex; gap: 5px; }
+.wt-flex-gap12 { display: flex; gap: 12px; }
+.wt-flex-col { display: flex; flex-direction: column; }
+.wt-flex-col-gap8 { display: flex; flex-direction: column; gap: 8px; }
+.wt-flex-center-gap4 { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.wt-flex-center-gap15 { display: flex; align-items: center; justify-content: center; gap: 15px; }
+.wt-flex1 { flex: 1; }
+.align-center { align-items: center; justify-content: space-between; }
+
+/* Grid Layouts */
+.wt-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+/* Flexible Column Proportions (Used in Item Lists) */
+.wt-col-1 { flex: 1; text-align: center; }
+.wt-col-2 { flex: 2; }
+.wt-col-3 { flex: 3; }
+.wt-col-4 { flex: 4; }
+.wt-col-5 { flex: 5; }
+
+/* Elements & Containers */
+.wt-block { display: block; }
+.wt-circle { border-radius: 50%; }
+.wt-scroll-y { overflow-y: auto; padding-right: 5px; }
+.wt-opacity-50 { opacity: 0.5; }
+.wt-cursor-pointer { cursor: pointer; }
+.wt-border-none { border: none !important; }
+.wt-border-top { border-top: var(--wt-border-dashed); }
+
+/* Common Input/Textarea Overrides */
+.wt textarea {
+  border: none;
+  padding: 8px;
+  width: 100%;
+  font-family: var(--wt-font-flavor);
+  resize: vertical;
+  background: transparent;
+  color: var(--wt-text-dark);
+}
+
+.wt-textarea { 
+    height: 150px; 
+    border: var(--wt-border-light); 
+    padding: 10px; 
+    resize: vertical; 
+    width: 100%; 
+    font-family: var(--wt-font-flavor); 
+    background: var(--wt-bg-paper); 
+    box-shadow: var(--wt-shadow-inset); 
+    color: var(--wt-text-dark); 
+}
+
+.wt-textarea-120 { 
+    height: 120px; 
+    border: var(--wt-border-light); 
+    padding: 10px; 
+    resize: vertical; 
+    width: 100%; 
+    font-family: var(--wt-font-flavor); 
+    background: var(--wt-bg-paper); 
+    box-shadow: var(--wt-shadow-inset); 
+    color: var(--wt-text-dark); 
+}
+
+/* -----------------------------------------
+    V14 BLANK GHOST WINDOW FIX
+----------------------------------------- */
+/* Instantly hide ApplicationV2 windows on close to prevent the blank background fade-out bug */
+.app-v2.closing {
+    display: none !important;
+    opacity: 0 !important;
+    animation: none !important;
+    transition: none !important;
+}
+
+/* -----------------------------------------
+    ADDITIONAL UTILITIES (Phase 1 Cleanup)
+----------------------------------------- */
+.wt-mt-0 { margin-top: 0 !important; }
+.wt-scroll-y { overflow-y: auto; }
+
+/* Item Sheet: Effects Tab Elements */
+.item-effects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--wt-font-flavor);
+  border-bottom: 2px solid var(--wt-bg-iron);
+  padding-bottom: 5px;
+  margin-bottom: var(--wt-space-md);
+  font-weight: bold;
+  font-size: var(--wt-text-lg);
+}
+
+.item-effects-add-btn {
+  cursor: pointer;
+  color: var(--wt-color-blood);
+  font-size: var(--wt-text-sm);
+  transition: color 0.2s;
+}
+
+.item-effects-add-btn:hover {
+  color: var(--wt-color-blood-dark);
+  text-shadow: 0 0 5px rgba(139,31,31,0.3);
+}
+
+.item-effects-empty {
+  text-align: center;
+  padding: 20px;
+  border: var(--wt-border-dashed);
+  color: var(--wt-text-muted);
+  font-style: italic;
+  border-radius: 4px;
+}
+
+/* -----------------------------------------
+    ROLL DIALOG UTILITIES
+----------------------------------------- */
+.wt-pool-value { color: var(--wt-color-emerald); }
+.wt-passion-group { display: flex; flex-direction: column; gap: 2px; }
+.wt-passion-group label { font-size: var(--wt-text-xs); text-transform: none; }
+.wt-passion-group select { font-size: var(--wt-text-sm); padding: 2px; }
+.wt-wealth-display { font-size: var(--wt-text-3xl); font-weight: bold; color: var(--wt-color-blood); font-family: var(--wt-font-data); }
+.wt-color-brass { color: var(--wt-color-brass); }
+
+/* -----------------------------------------
+    JS DIALOG UTILITY CLASSES
+----------------------------------------- */
+.wt-dialog-intro { text-align: center; font-size: var(--wt-text-lg); margin-bottom: 10px; }
+.wt-dialog-subtitle { text-align: center; font-size: var(--wt-text-sm); color: var(--wt-text-muted); margin-bottom: 10px; }
+.wt-dialog-callout { text-align: center; font-weight: bold; }
+.wt-dialog-section-divider { margin-bottom: 10px; border-top: var(--wt-border-dashed); padding-top: 10px; }
+.wt-dialog-advanced-link { font-size: var(--wt-text-sm); text-decoration: underline; color: var(--wt-color-blood); cursor: pointer; }
+.wt-dialog-advanced-link:hover { color: var(--wt-color-blood-dark); }
+.wt-improve-label { display: block; }
+.wt-improve-value { color: var(--wt-color-emerald); }
+.wt-font-display { font-family: var(--wt-font-display); }
+
+/* Cover & Layout Utilities */
+.wt-cover-checkboxes { display: flex; flex-direction: column; gap: 4px; padding: 0 20px; }
+.wt-cover-btn-wrapper { padding: 6px 10px 2px; text-align: center; }
+.wt-flex-col { display: flex; flex-direction: column; }
+.wt-flex-gap4 { gap: 4px; }
+.wt-flex-gap12 { gap: 12px; }
+.wt-mb-small { margin-bottom: 5px; }
+.wt-text-warning { color: var(--wt-color-brass); }
+
+/* Sidebar Dashboard Button */
+.wt-btn-dashboard { background: var(--wt-color-blood); color: var(--wt-text-light); border: 1px solid var(--wt-color-blood-dark); cursor: pointer; transition: filter 0.2s; }
+.wt-btn-dashboard:hover { filter: brightness(1.15); }
+/* Utility: JS-toggled visibility (replaces inline style="display:none") */
+.wt-hidden { display: none; }
+/* -----------------------------------------
+    TOKEN HUD: STATUS EFFECTS GRID
+    WT uses exactly 9 curated statuses.
+    Force a clean 3×3 grid so the panel
+    always renders as a tidy square.
+----------------------------------------- */
+#token-hud .status-effects {
+    display: grid !important;
+    grid-template-columns: repeat(3, 36px) !important;
+    grid-auto-rows: 36px !important;
+    gap: 3px !important;
+    padding: 5px !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+#token-hud .status-effects .effect-control {
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 !important;
+    padding: 2px !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    object-fit: contain !important;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PHASE 3: FOUNDRY GLOBAL SKINNING
+   ─────────────────────────────────────────────────────────────────────
+   Scoped to .system-wild-talents-2e (added to <body> during init hook).
+   Skins the Foundry chrome to match the "Blood, Iron, and Parchment"
+   visual identity so sheets don't feel like islands.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Sidebar ────────────────────────────────────────────────────────── */
+.system-wild-talents-2e #sidebar {
+  background: var(--wt-bg-parchment);
+  background-image: var(--wt-grain), var(--wt-texture-coarse);
+  border-left: var(--wt-border-iron);
+}
+
+.system-wild-talents-2e #sidebar .sidebar-tab {
+  background: transparent;
+  color: var(--wt-text-dark);
+  font-family: var(--wt-font-flavor);
+}
+
+.system-wild-talents-2e #sidebar #sidebar-tabs > .item {
+  font-family: var(--wt-font-display);
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  transition: color var(--wt-transition-base), border-color var(--wt-transition-base);
+}
+
+.system-wild-talents-2e #sidebar #sidebar-tabs > .item.active {
+  border-bottom-color: var(--wt-color-blood);
+  text-shadow: none;
+}
+
+.system-wild-talents-2e #sidebar .directory-header {
+  border-bottom: var(--wt-border-iron);
+}
+
+.system-wild-talents-2e #sidebar .directory-list .directory-item {
+  border-bottom: 1px solid var(--wt-bg-vellum);
+}
+
+.system-wild-talents-2e #sidebar h3 {
+  font-family: var(--wt-font-display);
+}
+
+/* ─── Window Headers ─────────────────────────────────────────────────── */
+.system-wild-talents-2e .window-app .window-header,
+.system-wild-talents-2e .app-v2 .window-header {
+  background: var(--wt-bg-iron);
+  color: var(--wt-text-light);
+  font-family: var(--wt-font-display);
+  border-bottom: 2px solid var(--wt-color-blood);
+}
+
+.system-wild-talents-2e .window-app .window-header .window-title,
+.system-wild-talents-2e .app-v2 .window-header .window-title {
+  color: var(--wt-text-light);
+  font-family: var(--wt-font-display);
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: var(--wt-text-sm);
+}
+
+.system-wild-talents-2e .window-app .window-header .header-button,
+.system-wild-talents-2e .app-v2 .window-header .header-button {
+  color: rgba(255,255,255,0.6);
+  transition: color var(--wt-transition-fast);
+}
+
+.system-wild-talents-2e .window-app .window-header .header-button:hover,
+.system-wild-talents-2e .app-v2 .window-header .header-button:hover {
+  color: var(--wt-text-light);
+}
+
+/* ─── Window Content ─────────────────────────────────────────────────── */
+.system-wild-talents-2e .window-app .window-content,
+.system-wild-talents-2e .app-v2 .window-content {
+  background: var(--wt-bg-parchment);
+  background-image: var(--wt-parchment-surface);
+}
+
+/* ─── Dialog Footer Buttons ──────────────────────────────────────────── */
+.system-wild-talents-2e .dialog .dialog-buttons button,
+.system-wild-talents-2e .app-v2 footer.window-footer button {
+  background: var(--wt-bg-iron);
+  color: var(--wt-text-light);
+  border: 1px solid var(--wt-bg-iron-light);
+  font-family: var(--wt-font-flavor);
+  font-weight: bold;
+  border-radius: var(--wt-radius-md);
+  transition: background var(--wt-transition-fast), transform var(--wt-transition-fast);
+}
+
+.system-wild-talents-2e .dialog .dialog-buttons button:hover,
+.system-wild-talents-2e .app-v2 footer.window-footer button:hover {
+  background: var(--wt-color-blood);
+  border-color: var(--wt-color-blood-dark);
+  transform: translateY(-1px);
+}
+
+/* ─── Chat Messages ──────────────────────────────────────────────────── */
+.system-wild-talents-2e #chat-log .message {
+  border-bottom: 1px solid var(--wt-bg-vellum);
+}
+
+.system-wild-talents-2e #chat-log .message .message-sender {
+  font-family: var(--wt-font-display);
+  font-weight: bold;
+}
+
+/* ─── Combat Tracker ─────────────────────────────────────────────────── */
+.system-wild-talents-2e #combat-tracker .combatant {
+  border-bottom: 1px solid var(--wt-bg-vellum);
+  transition: background var(--wt-transition-fast);
+}
+
+.system-wild-talents-2e #combat-tracker .combatant:hover {
+  background: var(--wt-bg-vellum);
+}
+
+.system-wild-talents-2e #combat-tracker .combatant.active {
+  border-left: 3px solid var(--wt-color-blood);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBARS
+   Thin, themed scrollbars that disappear into the design.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* Webkit (Chrome, Edge, Electron/Foundry) */
+.system-wild-talents-2e ::-webkit-scrollbar {
+  width: var(--wt-scrollbar-width);
+  height: var(--wt-scrollbar-width);
+}
+
+.system-wild-talents-2e ::-webkit-scrollbar-track {
+  background: var(--wt-scrollbar-track);
+}
+
+.system-wild-talents-2e ::-webkit-scrollbar-thumb {
+  background: var(--wt-scrollbar-thumb);
+  border-radius: 3px;
+  transition: background var(--wt-transition-base);
+}
+
+.system-wild-talents-2e ::-webkit-scrollbar-thumb:hover {
+  background: var(--wt-scrollbar-hover);
+}
+
+/* Firefox */
+.system-wild-talents-2e * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wt-scrollbar-thumb) var(--wt-scrollbar-track);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FOCUS STATES & KEYBOARD ACCESSIBILITY
+   Themed focus rings replace browser-default blue outlines.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* Global focus-visible ring for all interactive elements within WT */
+.system-wild-talents-2e input:focus-visible,
+.system-wild-talents-2e select:focus-visible,
+.system-wild-talents-2e textarea:focus-visible,
+.system-wild-talents-2e button:focus-visible,
+.system-wild-talents-2e [role="button"]:focus-visible,
+.system-wild-talents-2e a:focus-visible,
+.system-wild-talents-2e .item:focus-visible {
+  outline: none;
+  box-shadow: var(--wt-focus-glow);
+}
+
+/* Subtle inner highlight for inputs */
+.wt input:focus-visible,
+.wt select:focus-visible,
+.wt textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--wt-focus-glow), var(--wt-shadow-inset);
+  border-color: var(--wt-color-blood);
+}
+
+/* Tab navigation items */
+.wt .sheet-tabs .item:focus-visible {
+  box-shadow: var(--wt-focus-glow);
+  border-radius: var(--wt-radius-sm);
+}
+
+/* Skill rows — focus-within for keyboard navigation */
+.wt .skill-row:focus-within {
+  background: var(--wt-bg-blood-muted);
+  box-shadow: inset 3px 0 0 var(--wt-color-blood);
+}
+
+/* Prevent double focus rings in inner elements */
+.wt .skill-row:focus-within input:focus-visible {
+  box-shadow: none;
+}
+
+/* Overscroll containment for all scrollable areas */
+.wt .sheet-body,
+.wt-spell-scroll,
+.wt .tab {
+  overscroll-behavior: contain;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   THE .wt-btn SYSTEM
+   ─────────────────────────────────────────────────────────────────────
+   Unified button base with tactile micro-interactions (translateY,
+   brightness filter, shadow drop). All buttons MUST extend from this
+   base. Modifiers control colour; the base controls feel.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-family: var(--wt-font-flavor);
+  font-weight: bold;
+  font-size: var(--wt-text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  border: 1px solid transparent;
+  border-radius: var(--wt-radius-md);
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform var(--wt-transition-fast),
+    filter var(--wt-transition-fast),
+    box-shadow 0.15s ease,
+    background var(--wt-transition-fast),
+    border-color var(--wt-transition-fast);
+  box-shadow: var(--wt-shadow-drop);
+}
+
+.wt-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: var(--wt-shadow-elevated);
+}
+
+.wt-btn:active {
+  transform: translateY(0px);
+  filter: brightness(0.95);
+  box-shadow: none;
+}
+
+.wt-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--wt-focus-glow), var(--wt-shadow-drop);
+}
+
+.wt-btn:disabled,
+.wt-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+  box-shadow: none;
+}
+
+/* ── Colour Modifiers ────────────────────────────────────────────────── */
+
+/* Iron (default dark button) */
+.wt-btn--iron {
+  background: var(--wt-bg-iron);
+  color: var(--wt-text-light);
+  border-color: var(--wt-bg-iron-light);
+}
+
+.wt-btn--iron:hover {
+  background: var(--wt-bg-iron-light);
+}
+
+/* Blood (primary CTA, danger, attack) */
+.wt-btn--blood {
+  background: var(--wt-color-blood);
+  color: var(--wt-text-light);
+  border-color: var(--wt-color-blood-dark);
+}
+
+.wt-btn--blood:hover {
+  background: var(--wt-color-blood-dark);
+}
+
+/* Emerald (success, healing, gobble) */
+.wt-btn--emerald {
+  background: var(--wt-color-emerald);
+  color: var(--wt-text-light);
+  border-color: var(--wt-color-emerald);
+}
+
+.wt-btn--emerald:hover {
+  filter: brightness(1.2);
+}
+
+/* Brass (sovereignty, armor, shields) */
+.wt-btn--brass {
+  background: var(--wt-color-brass);
+  color: var(--wt-text-light);
+  border-color: var(--wt-color-brass);
+}
+
+.wt-btn--brass:hover {
+  filter: brightness(1.15);
+}
+
+/* Arcane (sorcery, esoterica) */
+.wt-btn--arcane {
+  background: var(--wt-color-sorcery);
+  color: var(--wt-text-light);
+  border-color: var(--wt-color-sorcery-dark);
+}
+
+.wt-btn--arcane:hover {
+  background: var(--wt-color-sorcery-dark);
+}
+
+/* Ghost (transparent outline — secondary actions) */
+.wt-btn--ghost {
+  background: transparent;
+  color: var(--wt-text-dark);
+  border-color: var(--wt-bg-ash);
+  box-shadow: none;
+}
+
+.wt-btn--ghost:hover {
+  background: var(--wt-bg-vellum);
+  box-shadow: var(--wt-shadow-drop);
+}
+
+/* Tinted variants (subtle coloured backgrounds for chat/card buttons) */
+.wt-btn--blood-tint {
+  background: var(--wt-bg-blood-subtle);
+  color: var(--wt-color-blood);
+  border-color: var(--wt-color-blood);
+  box-shadow: none;
+}
+
+.wt-btn--blood-tint:hover {
+  background: var(--wt-bg-blood-wash);
+}
+
+.wt-btn--emerald-tint {
+  background: var(--wt-bg-emerald-subtle);
+  color: var(--wt-color-emerald);
+  border-color: var(--wt-color-emerald);
+  box-shadow: none;
+}
+
+.wt-btn--emerald-tint:hover {
+  background: var(--wt-bg-emerald-muted);
+}
+
+.wt-btn--brass-tint {
+  background: var(--wt-bg-brass-subtle);
+  color: var(--wt-color-brass);
+  border-color: var(--wt-color-brass);
+  box-shadow: none;
+}
+
+.wt-btn--brass-tint:hover {
+  background: var(--wt-bg-brass-muted);
+}
+
+.wt-btn--blue-tint {
+  background: var(--wt-bg-blue-subtle);
+  color: var(--wt-color-blue-dark);
+  border-color: var(--wt-color-info-border);
+  box-shadow: none;
+}
+
+.wt-btn--blue-tint:hover {
+  background: var(--wt-bg-blue-muted);
+}
+
+.wt-btn--sorcery-tint {
+  background: var(--wt-bg-sorcery-subtle);
+  color: var(--wt-purple);
+  border-color: var(--wt-purple);
+  box-shadow: none;
+}
+
+.wt-btn--sorcery-tint:hover {
+  background: var(--wt-bg-sorcery-muted);
+}
+
+.wt-btn--teal-tint {
+  background: var(--wt-bg-teal-subtle);
+  color: var(--wt-color-emerald);
+  border-color: var(--wt-color-emerald);
+  box-shadow: none;
+}
+
+.wt-btn--teal-tint:hover {
+  background: var(--wt-bg-teal-muted);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   EMPTY STATES
+   Elegant dashed-border placeholder for empty lists/panels.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-empty-state {
+  text-align: center;
+  padding: var(--wt-space-lg);
+  border: 2px dashed var(--wt-bg-ash);
+  border-radius: var(--wt-radius-md);
+  color: var(--wt-text-muted);
+  font-style: italic;
+  font-family: var(--wt-font-flavor);
+  font-size: var(--wt-text-sm);
+  opacity: 0.7;
+  transition: opacity var(--wt-transition-base), border-color var(--wt-transition-base);
+}
+
+.wt-empty-state:hover {
+  opacity: 1;
+  border-color: var(--wt-color-blood);
+}
+
+.wt-empty-state i {
+  display: block;
+  font-size: var(--wt-text-2xl);
+  margin-bottom: var(--wt-space-sm);
+  color: var(--wt-bg-ash);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PHASE 6: INPUT & FORM POLISH
+   ─────────────────────────────────────────────────────────────────────
+   Unified input styling: consistent heights, smooth transitions,
+   themed spin-button removal, and select arrow styling.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Global Input Reset ─────────────────────────────────────────────── */
+/* Remove number input spin buttons across all WT sheets               */
+.wt input[type="number"]::-webkit-inner-spin-button,
+.wt input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wt input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Consistent transition on ALL inputs within WT sheets */
+.wt input,
+.wt select,
+.wt textarea {
+  transition:
+    border-color var(--wt-transition-base),
+    background var(--wt-transition-base),
+    box-shadow var(--wt-transition-base);
+}
+
+/* ─── Select Dropdown Polish ─────────────────────────────────────────── */
+.wt select {
+  background: var(--wt-bg-paper);
+  border: var(--wt-border-light);
+  border-radius: var(--wt-radius-md);
+  color: var(--wt-text-dark);
+  font-family: var(--wt-font-flavor);
+  padding: 3px 6px;
+  cursor: pointer;
+}
+
+.wt select:hover {
+  border-color: var(--wt-bg-ash);
+}
+
+/* ─── Checkbox Polish ────────────────────────────────────────────────── */
+.wt input[type="checkbox"] {
+  accent-color: var(--wt-color-blood);
+  cursor: pointer;
+}
+
+/* ─── Range Slider Polish ────────────────────────────────────────────── */
+.wt input[type="range"] {
+  accent-color: var(--wt-color-blood);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   PHASE 7: MICRO-DETAIL & POLISH
+   ─────────────────────────────────────────────────────────────────────
+   Tab fade-in, item row refinements, consistent zebra striping,
+   and overscroll containment.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Tab Content Fade-In ────────────────────────────────────────────── */
+/* Replaces hard display:none/block toggle with a smooth entrance        */
+@keyframes wt-tab-fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.wt .sheet-body .tab.active {
+  animation: wt-tab-fadein 0.2s ease-out;
+}
+
+/* ─── Item Row Polish ────────────────────────────────────────────────── */
+/* Subtle left-border accent on hover for interactive lists               */
+.wt .item-row {
+  transition: background var(--wt-transition-fast), border-left-color var(--wt-transition-fast);
+  border-left: 3px solid transparent;
+}
+
+.wt .item-row:hover {
+  border-left-color: var(--wt-color-blood);
+}
+
+/* Action icons: fade in on hover */
+.wt .item-row .item-controls {
+  opacity: 0.4;
+  transition: opacity var(--wt-transition-fast);
+}
+
+.wt .item-row:hover .item-controls {
+  opacity: 1;
+}
+
+/* ─── Skill Row Polish ───────────────────────────────────────────────── */
+.wt .skill-row {
+  border-left: 3px solid transparent;
+  transition: background var(--wt-transition-fast), border-left-color var(--wt-transition-fast);
+}
+
+.wt .skill-row:hover {
+  border-left-color: var(--wt-color-blood);
+}
+
+/* ─── Rollable Cursor & Hover ────────────────────────────────────────── */
+/* Any element with data-action that triggers a roll should feel clicky   */
+.wt [data-action*="roll"],
+.wt [data-action*="Roll"],
+.wt .rollable {
+  cursor: pointer;
+  transition: text-shadow var(--wt-transition-fast), color var(--wt-transition-fast);
+}
+
+.wt [data-action*="roll"]:hover,
+.wt [data-action*="Roll"]:hover,
+.wt .rollable:hover {
+  text-shadow: 0 0 6px var(--wt-bg-blood-subtle);
+  color: var(--wt-color-blood);
+}
+
+/* ─── Section Dividers ───────────────────────────────────────────────── */
+/* Consistent diamond divider between sections */
+.wt-divider {
+  background-image: var(--wt-divider);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 200px 8px;
+  height: 8px;
+  margin: var(--wt-space-md) 0;
+}
+
+/* ─── Selection Highlight ────────────────────────────────────────────── */
+/* Text selection uses the system palette, not default browser blue       */
+.system-wild-talents-2e ::selection {
+  background: rgba(139, 31, 31, 0.25);
+  color: var(--wt-text-dark);
+}
+
+.system-wild-talents-2e ::-moz-selection {
+  background: rgba(139, 31, 31, 0.25);
+  color: var(--wt-text-dark);
+}
+
+/* ─── Smooth Window Resize ───────────────────────────────────────────── */
+.wt.sheet {
+  transition: width 0.15s ease, height 0.15s ease;
+}
+
+/* ─── Tooltip Consistency ────────────────────────────────────────────── */
+.system-wild-talents-2e [data-tooltip] {
+  position: relative;
+}

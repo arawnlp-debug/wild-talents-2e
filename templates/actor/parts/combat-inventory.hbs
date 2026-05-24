@@ -1,0 +1,94 @@
+<div class="item-list-container wt-mb20">
+  <div class="list-header flexrow">
+    <h3 class="wt-col-2">{{localize 'WT.Weapon'}}</h3>
+    <span class="wt-col-1 wt-text-center" title="{{localize 'WT.Equipped'}}"><i class="fas fa-hand-paper"></i></span>
+    <span class="wt-col-1">{{localize 'WT.Damage'}}</span>
+    <span class="wt-col-1">{{localize 'WT.AttackPool'}}</span>
+    <span class="wt-col-1">{{localize 'WT.Range'}}</span>
+    <span class="wt-col-2">{{localize 'WT.Notes'}}</span>
+    <a class="item-create control-btn" data-action="itemCreate" data-type="weapon" title="Add Weapon"><i class="fas fa-plus"></i></a>
+  </div>
+  {{#each weapons as |item|}}
+  <div class="item-row flexrow">
+    <span class="item-name wt-col-2 wt-bold">
+      <label class="rollable" data-action="rollStat" data-type="item" data-key="{{item.id}}" data-label="{{item.name}}"><i class="fas fa-dice-d10 wt-mr10"></i></label>
+      {{item.name}}
+    </span>
+    <span class="wt-col-1 wt-flex-center">
+      <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-checkbox" title="Toggle Equip Weapon"/>
+    </span>
+    <span class="wt-col-1">{{item.system.damage}}</span>
+    <span class="wt-col-1">{{item.resolvedPoolLabel}}</span>
+    <span class="wt-col-1">{{item.system.range}}</span>
+    <span class="wt-col-2 wt-item-subtext">{{item.system.notes}}</span>
+    <div class="item-controls">
+      <a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a>
+      <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+      <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<div class="item-list-container wt-mb20">
+  <div class="list-header flexrow">
+    <h3 class="wt-col-2">Shield</h3>
+    <span class="wt-col-1 wt-text-center" title="{{localize 'WT.Equipped'}}">
+      <i class="fas fa-shield-alt"></i>
+    </span>
+    <span class="wt-col-1 wt-text-center" title="{{localize 'WT.ParryBonus'}}">Parry</span>
+    <span class="wt-col-4"></span>
+    <a class="item-create control-btn" data-action="itemCreate" data-type="shield" title="Add Shield">
+      <i class="fas fa-plus"></i>
+    </a>
+  </div>
+  {{#each shields as |item|}}
+  <div class="item-row flexrow">
+    <span class="wt-col-2 wt-bold">{{item.name}}</span>
+    <span class="wt-col-1 wt-flex-center">
+      <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-checkbox" title="{{localize 'WT.Equipped'}}"/>
+    </span>
+    <span class="wt-col-1 wt-text-center">+{{item.system.parryBonus}}d</span>
+    <span class="wt-col-4 wt-flex-center">
+      {{#if (eq item.system.shieldSize "tower")}}
+        <a class="item-control wt-tower-toggle {{#if item.system.isStationary}}active{{/if}}" data-action="toggleStationary" data-item-id="{{item.id}}" title="Tower Shield: Toggle Stationary vs Moving Coverage">
+          <i class="fas {{#if item.system.isStationary}}fa-anchor{{else}}fa-walking{{/if}}"></i> {{#if item.system.isStationary}}Stationary{{else}}Moving{{/if}}
+        </a>
+      {{/if}}
+    </span>
+    <div class="item-controls">
+      <a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a>
+      <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+      <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<div class="item-list-container wt-mt20">
+  <div class="list-header flexrow">
+    <h3 class="wt-col-2">{{localize 'WT.MartialTechnique'}}</h3>
+    <span class="wt-col-1">{{localize 'WT.Path'}}</span>
+    <span class="wt-col-1">{{localize 'WT.Pool'}}</span>
+    <span class="wt-col-1">{{localize 'WT.Page'}}</span>
+    <span class="wt-col-3">{{localize 'WT.Effect'}}</span>
+    <a class="item-create control-btn" data-action="itemCreate" data-type="technique"><i class="fas fa-plus"></i></a>
+  </div>
+  {{#each techniques as |item|}}
+  <div class="item-row flexrow">
+    <span class="item-name wt-col-2 wt-bold">
+      <label class="rollable" data-action="rollStat" data-type="item" data-key="{{item.id}}" data-label="{{item.name}}"><i class="fas fa-dice-d10 wt-mr10"></i></label>
+      {{item.name}}
+    </span>
+    <span class="wt-col-1">{{item.system.path}}</span>
+    <span class="wt-col-1">{{item.system.pool}}</span>
+    <span class="wt-col-1">{{item.system.page}}</span>
+    <span class="wt-col-3 wt-item-subtext">{{item.system.effect}}</span>
+    <div class="item-controls">
+      <a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a>
+      <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+      <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+    </div>
+  </div>
+  {{/each}}
+</div>

@@ -1,0 +1,199 @@
+{{!-- templates/dialogs/hazard-roller.hbs --}}
+{{!-- G1 + G2 + G3: Unified Hazard Roller — Falling, Fire, Poison, Area --}}
+
+<div class="wt-dialog-form wt-hazard-roller">
+
+  {{!-- Tab Bar --}}
+  <div class="hazard-tab-bar">
+    <button type="button" class="hazard-tab-btn active" data-tab="falling">
+      <i class="fas fa-arrow-down"></i> Falling
+    </button>
+    <button type="button" class="hazard-tab-btn" data-tab="fire">
+      <i class="fas fa-fire"></i> Fire
+    </button>
+    <button type="button" class="hazard-tab-btn" data-tab="poison">
+      <i class="fas fa-skull-crossbones"></i> Poison
+    </button>
+    <button type="button" class="hazard-tab-btn" data-tab="area">
+      <i class="fas fa-crosshairs"></i> Area
+    </button>
+  </div>
+
+  {{!-- ════════════════════════════════════════════ --}}
+  {{!-- FALLING TAB --}}
+  {{!-- ════════════════════════════════════════════ --}}
+  <div class="hazard-tab-panel active" data-tab="falling">
+    <p class="wt-text-small wt-text-muted wt-mb-small">
+      RAW Ch13: 1d per 5 feet, max 30d (terminal velocity). Mundane armour does not apply.
+    </p>
+
+    <div class="dialog-grid dialog-grid-2">
+      <div class="form-group">
+        <label>Height (feet)</label>
+        <input type="number" name="fall-height" value="10" min="5" step="5"/>
+      </div>
+      <div class="form-group">
+        <label>Surface Type</label>
+        <select name="fall-surface">
+          <option value="shock">Yielding — Shock (water, mud, snow)</option>
+          <option value="killing">Hard — Killing (rock, soil, stone)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="dialog-grid dialog-grid-2">
+      <div class="form-group">
+        <label class="checkbox-group">
+          <input type="checkbox" name="fall-controlled"/>
+          Controlled Drop (–2d)
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Brutal Surface Bonus (+d)</label>
+        <input type="number" name="fall-brutal" value="0" min="0" max="10"/>
+      </div>
+    </div>
+
+    <div class="wt-dialog-pool-preview">
+      Pool: <span class="fall-pool-preview">2d10</span>
+    </div>
+
+    <button type="button" class="wt-btn-execute apply-falling-btn">
+      <i class="fas fa-arrow-down"></i> Apply Falling Damage to Targets
+    </button>
+  </div>
+
+  {{!-- ════════════════════════════════════════════ --}}
+  {{!-- FIRE TAB --}}
+  {{!-- ════════════════════════════════════════════ --}}
+  <div class="hazard-tab-panel" data-tab="fire">
+    <p class="wt-text-small wt-text-muted wt-mb-small">
+      RAW Ch13: Area attack — repeats every round while in the fire. Mundane armour does not apply.
+    </p>
+
+    <div class="dialog-grid dialog-grid-2">
+      <div class="form-group">
+        <label>Intensity</label>
+        <select name="fire-intensity">
+          <option value="shock">Small / Guttering — Shock</option>
+          <option value="killing">Intense / Raging — Killing</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Area Rating (1–8)</label>
+        <input type="number" name="fire-area" value="3" min="1" max="8"/>
+      </div>
+    </div>
+
+    <button type="button" class="wt-btn-execute apply-fire-btn">
+      <i class="fas fa-fire"></i> Apply Fire Damage to Targets
+    </button>
+  </div>
+
+  {{!-- ════════════════════════════════════════════ --}}
+  {{!-- POISON TAB --}}
+  {{!-- ════════════════════════════════════════════ --}}
+  <div class="hazard-tab-panel" data-tab="poison">
+    <p class="wt-text-small wt-text-muted wt-mb-small">
+      RAW Ch13: Roll Potency pool. Set = Major + Minor effect. No set = Minor only. Each resist removes one effect.
+    </p>
+
+    <div class="form-group">
+      <label>Source</label>
+      <select name="poison-mode">
+        <option value="manual">Manual Entry</option>
+        {{#if poisonOptions.length}}
+        <option value="item">From Poison Item</option>
+        {{/if}}
+      </select>
+    </div>
+
+    {{!-- Item selection panel --}}
+    <div class="poison-item-panel" style="display:none;">
+      <div class="form-group">
+        <label>Select Poison</label>
+        <select name="poison-select">
+          <option value="">— Choose —</option>
+          {{#each poisonOptions as |p|}}
+          <option value="{{p.uuid}}">{{p.name}} (Potency {{p.potency}})</option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
+    {{!-- Manual entry panel --}}
+    <div class="poison-manual-panel">
+      <div class="form-group">
+        <label>Poison Name</label>
+        <input type="text" name="poison-name" value="Unknown Poison" placeholder="e.g. Viper Toxin"/>
+      </div>
+      <div class="dialog-grid dialog-grid-2">
+        <div class="form-group">
+          <label>Potency</label>
+          <input type="number" name="poison-potency" value="5" min="1" max="15"/>
+        </div>
+        <div class="form-group">
+          <label>Resist Difficulty</label>
+          <input type="number" name="poison-difficulty" value="0" min="0" max="10"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Major Effect (on set)</label>
+        <input type="text" name="poison-major" placeholder="e.g. Instant death"/>
+      </div>
+      <div class="form-group">
+        <label>Minor Effect (always)</label>
+        <input type="text" name="poison-minor" placeholder="e.g. Violent tremors, no actions for 5 minutes"/>
+      </div>
+    </div>
+
+    {{!-- Shared delivery toggle --}}
+    <div class="form-group">
+      <label class="checkbox-group">
+        <input type="checkbox" name="poison-retained-override" checked/>
+        Retained Delivery (weapon stays in wound — uncheck for –4 Potency)
+      </label>
+    </div>
+
+    <button type="button" class="wt-btn-execute apply-poison-btn">
+      <i class="fas fa-skull-crossbones"></i> Roll Potency &amp; Apply to Targets
+    </button>
+  </div>
+
+  {{!-- ════════════════════════════════════════════ --}}
+  {{!-- AREA DAMAGE TAB --}}
+  {{!-- ════════════════════════════════════════════ --}}
+  <div class="hazard-tab-panel" data-tab="area">
+    <p class="wt-text-small wt-text-muted wt-mb-small">
+      RAW Ch1: Roll Area dice — each die hits the location matching its face. If a location comes up twice, apply two points. Armour does not protect against Area attacks.
+    </p>
+
+    <div class="form-group">
+      <label>Source Name</label>
+      <input type="text" name="area-source" value="Area Attack" placeholder="e.g. Boiling Oil, Eldritch Blast, Scalding Breath"/>
+    </div>
+
+    <div class="dialog-grid dialog-grid-2">
+      <div class="form-group">
+        <label>Area Dice</label>
+        <input type="number" name="area-dice" value="3" min="1" max="30"/>
+      </div>
+      <div class="form-group">
+        <label>Damage Type</label>
+        <select name="area-type">
+          <option value="shock">Shock</option>
+          <option value="killing">Killing</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="wt-dialog-pool-preview">
+      Pool: <span class="area-pool-preview">3d10 Shock</span>
+    </div>
+
+    <button type="button" class="wt-btn-execute apply-area-btn">
+      <i class="fas fa-crosshairs"></i> Apply Area Damage to Targets
+    </button>
+  </div>
+
+</div>

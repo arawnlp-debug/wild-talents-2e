@@ -1,0 +1,426 @@
+/* ====================================================
+   WT: 2ND EDITION
+   Comic Theme — Fonts & Utility Classes
+   ────────────────────────────────────────────────────
+   Loaded AFTER variables.css and base.css.
+   Provides:
+     1. @font-face declarations for Bebas Neue + Montserrat
+     2. Comic-panel utility classes (.wt-panel-ink,
+        .wt-panel-header-slant, .wt-btn-burst)
+     3. Comic theme root container styling (.wt-comic)
+   ────────────────────────────────────────────────────
+   Files expected in fonts/:
+     - BebasNeue-Regular.woff2
+     - Montserrat-Regular.woff2
+     - Montserrat-Bold.woff2
+   ────────────────────────────────────────────────────
+   If a font file is missing, the @font-face simply
+   fails and the next stack in --cm-font-display /
+   --cm-font-body takes over (Oswald → Impact → sans;
+   Roboto → system-ui → sans). Nothing breaks.
+==================================================== */
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FONT-FACE DECLARATIONS
+   ─────────────────────────────────────────────────────────────────
+   font-display: swap — Foundry renders with fallback immediately,
+   then swaps to bundled font when ready. No invisible-text flash.
+
+   Path resolution: this stylesheet lives at styles/comic.css. The
+   url() is relative to the stylesheet, so "../fonts/X.woff2"
+   resolves to systems/wild-talents-2e/fonts/X.woff2 at runtime.
+═════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/BebasNeue-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Montserrat-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Montserrat-Bold.woff2') format('woff2');
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   ROOT CONTAINER — .wt-comic
+   ─────────────────────────────────────────────────────────────────
+   Apply this class to any container that should adopt the Comic
+   visual language. The legacy --wt-* tokens are remapped inside this
+   scope (see variables.css), and the container itself gets the
+   gutter background + body typography defaults.
+
+   IMPORTANT: this class is NOT applied in Sprint 1.1. It's defined
+   here so Sprint 1.2 / Increment 2 can flip the character sheet
+   over by adding `wt-comic` to .wt-sheet-root.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-comic {
+  background: var(--cm-gutter);
+  background-image: none;
+  color: var(--cm-text-on-paper);
+  font-family: var(--cm-font-body);
+  /* Override Foundry's inset parchment shadow for the comic look */
+  box-shadow: none;
+}
+
+/* All-caps display headings inside .wt-comic use Bebas Neue */
+.wt-comic h1,
+.wt-comic h2,
+.wt-comic h3,
+.wt-comic h4,
+.wt-comic .wt-display,
+.wt-comic .cm-display {
+  font-family: var(--cm-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--cm-text-on-paper);
+  font-weight: 400;
+  /* Bebas Neue has tight default leading; give headings breathing room */
+  line-height: 1.05;
+  /* Remove legacy bottom-border so .wt-panel-ink frames cleanly */
+  border-bottom: none;
+}
+
+/* Body copy inside .wt-comic */
+.wt-comic p,
+.wt-comic label,
+.wt-comic input,
+.wt-comic select,
+.wt-comic textarea,
+.wt-comic button,
+.wt-comic .cm-body {
+  font-family: var(--cm-font-body);
+}
+
+/* Numbers should feel tabular & weighty when displayed prominently.
+   Add .cm-numeric to any element that displays a stat total, point cost,
+   willpower value, etc. */
+.wt-comic .cm-numeric {
+  font-family: var(--cm-font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY: .wt-panel-ink — The Comic Panel
+   ─────────────────────────────────────────────────────────────────
+   Heavy ink border + hard offset shadow + white background.
+   This is the workhorse class for every dashboard "panel."
+   Use .wt-panel-ink--sm for tighter cards (miracle cards, badges).
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-panel-ink {
+  background: var(--cm-paper);
+  border: var(--cm-border-panel);
+  box-shadow: var(--cm-shadow-panel);
+  /* Comics don't have rounded corners */
+  border-radius: 0;
+  /* Reserve space so the offset shadow doesn't overflow into a neighbour */
+  margin: 0 6px 6px 0;
+  /* Inner content always gets ink text on white */
+  color: var(--cm-text-on-paper);
+  position: relative;
+}
+
+.wt-panel-ink--sm {
+  background: var(--cm-paper);
+  border: var(--cm-border-card);
+  box-shadow: var(--cm-shadow-panel-sm);
+  border-radius: 0;
+  margin: 0 3px 3px 0;
+  color: var(--cm-text-on-paper);
+  position: relative;
+}
+
+/* Variant: inverse panel — ink background, paper text (used for action bars) */
+.wt-panel-ink--inverse {
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  border: var(--cm-border-panel);
+  box-shadow: var(--cm-shadow-panel);
+  border-radius: 0;
+  margin: 0 6px 6px 0;
+}
+
+/* Variant: accent — accent-blue background, white text (for primary callouts) */
+.wt-panel-ink--accent {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+  border: var(--cm-border-panel);
+  box-shadow: var(--cm-shadow-panel);
+  border-radius: 0;
+  margin: 0 6px 6px 0;
+}
+
+/* Variant: danger — for DEAD / UNCONSCIOUS banners */
+.wt-panel-ink--danger {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+  border: var(--cm-border-panel);
+  box-shadow: var(--cm-shadow-panel);
+  border-radius: 0;
+  margin: 0 6px 6px 0;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY: .wt-panel-header-slant — Slanted Action Header
+   ─────────────────────────────────────────────────────────────────
+   Cuts the right edge at an angle for forward-leaning energy.
+   Sits at the top of a .wt-panel-ink. Always paired with display
+   typography (Bebas Neue caps).
+   Variants:
+     - default: ink fill, paper text
+     - .wt-panel-header-slant--accent: accent-blue fill
+     - .wt-panel-header-slant--yellow: action-yellow fill, ink text
+     - .wt-panel-header-slant--danger: danger-red fill
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-panel-header-slant {
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  font-family: var(--cm-font-display);
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 8px 24px 8px 12px;
+  /* The slant: cut the right edge */
+  clip-path: var(--cm-slant-right);
+  /* Forward-leaning energy — the slant is *to the right* */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* Position absolutely against parent .wt-panel-ink top edge */
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  /* Reserve extra right-padding so the slant doesn't crop the last letter */
+  min-width: 140px;
+  user-select: none;
+}
+
+.wt-panel-header-slant--accent {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-panel-header-slant--yellow {
+  background: var(--cm-accent-yellow);
+  color: var(--cm-ink);
+}
+
+.wt-panel-header-slant--danger {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-panel-header-slant--green {
+  background: var(--cm-accent-green);
+  color: var(--cm-text-on-ink);
+}
+
+/* When the slanted header is the FIRST child of a .wt-panel-ink, pull it
+   up so it overlaps the top border slightly (the "label sticks out" look). */
+.wt-panel-ink > .wt-panel-header-slant:first-child {
+  margin: -3px 0 0 -3px;   /* compensate for the parent's 3px border */
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY: .wt-btn-burst — Action Button
+   ─────────────────────────────────────────────────────────────────
+   Yellow fill, ink border, hard offset shadow.
+   On hover, the button physically moves up-left and the shadow grows,
+   creating the "pops off the page" effect.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-btn-burst {
+  background: var(--cm-accent-yellow);
+  color: var(--cm-ink);
+  border: var(--cm-border-card);
+  box-shadow: var(--cm-shadow-button);
+  border-radius: 0;
+  font-family: var(--cm-font-display);
+  font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease-out,
+    box-shadow 0.12s ease-out,
+    background 0.12s ease-out;
+  /* Keep the offset shadow visible — don't let the parent clip it */
+  margin: 0 4px 4px 0;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.wt-btn-burst:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--cm-shadow-button-hover);
+  background: var(--cm-accent-yellow);   /* keep colour — only depth changes */
+}
+
+.wt-btn-burst:active,
+.wt-btn-burst:focus-visible {
+  /* Press-in: shrink shadow, push button down-right */
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--cm-ink);
+  outline: none;
+}
+
+.wt-btn-burst:focus-visible {
+  /* Accessible focus indication — accent-blue ring */
+  box-shadow:
+    1px 1px 0 var(--cm-ink),
+    var(--cm-focus-ring);
+}
+
+.wt-btn-burst:disabled,
+.wt-btn-burst[aria-disabled="true"] {
+  background: var(--cm-gutter-deep);
+  color: var(--cm-text-disabled);
+  box-shadow: var(--cm-shadow-button);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Variants */
+.wt-btn-burst--accent {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+}
+.wt-btn-burst--accent:hover { background: var(--cm-accent-blue); }
+
+.wt-btn-burst--danger {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+}
+.wt-btn-burst--danger:hover { background: var(--cm-accent-red); }
+
+.wt-btn-burst--ghost {
+  background: var(--cm-paper);
+  color: var(--cm-ink);
+}
+.wt-btn-burst--ghost:hover { background: var(--cm-paper); }
+
+/* Size modifiers */
+.wt-btn-burst--sm {
+  font-size: 0.8em;
+  padding: 5px 10px;
+  box-shadow: 2px 2px 0 var(--cm-ink);
+}
+.wt-btn-burst--sm:hover {
+  box-shadow: 4px 4px 0 var(--cm-ink);
+}
+
+.wt-btn-burst--lg {
+  font-size: 1.15em;
+  padding: 12px 24px;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   UTILITY: .wt-chip — Small Inline Label
+   ─────────────────────────────────────────────────────────────────
+   Used for archetype names, capacity badges, status labels.
+   Outlined by default; modifiers fill it with colour.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cm-paper);
+  border: var(--cm-border-card);
+  border-radius: 0;
+  padding: 2px 8px;
+  font-family: var(--cm-font-display);
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cm-ink);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.wt-chip--accent {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-chip--yellow {
+  background: var(--cm-accent-yellow);
+  color: var(--cm-ink);
+}
+
+.wt-chip--danger {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-chip--green {
+  background: var(--cm-accent-green);
+  color: var(--cm-text-on-ink);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   FOCUS-VISIBLE — Accessibility Baseline
+   ─────────────────────────────────────────────────────────────────
+   Every interactive element inside .wt-comic gets a visible focus
+   ring when focused via keyboard. This is required for WCAG 2.4.7.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-comic a:focus-visible,
+.wt-comic button:focus-visible,
+.wt-comic input:focus-visible,
+.wt-comic select:focus-visible,
+.wt-comic textarea:focus-visible,
+.wt-comic [tabindex="0"]:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   REDUCE MOTION — Honour OS Setting
+   ─────────────────────────────────────────────────────────────────
+   The burst-button hover transform is a small but real motion.
+   Users who request reduced motion get static state changes.
+═════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-btn-burst,
+  .wt-btn-burst:hover,
+  .wt-btn-burst:active {
+    transition: none;
+    transform: none;
+  }
+  .wt-btn-burst:hover {
+    /* Still indicate hover by deepening the shadow only */
+    box-shadow: var(--cm-shadow-button-hover);
+  }
+}

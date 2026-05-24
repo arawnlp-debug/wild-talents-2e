@@ -1,0 +1,491 @@
+<div class="wt-chat-card {{#if needsGobbleSelection}}wt-awaiting-gobble{{/if}}">
+    <header class="wt-roll-title">
+        <i class="fas fa-dice-d10"></i> Rolling {{label}}
+        {{!-- BATCH B ITEM-11: Re-roll button — handler in wild-talents-2e.mjs reads lastRollContext from actor flags --}}
+        <button class="wt-reroll-btn" data-action="rerollLast" title="Re-roll with the same settings">↺</button>
+    </header>
+
+    {{#if (gt multiActions 1)}}
+        <div class="wt-banner wt-banner-warning">
+            ATTEMPTING {{multiActions}} ACTIONS<br>
+            <small>(Requires {{multiActions}} matched sets)</small>
+        </div>
+    {{/if}}
+
+    {{#if (gt calledShot 0)}}
+        <div class="wt-banner wt-banner-info">
+            <i class="fas fa-crosshairs"></i> CALLED SHOT: Height {{calledShot}}
+        </div>
+    {{/if}}
+
+    <details class="wt-pool-breakdown">
+        <summary>
+            Pool: {{totalPool}}d10 {{#if wasCapped}}<span class="wt-text-danger">(Capped)</span>{{/if}}
+        </summary>
+        {{#if poolBreakdown.length}}
+            <ul>
+                {{#each poolBreakdown as |b|}}
+                    <li><strong>{{b.label}}:</strong> <span class="{{#if b.isPenalty}}wt-text-critical{{else}}wt-text-success{{/if}}">{{b.value}}</span></li>
+                {{/each}}
+            </ul>
+        {{/if}}
+    </details>
+
+    <div class="sets-result">
+        <div class="wt-section-title">Matched Sets</div>
+        
+        {{#if sets.length}}
+            <div class="wt-flex-col-gap8 wt-mb-medium">
+                {{#each sets as |set|}}
+                    <div class="ore-set {{#if set.isSuccess}}wt-set-success{{else}}wt-set-fail{{/if}}">
+                        
+                        <div class="dice-tray wrap">
+                            {{#each set.dice as |die|}}
+                                <div class="wt-die {{die.cssClass}}" title="{{#if (eq die.cssClass 'matched')}}Matched Die{{else}}Waste Die{{/if}}">{{die.value}}</div>
+                            {{/each}}
+                        </div>
+                        
+                        <div class="set-details wt-mt-small">
+                            {{#if set.location}}
+                               <i class="fas fa-bullseye wt-text-success"></i> HIT: <strong>{{set.location}}</strong>
+                            {{else if set.isSuccess}}
+                               <i class="fas fa-check-circle wt-text-success"></i> <strong class="wt-text-success">Success</strong>
+                            {{/if}}
+
+                            {{#unless set.isSuccess}}
+                               <div class="wt-text-danger wt-text-bold wt-mt-small"><i class="fas fa-times-circle"></i> FAILED: {{set.failReason}}</div>
+                            {{/unless}}
+                        </div>
+
+                        {{!-- Gobble UI Block --}}
+                        {{#if ../isDefense}}
+                            <div class="wt-gobble-gen">
+                                <div><strong><i class="fas fa-shield-alt"></i> Generates {{set.width}} Gobble Dice of Height {{set.height}}</strong></div>
+                                <div class="wt-gobble-gen-defense">
+                                    Defense Type: <strong>{{../defenseTypeLabel}}</strong><br>
+                                    {{#if (eq ../defenseType "dodge")}}
+                                        <span class="wt-text-danger">(Can only protect yourself)</span>
+                                    {{else}}
+                                        <span class="wt-text-success">(Can protect yourself or allies)</span>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        {{/if}}
+
+                        {{!-- Damage Tags Block --}}
+                        {{#if set.dmg}}
+                            <div class="wt-dmg-tags">
+                                <div><strong>Damage:</strong> {{set.dmg.formula}}</div>
+                                <div class="dice-tray wrap">
+                                    {{#if set.dmg.ap}}<span class="wt-tag ap-tag">AP {{set.dmg.ap}}</span>{{/if}}
+                                    {{#if set.dmg.slow}}<span class="wt-tag">SLOW {{set.dmg.slow}}</span>{{/if}}
+                                    {{#if set.dmg.twoHanded}}<span class="wt-tag">2H</span>{{/if}}
+                                    {{#if set.dmg.massive}}<span class="wt-tag massive-tag">MASSIVE</span>{{/if}}
+                                    {{#if set.dmg.area}}<span class="wt-tag area-tag">AREA {{set.dmg.area}}d</span>{{/if}}
+                                </div>
+                            </div>
+                        {{/if}}
+
+                        {{!-- Healing Block --}}
+                        {{#if set.heal}}
+                            <div class="wt-heal-tags">
+                                <span><strong>Healing:</strong> {{set.heal.formula}}</span>
+                            </div>
+                        {{/if}}
+
+                        {{!-- Ch7 Maneuver Outcome Block --}}
+                        {{#if set.maneuverOutcome}}
+                            <div class="wt-maneuver-outcome {{#if set.maneuverOutcome.isTier1}}tier1{{else}}tier2{{/if}}">
+                                <div class="wt-maneuver-title">
+                                    <i class="fas fa-{{#if set.maneuverOutcome.isTier1}}bolt{{else}}scroll{{/if}}"></i>
+                                    {{localize set.maneuverOutcome.maneuverLabel}} — {{set.maneuverOutcome.tierLabel}} Success
+                                </div>
+                                {{#if set.maneuverOutcome.description}}
+                                    <div>{{localize set.maneuverOutcome.description}}</div>
+                                {{/if}}
+                                {{#if set.maneuverOutcome.requiresKill}}
+                                    <div class="wt-text-danger wt-text-small wt-maneuver-detail">
+                                        <i class="fas fa-skull"></i> Must kill the target to trigger this effect.
+                                    </div>
+                                {{/if}}
+                                {{#if set.maneuverOutcome.bonusShock}}
+                                    <div class="wt-text-small wt-maneuver-detail">
+                                        <strong>Bonus Damage:</strong>
+                                        {{#if set.maneuverOutcome.bonusKilling}}+{{set.maneuverOutcome.bonusShock}} Shock, +{{set.maneuverOutcome.bonusKilling}} Killing{{else}}+{{set.maneuverOutcome.bonusShock}} Shock{{/if}}
+                                    </div>
+                                {{/if}}
+                                {{#if set.maneuverOutcome.convertKillingToShock}}
+                                    <div class="wt-text-small wt-maneuver-detail wt-text-info">
+                                        <i class="fas fa-exchange-alt"></i> All Killing damage converted to Shock.
+                                        {{#if set.maneuverOutcome.discardOverflow}} Overflow Shock discarded (non-lethal).{{/if}}
+                                    </div>
+                                {{/if}}
+                                {{#if set.maneuverOutcome.isTier2}}
+                                    <details class="wt-maneuver-rules">
+                                        <summary class="wt-text-muted wt-text-small">
+                                            <i class="fas fa-book"></i> {{localize 'WT.ManeuverTier2Notice'}}
+                                        </summary>
+                                        <div class="wt-maneuver-rules-text">
+                                            {{localize set.maneuverOutcome.rulesText}}
+                                        </div>
+                                    </details>
+                                    {{#if set.isSuccess}}
+                                    <button class="wt-btn-maneuver-secondary wt-btn-primary gm-resolve-maneuver-btn"
+                                        data-maneuver-key="{{set.maneuverOutcome.maneuverKey}}"
+                                        data-maneuver-label="{{localize set.maneuverOutcome.maneuverLabel}}"
+                                        data-width="{{set.width}}"
+                                        data-height="{{set.height}}"
+                                        title="GM: post a confirmation that this manoeuvre has been resolved">
+                                        <i class="fas fa-gavel"></i> GM: Resolve {{localize set.maneuverOutcome.maneuverLabel}}
+                                    </button>
+                                    {{/if}}
+                                {{/if}}
+                            </div>
+                        {{/if}}
+
+                        {{!-- ACTION BUTTONS — Primary actions full-width, secondary compact --}}
+                        <div class="wt-action-buttons">
+                            {{!-- Primary Actions: Damage / Heal / First Aid --}}
+                            <div class="wt-actions-primary">
+                                {{#if set.dmg}}
+                                    <button class="wt-btn-damage wt-btn-primary apply-dmg-btn" data-width="{{set.width}}" data-height="{{set.height}}" data-dmg-string="{{set.dmg.formula}}" data-ap="{{set.dmg.ap}}" data-massive="{{set.dmg.massive}}" data-area-dice="{{set.dmg.area}}" title="Apply Primary Damage" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-hand-fist"></i> Apply Damage: {{set.dmg.formula}}
+                                    </button>
+                                {{/if}}
+
+                                {{#if set.heal}}
+                                    <button class="wt-btn-heal wt-btn-primary apply-heal-btn" data-width="{{set.width}}" data-height="{{set.height}}" data-heal-string="{{set.heal.formula}}" title="Apply Magical Healing" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-hand-holding-medical"></i> Apply Healing: {{set.heal.formula}}
+                                    </button>
+                                {{/if}}
+
+                                {{#if ../isFirstAid}}
+                                    <button class="wt-btn-first-aid wt-btn-primary apply-first-aid-btn" data-width="{{set.width}}" title="Apply First Aid (Convert Killing to Shock)" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-notes-medical"></i> Apply First Aid
+                                    </button>
+                                {{/if}}
+
+                                {{!-- C1: Manoeuvre status effect button (Pin, Restrain, Stand, Shove, Slam) --}}
+                                {{#if set.maneuverOutcome.hasStatusEffect}}
+                                    <button class="wt-btn-maneuver wt-btn-primary apply-maneuver-status-btn"
+                                        data-maneuver-key="{{set.maneuverOutcome.maneuverKey}}"
+                                        data-apply-status="{{set.maneuverOutcome.applyStatus}}"
+                                        data-clear-status="{{set.maneuverOutcome.clearStatus}}"
+                                        data-set-flag="{{set.maneuverOutcome.setFlag}}"
+                                        data-status-target="{{set.maneuverOutcome.statusTarget}}"
+                                        data-slam-shock="{{set.maneuverOutcome.slamShock}}"
+                                        data-slam-multi-loc="{{set.maneuverOutcome.slamMultiLoc}}"
+                                        title="Apply {{localize set.maneuverOutcome.maneuverLabel}} Effect"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-magic"></i> Apply: {{localize set.maneuverOutcome.maneuverLabel}}
+                                    </button>
+                                {{/if}}
+
+                                {{!-- C2: Strangle — initial application + maintain hold --}}
+                                {{#if set.maneuverOutcome.hasStrangleSetup}}
+                                    <button class="wt-btn-maneuver wt-btn-primary apply-strangle-initial-btn"
+                                        data-shock="{{set.maneuverOutcome.strangleShock}}"
+                                        title="Apply {{set.maneuverOutcome.strangleShock}} Shock to target's head"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-hand-fist"></i> Apply: Strangle ({{set.maneuverOutcome.strangleShock}} Shock to Head)
+                                    </button>
+                                    <button class="wt-btn-maneuver-secondary wt-btn-primary apply-strangle-maintain-btn"
+                                        data-shock="{{set.maneuverOutcome.strangleNextRound}}"
+                                        title="Maintain strangle: apply {{set.maneuverOutcome.strangleNextRound}} Shock next round (no roll needed)">
+                                        <i class="fas fa-repeat"></i> Maintain Strangle ({{set.maneuverOutcome.strangleNextRound}} Shock)
+                                    </button>
+                                {{/if}}
+
+                                {{!-- C2: Iron Kiss — setup this round, execute next round --}}
+                                {{#if set.maneuverOutcome.hasIronKissSetup}}
+                                    <button class="wt-btn-maneuver wt-btn-primary setup-iron-kiss-btn"
+                                        data-virtual-width="{{set.maneuverOutcome.ironKissVirtualWidth}}"
+                                        title="Set up Iron Kiss: store {{set.maneuverOutcome.ironKissVirtualWidth}}×10 guaranteed attack for next round"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-knife"></i> Set Up: Iron Kiss ({{set.maneuverOutcome.ironKissVirtualWidth}}×10 ready)
+                                    </button>
+                                    <button class="wt-btn-maneuver-secondary wt-btn-primary execute-iron-kiss-btn"
+                                        title="Execute Iron Kiss: fire the stored guaranteed attack (next round)">
+                                        <i class="fas fa-bolt"></i> Execute Iron Kiss
+                                    </button>
+                                {{/if}}
+
+                                {{!-- C2: Redirect — opens dialog for incoming attack parameters --}}
+                                {{#if set.maneuverOutcome.hasRedirectSetup}}
+                                    <button class="wt-btn-maneuver wt-btn-primary apply-redirect-btn"
+                                        data-width-mod="{{set.maneuverOutcome.redirectWidthMod}}"
+                                        data-redirect-any="{{set.maneuverOutcome.redirectAny}}"
+                                        title="Apply Redirect: enter the attacker's damage and redirect to a new target"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-rotate"></i> Apply: Redirect
+                                    </button>
+                                {{/if}}
+
+                                {{!-- C2: Submission Hold — apply hold damage + wrench free option --}}
+                                {{#if set.maneuverOutcome.hasSubmissionHold}}
+                                    <button class="wt-btn-maneuver wt-btn-primary apply-submission-hold-btn"
+                                        data-shock="{{set.maneuverOutcome.holdShock}}"
+                                        data-hold-height="{{set.maneuverOutcome.holdHeight}}"
+                                        title="Apply Hold: {{set.maneuverOutcome.holdShock}} Shock to held limb"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-link"></i> Apply: Hold ({{set.maneuverOutcome.holdShock}} Shock)
+                                    </button>
+                                    <button class="wt-btn-maneuver-secondary wt-btn-primary apply-wrench-free-btn"
+                                        data-killing="{{set.maneuverOutcome.wrenchKilling}}"
+                                        data-hold-height="{{set.maneuverOutcome.holdHeight}}"
+                                        title="Wrench Free: target self-inflicts {{set.maneuverOutcome.wrenchKilling}} Killing to break the hold"
+                                        {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-person-running"></i> Wrench Free ({{set.maneuverOutcome.wrenchKilling}} Killing to self)
+                                    </button>
+                                {{/if}}
+
+                                {{!-- BATCH B ITEM-2: Pin escape roll button.
+                                     RAW Ch7: escape = Body+Fight or Coord+Grapple vs pinner's Body or Grapple (whichever higher).
+                                     ED in Grapple: -1d penalty. MD in Grapple: -2d penalty. Fight ED/MD gives no bonus.
+                                     attackerBody/attackerFight stamped by character-roller.js (Batch C). --}}
+                                {{#if set.maneuverOutcome.isPinManeuver}}
+                                {{#if set.isSuccess}}
+                                <button class="wt-btn-maneuver-secondary wt-btn-primary attempt-escape-btn"
+                                    data-attacker-body="{{set.maneuverOutcome.attackerBody}}"
+                                    data-attacker-fight="{{set.maneuverOutcome.attackerFight}}"
+                                    title="Roll to escape the pin — Body + Fight or Coordination + Grapple">
+                                    <i class="fas fa-person-running"></i> Attempt Escape (Pinned character)
+                                </button>
+                                {{/if}}
+                                {{/if}}
+                            </div>
+
+                            {{!-- Secondary Actions: Compact icon row --}}
+                            <div class="wt-actions-secondary">
+                                {{#if set.initBtn}}
+                                    <button class="wt-btn-small wt-btn-init set-init-btn" data-width="{{set.width}}" data-height="{{set.height}}" title="Use this set's speed for Combat Initiative">
+                                        <i class="fas fa-bolt"></i>
+                                    </button>
+                                {{/if}}
+
+                                {{#if ../needsGobbleSelection}}
+                                    <button class="wt-btn-small wt-btn-gobble select-gobble-set-btn" data-width="{{set.width}}" data-height="{{set.height}}" title="Select this set as your Gobble Dice">
+                                        <i class="fas fa-hand-pointer"></i>
+                                    </button>
+                                {{/if}}
+
+                                {{!-- Dodge/Parry gobble: always on physical attacks; only on spells that are dodgeable/parriable --}}
+                                {{#unless ../isDefense}}
+                                    {{#if ../isSpell}}
+                                        {{#if ../spellDodgeable}}
+                                        <button class="wt-btn-small wt-btn-gobble gobble-dmg-btn" data-height="{{set.height}}" title="Gobble 1 Die — use your Dodge or Parry to cancel this {{../label}} set (Height {{set.height}})">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </button>
+                                        {{else if ../spellParriable}}
+                                        <button class="wt-btn-small wt-btn-gobble gobble-dmg-btn" data-height="{{set.height}}" title="Gobble 1 Die — use your Parry to cancel this {{../label}} set (Height {{set.height}})">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </button>
+                                        {{/if}}
+                                        {{!-- F1: Counterspell gobble — always available on spell cards --}}
+                                        <button class="wt-btn-small wt-btn-magic counterspell-gobble-btn" data-height="{{set.height}}" title="Gobble 1 Die — Counterspell this {{../label}} set (Height {{set.height}})">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    {{else}}
+                                        <button class="wt-btn-small wt-btn-gobble gobble-dmg-btn" data-height="{{set.height}}" title="Gobble 1 Die — use your Dodge or Parry to cancel this {{../label}} set (Height {{set.height}})">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </button>
+                                    {{/if}}
+                                {{/unless}}
+
+                                {{#if set.companyDmg}}
+                                    <button class="wt-btn-small wt-btn-company apply-company-dmg-btn" data-width="{{set.companyDmg.width}}" data-quality="{{set.companyDmg.quality}}" title="Apply Company Damage" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-chess-rook"></i>
+                                    </button>
+                                {{/if}}
+
+                                {{#if ../hasEffects}}
+                                    <button class="wt-btn-small wt-btn-condition apply-condition-btn" data-item-uuid="{{../itemUuid}}" title="Apply Condition to Targets" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-bolt"></i>
+                                    </button>
+                                {{/if}}
+
+                                {{#if set.maneuverOutcome.hasMoraleAttack}}
+                                    <button class="wt-btn-small wt-btn-morale apply-morale-btn" data-morale-value="{{set.maneuverOutcome.moraleAttack}}" data-source="{{localize set.maneuverOutcome.maneuverLabel}}" title="Apply Morale Attack {{set.maneuverOutcome.moraleAttack}} to targeted threat groups" {{#unless set.isSuccess}}disabled{{/unless}}>
+                                        <i class="fas fa-skull-crossbones"></i> MA {{set.maneuverOutcome.moraleAttack}}
+                                    </button>
+                                {{/if}}
+                            </div>
+                        </div>
+
+                        {{!-- 8b: Multi-action set assignment ─────────────────────────────────
+                             Only shown on multi-action rolls that used the declaration dialog.
+                             Renders an assignment dropdown until assigned, then a read-only label. --}}
+                        {{#if ../isMultiAction}}
+                          {{#if (lookup ../setAssignments @index)}}
+                            <div class="wt-set-assignment-label">
+                              <i class="fas fa-arrow-right wt-text-success"></i>
+                              Assigned: <strong>{{lookup ../setAssignments @index}}</strong>
+                            </div>
+                          {{else}}
+                            <div class="wt-set-assignment-controls">
+                              <select class="set-assign-select" data-set-index="{{@index}}">
+                                <option value="">— Assign to action… —</option>
+                                {{#each ../declaredActions as |action|}}
+                                  <option value="{{action.label}}">{{action.label}}</option>
+                                {{/each}}
+                              </select>
+                              <button class="wt-btn-small set-assign-btn" data-set-index="{{@index}}" title="Assign this set to the selected action">Assign</button>
+                            </div>
+                          {{/if}}
+                        {{/if}}
+
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <div class="wt-banner wt-banner-fail">No Sets Found</div>
+        {{/if}}
+    </div>
+
+    {{!-- BATCH B ITEM-4: Gobble selection prompt promoted to immediately after sets.
+         When a defence roll has multiple sets, the player must choose before the
+         attacker can apply damage. Surfacing this here prevents it being missed. --}}
+    {{#if needsGobbleSelection}}
+    <div class="wt-gobble-select-prompt">
+        ⚠ <strong>Select Your Gobble Dice</strong> — you rolled multiple sets. Click <i class="fas fa-hand-pointer"></i> on one set above to lock it in as your active defence.
+    </div>
+    {{/if}}
+
+    {{!-- ── SPELL RESULT BLOCK ──────────────────────────────────────── --}}
+    {{#if isSpell}}
+    <div class="wt-spell-result">
+
+        {{!-- Intensity check: did the best set meet or beat the spell's Intensity? --}}
+        <div class="wt-spell-intensity-check {{#if spellFired}}fired{{else}}fizzled{{/if}}">
+            {{#if spellFired}}
+                <i class="fas fa-star"></i>
+                Spell Fires — set Width equals or exceeds Intensity {{spellIntensity}}
+            {{else}}
+                <i class="fas fa-times-circle"></i>
+                Spell Fizzled — no set wide enough for Intensity {{spellIntensity}}
+            {{/if}}
+        </div>
+
+        {{!-- Spell metadata tags --}}
+        <div class="wt-spell-meta">
+
+            {{!-- Detection radius (only shown if Intensity ≥ 2) --}}
+            {{#if spellDetectionRadius}}
+            {{#unless (eq spellDetectionRadius '—')}}
+            <span class="wt-spell-meta-tag detection" title="Any character within this range may make a Sense + Eerie roll to sense the casting — any match succeeds">
+                <i class="fas fa-eye"></i> Detectable: {{spellDetectionRadius}}
+            </span>
+            {{/unless}}
+            {{/if}}
+
+            {{!-- Slow rating --}}
+            {{#if (gt spellSlow 0)}}
+            <span class="wt-spell-meta-tag slow" title="Slow {{spellSlow}} — requires {{spellSlow}} round(s) of preparation before rolling">
+                <i class="fas fa-hourglass-half"></i> Slow {{spellSlow}}
+            </span>
+            {{/if}}
+
+            {{!-- School --}}
+            {{#if spellSchool}}
+            <span class="wt-spell-meta-tag" title="Magical school">
+                <i class="fas fa-hat-wizard"></i> {{spellSchool}}
+            </span>
+            {{/if}}
+
+            {{!-- Duration --}}
+            {{#if spellDuration}}
+            <span class="wt-spell-meta-tag" title="Spell duration">
+                <i class="fas fa-clock"></i> {{spellDuration}}
+            </span>
+            {{/if}}
+
+            {{!-- Interaction flags --}}
+            {{#if spellDodgeable}}
+            <span class="wt-spell-meta-tag flag" title="Targets may Dodge this spell">
+                <i class="fas fa-person-running"></i> Dodgeable
+            </span>
+            {{/if}}
+            {{#if spellParriable}}
+            <span class="wt-spell-meta-tag flag" title="Targets may Parry this spell">
+                <i class="fas fa-shield-halved"></i> Parriable
+            </span>
+            {{/if}}
+            {{#if spellArmorBlocks}}
+            <span class="wt-spell-meta-tag flag" title="The target's Armor Rating applies against this spell">
+                <i class="fas fa-shirt"></i> Armor Blocks
+            </span>
+            {{/if}}
+
+            {{!-- Attunement spell marker --}}
+            {{#if spellIsAttunementSpell}}
+            <span class="wt-spell-meta-tag attune-spell" title="Casting this spell grants temporary attunement for the next higher spell">
+                <i class="fas fa-link-simple"></i> Attunement Spell
+            </span>
+            {{/if}}
+
+        </div>
+    </div>
+    {{/if}}
+    {{!-- ── END SPELL RESULT BLOCK ──────────────────────────────────── --}}
+
+    {{!-- Gobble Dice tracker — shows available dice once assigned.
+         The selection prompt is now rendered above the sets tray (BATCH B ITEM-4). --}}
+    {{#if isDefense}}
+        {{#unless needsGobbleSelection}}
+            <div class="wt-gobble-tracker">
+                <div class="wt-section-title wt-gobble-available-title">
+                    <i class="fas fa-shield-alt"></i> Available Gobble Dice ({{gobbleCount}})
+                    {{#if gobbleDiceAutoAssigned}}
+                        <span class="wt-text-muted wt-text-small"> — auto-assigned from your only set</span>
+                    {{/if}}
+                </div>
+                <div class="dice-tray wrap gobble-list">
+                    {{#if gobbleDice.length}}
+                        {{#each gobbleDice as |die|}}
+                            <div class="wt-die gobble-badge" title="Available Gobble Die">{{die}}</div>
+                        {{/each}}
+                    {{else}}
+                        <span class="wt-text-danger wt-text-bold wt-text-muted">All Gobble Dice Spent!</span>
+                    {{/if}}
+                </div>
+            </div>
+        {{/unless}}
+    {{/if}}
+
+    <div class="wt-callout">
+        <div class="wt-section-title">Unmatched Dice (Waste)</div>
+        <div class="dice-tray wrap">
+            {{#if waste.length}}
+                {{#each waste as |die|}}
+                    <div class="wt-die waste" title="Waste Die">{{die.value}}</div>
+                {{/each}}
+            {{else}}
+                <span class="wt-text-muted">None</span>
+            {{/if}}
+        </div>
+        
+        {{!-- Waste Hit/Heal UI Block --}}
+        {{#if wasteDmg}}
+            <div class="wt-heal-tags">
+                <div class="{{#if wasteDmg.isHealing}}wt-waste-heal{{else}}wt-waste-dmg{{/if}}">
+                    <strong>Waste Effect:</strong><br>
+                    1 {{wasteDmg.type}} to {{wasteDmg.locations}}
+                </div>
+                <button class="wt-btn-small apply-waste-dmg-btn {{#if wasteDmg.isHealing}}wt-btn-heal{{else}}wt-btn-waste-dmg{{/if}}" data-faces="{{wasteDmg.faces}}" data-type="{{wasteDmg.type}}" data-ap="{{wasteDmg.ap}}" title="Apply Waste {{#if wasteDmg.isHealing}}Healing{{else}}Hits{{/if}}">
+                    <i class="fas {{#if wasteDmg.isHealing}}fa-heartbeat{{else}}fa-meteor{{/if}}"></i>
+                </button>
+            </div>
+        {{/if}}
+    </div>
+
+    {{#if (gt hardDieCount 0)}}
+        <div class="wt-hd-result">
+            <strong>Hard Dice:</strong> <span class="wt-hd-badge">{{hardDieCount}} (always 10)</span>
+        </div>
+    {{/if}}
+    {{#if (gt wiggleDieCount 0)}}
+        <div class="wt-wd-result">
+            <strong>Wiggle Dice:</strong> <span class="wt-wd-badge">{{wiggleDieCount}} (assigned)</span>
+        </div>
+    {{/if}}
+</div>

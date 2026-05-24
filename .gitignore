@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Compiled compendium packs (LevelDB) — rebuild with `npm run build:packs`
+packs/archetypes/
+packs/weapons/
+packs/powers/
+
+# OS
+.DS_Store
+Thumbs.db

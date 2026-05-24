@@ -1,0 +1,26 @@
+{
+  "name": "wild-talents-2e",
+  "version": "0.1.0",
+  "description": "Wild Talents 2nd Edition system for Foundry VTT",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint scripts/",
+    "test": "node --test --experimental-vm-modules scripts/helpers/ore-engine_test.js && node --experimental-vm-modules scripts/helpers/archetype-engine_test.js",
+    "test:ore": "node --test --experimental-vm-modules scripts/helpers/ore-engine_test.js",
+    "test:archetype": "node --experimental-vm-modules scripts/helpers/archetype-engine_test.js",
+    "build:packs": "npm run build:pack:archetypes && npm run build:pack:weapons && npm run build:pack:powers",
+    "build:pack:archetypes": "fvtt package pack -n archetypes --type System --id wild-talents-2e --in src/packs/archetypes --out packs",
+    "build:pack:weapons": "fvtt package pack -n weapons --type System --id wild-talents-2e --in src/packs/weapons --out packs",
+    "build:pack:powers": "fvtt package pack -n powers --type System --id wild-talents-2e --in src/packs/powers --out packs",
+    "unpack": "npm run unpack:archetypes && npm run unpack:weapons && npm run unpack:powers",
+    "unpack:archetypes": "fvtt package unpack -n archetypes --type System --id wild-talents-2e --in packs/archetypes --out src/packs/archetypes",
+    "unpack:weapons": "fvtt package unpack -n weapons --type System --id wild-talents-2e --in packs/weapons --out src/packs/weapons",
+    "unpack:powers": "fvtt package unpack -n powers --type System --id wild-talents-2e --in packs/powers --out src/packs/powers",
+    "build": "npm run lint && npm run test && npm run build:packs"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^3.0.0",
+    "eslint": "^9.0.0"
+  },
+  "license": "MIT"
+}

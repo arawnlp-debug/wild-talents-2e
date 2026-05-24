@@ -1,0 +1,62 @@
+<div class="stat-block wt-mb20">
+  <div class="stat-header"><h2>Combat Actions</h2></div>
+  <div class="stat-skills wt-combat-actions">
+    <a class="rollable wt-combat-action-btn" data-action="declareAim" title="Spend this round aiming (+1d on next attack, stackable to +2d)">
+      <i class="fas fa-crosshairs"></i> Aim
+      {{#if aimBonus}}<span class="wt-text-success wt-text-small"> (+{{aimBonus}}d)</span>{{/if}}
+    </a>
+    {{#if hasShields}}
+    <a class="rollable wt-combat-action-btn" data-action="assignShield" title="Declare which locations your shield protects this round">
+      <i class="fas fa-shield-alt"></i> Shield Coverage
+      {{#if shieldCoverageSet}}<span class="wt-text-success wt-text-small"> (Set)</span>{{/if}}
+    </a>
+    {{/if}}
+  </div>
+</div>
+
+<div class="stat-block wt-mb20">
+  <div class="stat-header"><h2>{{localize 'WT.PreferredMoves'}}</h2></div>
+  <div class="stat-skills wt-move-list">
+      <div class="preferred-move-row">
+        <label class="rollable" data-action="rollStat" data-type="skill" data-key="parry" data-label="Parry">{{localize 'WT.ParryPool'}} <i class="fas fa-dice-d10"></i></label>
+        <div class="move-details">
+          <span>Body ({{preferredMoves.body}}) + Parry ({{preferredMoves.parry}}){{#if preferredMoves.shieldBonus}} + Shield ({{preferredMoves.shieldBonus}}){{/if}} =</span>
+          <span class="move-total">{{preferredMoves.parryTotal}}</span>
+        </div>
+      </div>
+      <div class="preferred-move-row">
+        <label class="rollable" data-action="rollStat" data-type="skill" data-key="dodge" data-label="Dodge">{{localize 'WT.DodgePool'}} <i class="fas fa-dice-d10"></i></label>
+        <div class="move-details">
+          <span>Coordination ({{preferredMoves.coord}}) + Dodge ({{preferredMoves.dodge}}) =</span>
+          <span class="move-total">{{preferredMoves.dodgeTotal}}</span>
+        </div>
+      </div>
+      {{#each customMoves as |move|}}
+      <div class="preferred-move-row dynamic-move">
+        <div class="wt-move-row">
+          <a class="delete-custom-move" data-action="deleteCustomMove" data-move-id="{{move.key}}" title="Delete Move"><i class="fas fa-trash"></i></a>
+          <label class="rollable" data-action="rollStat" data-type="move" data-key="{{move.key}}" data-label="{{move.name}}"><i class="fas fa-dice-d10"></i></label>
+          <input type="text" name="system.customMoves.{{move.key}}.name" value="{{move.name}}" placeholder="Move Name..." class="move-name-input"/>
+          <div class="move-details">
+            <span class="wt-move-total-label">{{localize 'WT.Total'}}:</span>
+            <span class="move-total wt-move-total-val">{{move.total}}</span>
+          </div>
+        </div>
+        <div class="move-builder">
+          <select name="system.customMoves.{{move.key}}.attrKey">
+            {{selectOptions ../attributeOptions selected=move.attrKey}}
+          </select>
+          <span>+</span>
+          <select name="system.customMoves.{{move.key}}.skillKey">
+            {{selectOptions ../skillOptions selected=move.skillKey}}
+          </select>
+          <span class="wt-ml15">+ {{localize 'WT.Mod'}}:</span>
+          <input type="number" name="system.customMoves.{{move.key}}.modifier" value="{{move.modifier}}"/>
+        </div>
+      </div>
+      {{/each}}
+      <div class="custom-add-container wt-add-move-btn">
+        <a class="add-custom-skill control-btn" data-action="addCustomMove"><i class="fas fa-plus"></i> {{localize 'WT.AddQuickMove'}}</a>
+      </div>
+  </div>
+</div>

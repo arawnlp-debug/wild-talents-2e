@@ -1,0 +1,19 @@
+{
+  "name": "Light Pistol",
+  "type": "weapon",
+  "_id": "wt2eWeapLtPistol",
+  "system": {
+    "weaponType": "ranged",
+    "damage": {
+      "width": true,
+      "widthPlus": 0,
+      "shock": 0,
+      "killing": 1,
+      "formula": "Width in Killing"
+    },
+    "range": "short",
+    "notes": "\ud83d\udcd6 WT2e Ref Sheet. Concealable sidearm. Width = damage, +1K.",
+    "qualities": []
+  },
+  "_key": "!items!wt2eWeapLtPistol"
+}

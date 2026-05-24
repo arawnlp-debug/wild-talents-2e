@@ -1,0 +1,1486 @@
+/* ====================================================
+   WT: 2ND EDITION
+   Dashboard View — Comic Theme Play Surface
+   ────────────────────────────────────────────────────
+   Loaded AFTER comic.css. Most rules scoped to
+   .wt-dashboard so they cannot leak into the
+   detail editor view.
+   ────────────────────────────────────────────────────
+   This stylesheet contains ONLY layout & component
+   styles. All colours, fonts, and shadows come from
+   the --cm-* tokens defined in variables.css and the
+   utility classes (.wt-panel-ink, .wt-btn-burst etc.)
+   defined in comic.css.
+==================================================== */
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   DETAIL-VIEW TOGGLE BUTTON
+   ─────────────────────────────────────────────────────────────────
+   The toggle button that switches FROM detail view TO dashboard view
+   lives inside the legacy header bar (.wt-header-bar). That bar is
+   styled by actor-sheet.css and is NOT inside .wt-dashboard, so this
+   rule must be un-scoped. It's placed in dashboard.css to keep all
+   Sprint 1.2 styling in one file.
+
+   The dashboard-side toggle (which sits inside .wt-dashboard) uses
+   the standard .wt-btn-burst utility from comic.css and needs no
+   special rule here.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-sheet-v2 .wt-view-toggle-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--wt-color-brass);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-left: 4px;
+  transition: background 0.15s ease;
+}
+
+.wt-sheet-v2 .wt-view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.wt-sheet-v2 .wt-view-toggle-btn:focus-visible {
+  outline: 2px solid var(--wt-focus-ring);
+  outline-offset: 2px;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   ROOT GRID — Comic Page Macro Layout
+   ─────────────────────────────────────────────────────────────────
+   Header full-width on top, then three-column body underneath.
+   Columns sized to mirror the play-surface reference layout:
+   - Left  ~250px (stat column — wide enough for "Coordination: 6d")
+   - Centre flex (figure)
+   - Right ~320px (miracle rail — wide enough for a card with chips)
+   The 8px grid gap is the visual "gutter" between comic panels.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr 320px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "header header  header"
+    "stats  figure  miracles";
+  gap: 12px;
+  padding: 12px;
+  width: 100%;
+  height: 100%;
+  background: var(--cm-gutter);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Below 1100px (e.g. small windows), collapse to a single-column stack so
+   nothing gets cropped. The detail view remains the canonical editor at
+   any width. */
+@media (max-width: 1100px) {
+  .wt-dashboard {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "stats"
+      "figure"
+      "miracles";
+    overflow-y: auto;
+  }
+}
+
+.wt-dash-header  { grid-area: header; }
+.wt-dash-stats   { grid-area: stats; }
+.wt-dash-figure  { grid-area: figure; }
+.wt-dash-miracles{ grid-area: miracles; }
+
+/* The body wrapper is a sub-grid below the header — it inherits the
+   three-column structure from the parent. We define this rule so the
+   class is present even though it doesn't currently need its own
+   layout. Subsequent sprints may add row-specific styling here. */
+.wt-dashboard .wt-dash-body {
+  display: contents;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   HEADER STRIP — Portrait + Identity + Willpower
+   ─────────────────────────────────────────────────────────────────
+   Three-column flex inside the panel:
+   - Portrait (96px square)
+   - Identity (flex 1) — name on top row, archetype chips + point cost below
+   - Willpower gauge (260px) — title row + horizontal bar
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-header {
+  display: grid;
+  grid-template-columns: 96px 1fr 280px;
+  gap: 16px;
+  padding: 12px 16px;
+  align-items: center;
+  margin: 0;       /* override .wt-panel-ink margin — header sits flush at top */
+}
+
+/* ── Portrait ───────────────────────────────────────────────────────── */
+
+.wt-dashboard .wt-dash-portrait {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+}
+
+.wt-dashboard .wt-dash-portrait-img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border: var(--cm-border-card);
+  background: var(--cm-paper);
+  cursor: pointer;
+  display: block;
+  border-radius: 0;
+}
+
+.wt-dashboard .wt-dash-gmc-badge {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  background: var(--cm-paper);
+  color: var(--cm-ink);
+  border: var(--cm-border-card);
+  border-radius: 0;
+  font-family: var(--cm-font-display);
+  font-size: 0.7em;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  cursor: pointer;
+  box-shadow: var(--cm-shadow-panel-sm);
+  transition: background 0.12s, color 0.12s, transform 0.12s;
+  margin: 0;       /* override .wt-btn-burst style if it bleeds in */
+}
+
+.wt-dashboard .wt-dash-gmc-badge:hover {
+  background: var(--cm-accent-yellow);
+}
+
+.wt-dashboard .wt-dash-gmc-badge.wt-dash-gmc-active {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+}
+
+/* ── Identity ────────────────────────────────────────────────────────── */
+
+.wt-dashboard .wt-dash-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;    /* allow flex children to shrink properly */
+}
+
+.wt-dashboard .wt-dash-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wt-dashboard .wt-dash-name-input {
+  flex: 1;
+  font-family: var(--cm-font-display);
+  font-size: 1.8em;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cm-ink);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 2px 0;
+  line-height: 1;
+  transition: border-color 0.12s, background 0.12s;
+  min-width: 0;
+}
+
+.wt-dashboard .wt-dash-name-input:hover {
+  background: var(--cm-gutter);
+}
+
+.wt-dashboard .wt-dash-name-input:focus {
+  outline: none;
+  border-bottom-color: var(--cm-accent-blue);
+  background: var(--cm-paper);
+}
+
+.wt-dashboard .wt-dash-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wt-dashboard .wt-dash-pts-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px 10px;
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  font-family: var(--cm-font-display);
+  font-size: 0.9em;
+  letter-spacing: 0.06em;
+  border: var(--cm-border-card);
+  border-radius: 0;
+  /* tabular numerals for visual alignment as cost changes */
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-dashboard .wt-dash-pts-badge.wt-dash-pts-over {
+  background: var(--cm-accent-red);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-dashboard .wt-dash-pts-sep {
+  opacity: 0.6;
+  margin: 0 2px;
+}
+
+.wt-dashboard .wt-dash-pts-label {
+  font-size: 0.8em;
+  opacity: 0.85;
+  margin-left: 4px;
+}
+
+/* ── Willpower gauge ────────────────────────────────────────────────── */
+
+.wt-dashboard .wt-dash-wp {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.wt-dashboard .wt-dash-wp-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.wt-dashboard .wt-dash-wp-title {
+  font-family: var(--cm-font-display);
+  font-size: 0.85em;
+  letter-spacing: 0.12em;
+  color: var(--cm-ink);
+  line-height: 1;
+}
+
+.wt-dashboard .wt-dash-wp-base {
+  font-family: var(--cm-font-display);
+  font-size: 0.7em;
+  letter-spacing: 0.08em;
+  color: var(--cm-text-muted);
+  line-height: 1;
+}
+
+.wt-dashboard .wt-dash-wp-gauge {
+  position: relative;
+  height: 30px;
+  background: var(--cm-paper);
+  border: var(--cm-border-card);
+  overflow: hidden;
+  /* Inner shadow gives the gauge a recessed feel */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.wt-dashboard .wt-dash-wp-gauge.wt-dash-wp-empty {
+  /* Zero-WP: thicker danger border so it's unmissable */
+  border-color: var(--cm-accent-red);
+  box-shadow: inset 0 0 0 2px var(--cm-accent-red-soft);
+}
+
+.wt-dashboard .wt-dash-wp-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--cm-accent-blue);
+  transition: width 0.2s ease-out;
+  /* Hard right edge — comic style, no gradient */
+}
+
+.wt-dashboard .wt-dash-wp-readout {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--cm-font-display);
+  font-size: 1.05em;
+  color: var(--cm-text-on-ink);
+  /* mix-blend-mode flips text colour over the fill vs paper background */
+  mix-blend-mode: difference;
+  pointer-events: none;     /* let the gauge below click through… */
+}
+
+.wt-dashboard .wt-dash-wp-readout > * {
+  pointer-events: auto;     /* …but inputs themselves still focusable */
+}
+
+.wt-dashboard .wt-dash-wp-input {
+  width: 36px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: center;
+  padding: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.wt-dashboard .wt-dash-wp-input:focus {
+  outline: none;
+  background: rgba(255,255,255,0.15);
+}
+
+/* Hide the spinner arrows on the number inputs — they're noisy at this scale */
+.wt-dashboard .wt-dash-wp-input::-webkit-inner-spin-button,
+.wt-dashboard .wt-dash-wp-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.wt-dashboard .wt-dash-wp-input { -moz-appearance: textfield; }
+
+.wt-dashboard .wt-dash-wp-sep {
+  opacity: 0.6;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BODY PANELS — Generic Container Rules
+   ─────────────────────────────────────────────────────────────────
+   The three body cells (stats / figure / miracles) share these
+   defaults. Sprint 2.2 / 3.x / 4.x will add specifics.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-stats,
+.wt-dashboard .wt-dash-figure,
+.wt-dashboard .wt-dash-miracles {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wt-dashboard .wt-dash-panel-body {
+  flex: 1 1 auto;
+  padding: 16px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Placeholder text shown while body cells are empty (Sprint 1.2 only).
+   Removed entirely in subsequent sprints once content lands. */
+.wt-dashboard .wt-dash-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  color: var(--cm-text-muted);
+  font-family: var(--cm-font-body);
+  font-style: italic;
+}
+
+.wt-dashboard .wt-dash-placeholder-text {
+  font-size: 0.95em;
+  margin: 0;
+  color: var(--cm-text-muted);
+}
+
+.wt-dashboard .wt-dash-placeholder-hint {
+  font-size: 0.8em;
+  margin: 0;
+  color: var(--cm-text-disabled);
+}
+
+.wt-dashboard .wt-dash-placeholder-hint strong {
+  color: var(--cm-accent-blue);
+  font-style: normal;
+  font-family: var(--cm-font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   RIGHT COLUMN — ACTIVE MIRACLES RAIL (Sprint 4.1)
+   ─────────────────────────────────────────────────────────────────
+   One comic-panel card per power. Each card: header (icon + name +
+   type badge), quality chips (A/D/U), footer (dice pool + roll button).
+   Roll wiring reuses the detail view's rollStat/power action.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-comic .wt-dash-miracles-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wt-comic .wt-dash-miracle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each card is a comic panel: paper background, ink border, hard
+   offset shadow. A coloured left edge encodes the power type. */
+.wt-comic .wt-dash-miracle-card {
+  position: relative;
+  background: var(--cm-paper);
+  border: 2px solid var(--cm-ink);
+  box-shadow: 3px 3px 0 var(--cm-ink);
+  padding: 8px 10px 8px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  /* The left accent strip is drawn via a thick left border applied
+     per-type below. */
+}
+
+/* Type accent strips */
+.wt-comic .wt-dash-miracle-card.wt-miracle-miracle    { border-left-width: 6px; border-left-color: var(--cm-accent-red); }
+.wt-comic .wt-dash-miracle-card.wt-miracle-hyperstat  { border-left-width: 6px; border-left-color: var(--cm-accent-blue); }
+.wt-comic .wt-dash-miracle-card.wt-miracle-hyperskill { border-left-width: 6px; border-left-color: var(--cm-accent-yellow); }
+
+/* ── Header row ── */
+.wt-comic .wt-dash-miracle-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.wt-comic .wt-dash-miracle-icon {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--cm-ink);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--cm-paper-warm);
+}
+
+.wt-comic .wt-dash-miracle-name {
+  font-family: var(--cm-font-display);
+  font-size: 1em;
+  letter-spacing: 0.02em;
+  color: var(--cm-ink);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.wt-comic .wt-dash-miracle-type {
+  flex-shrink: 0;
+  font-family: var(--cm-font-body);
+  font-size: 0.62em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 5px;
+  border: 1px solid var(--cm-ink);
+  white-space: nowrap;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wt-comic .wt-miracle-type-miracle    { background: var(--cm-accent-red);    color: var(--cm-text-on-ink); }
+.wt-comic .wt-miracle-type-hyperstat  { background: var(--cm-accent-blue);   color: var(--cm-text-on-ink); }
+.wt-comic .wt-miracle-type-hyperskill { background: var(--cm-accent-yellow); color: var(--cm-ink); }
+
+/* ── Quality chips ── */
+.wt-comic .wt-dash-miracle-qualities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.wt-comic .wt-dash-quality-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--cm-font-display);
+  font-size: 0.78em;
+  letter-spacing: 0.03em;
+  padding: 1px 6px;
+  border: 1px solid var(--cm-ink);
+  background: var(--cm-paper-warm);
+  color: var(--cm-ink);
+  line-height: 1.3;
+}
+/* A/D/U colour coding — subtle, just the chip's left tick */
+.wt-comic .wt-dash-quality-chip.wt-quality-attacks { border-bottom: 2px solid var(--cm-accent-red); }
+.wt-comic .wt-dash-quality-chip.wt-quality-defends { border-bottom: 2px solid var(--cm-accent-blue); }
+.wt-comic .wt-dash-quality-chip.wt-quality-useful  { border-bottom: 2px solid var(--cm-text-muted); }
+.wt-comic .wt-dash-quality-chip .cm-numeric { font-size: 0.92em; }
+
+/* ── Footer row ── */
+.wt-comic .wt-dash-miracle-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 1px;
+}
+
+.wt-comic .wt-dash-miracle-pool {
+  font-family: var(--cm-font-display);
+  font-size: 1.05em;
+  letter-spacing: 0.03em;
+  color: var(--cm-ink);
+  background: var(--cm-paper-warm);
+  border: 1px solid var(--cm-ink);
+  padding: 1px 8px;
+}
+
+.wt-comic .wt-dash-miracle-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wt-comic .wt-dash-miracle-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--cm-ink);
+  background: var(--cm-paper);
+  color: var(--cm-ink);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.wt-comic .wt-dash-miracle-edit:hover {
+  background: var(--cm-paper-warm);
+}
+
+/* Roll button — the primary action. Yellow burst, ink text. */
+.wt-comic .wt-dash-miracle-roll {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--cm-font-display);
+  font-size: 0.82em;
+  letter-spacing: 0.06em;
+  padding: 3px 11px;
+  border: 1.5px solid var(--cm-ink);
+  background: var(--cm-accent-yellow);
+  color: var(--cm-ink);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--cm-ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.wt-comic .wt-dash-miracle-roll:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--cm-ink);
+}
+.wt-comic .wt-dash-miracle-roll:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--cm-ink);
+}
+.wt-comic .wt-dash-miracle-roll:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring), 2px 2px 0 var(--cm-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-comic .wt-dash-miracle-roll,
+  .wt-comic .wt-dash-miracle-roll:hover,
+  .wt-comic .wt-dash-miracle-roll:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   LEFT COLUMN — ORE STATS (Sprint 2.1)
+   ─────────────────────────────────────────────────────────────────
+   Six stat rows, each clickable to roll. Below each stat: up to 3
+   skill chips. The stat name sits on the left, the dice total on
+   the right (mock-up layout).
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-stats-body {
+  /* Tighter padding than the generic panel-body — stats are dense */
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wt-dashboard .wt-dash-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Subtle divider between stats — comic-style hairline */
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--cm-gutter-deep);
+  /* Position context for the +N MORE popover (Sprint 2.2 fix) */
+  position: relative;
+}
+
+.wt-dashboard .wt-dash-stat-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* The clickable stat name+total row */
+.wt-dashboard .wt-dash-stat-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  color: var(--cm-ink);
+  text-decoration: none;
+  /* Hover state — comic-style yellow wash from the left */
+  background: transparent;
+  transition: background 0.12s ease;
+  border-radius: 0;
+}
+
+.wt-dashboard .wt-dash-stat-name:hover {
+  background: var(--cm-accent-yellow-soft);
+  /* Faint left border to indicate "armed for click" */
+  box-shadow: inset 3px 0 0 var(--cm-accent-yellow);
+}
+
+.wt-dashboard .wt-dash-stat-name:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+/* Icon block (24×24, ink colour) */
+.wt-dashboard .wt-dash-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--cm-ink);
+  font-size: 1.05em;
+}
+
+/* Per-stat icon tints — subtle differentiation, all readable */
+.wt-dashboard .wt-stat-icon-body        { color: var(--cm-accent-red); }
+.wt-dashboard .wt-stat-icon-coordination{ color: var(--cm-accent-green); }
+.wt-dashboard .wt-stat-icon-sense       { color: var(--cm-accent-blue); }
+.wt-dashboard .wt-stat-icon-mind        { color: var(--cm-accent-purple); }
+.wt-dashboard .wt-stat-icon-charm       { color: var(--cm-accent-red); }
+.wt-dashboard .wt-stat-icon-command     { color: var(--cm-accent-yellow-dark); }
+
+/* Stat label — Bebas Neue, uppercase, slightly muted weight */
+.wt-dashboard .wt-dash-stat-label {
+  flex: 1;
+  font-family: var(--cm-font-display);
+  font-size: 1.05em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--cm-ink);
+}
+
+/* Total dice — bold, large, tabular */
+.wt-dashboard .wt-dash-stat-total {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  color: var(--cm-ink);
+  font-family: var(--cm-font-display);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.wt-dashboard .wt-dash-stat-total-num {
+  font-size: 1.4em;
+  line-height: 1;
+}
+
+.wt-dashboard .wt-dash-stat-total-d {
+  font-size: 0.85em;
+  line-height: 1;
+  opacity: 0.7;
+  margin-left: 1px;
+}
+
+/* Zero-dice stat — visually faded so empty rows don't shout.
+   The data-stat-key="X" plus aria signaling lets us target rows
+   whose total is zero via a JS-set class rather than fragile :has(). */
+.wt-dashboard .wt-dash-stat-row.wt-dash-stat-zero {
+  opacity: 0.55;
+}
+
+/* Skill chips beneath the stat */
+.wt-dashboard .wt-dash-stat-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: 28px;
+  /* Hangs under the stat icon */
+}
+
+.wt-dashboard .wt-dash-skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: var(--cm-paper);
+  border: 1px solid var(--cm-gutter-deep);
+  border-radius: 0;
+  font-family: var(--cm-font-body);
+  font-size: 0.78em;
+  color: var(--cm-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.3;
+  /* Hard-edge comic chips */
+}
+
+.wt-dashboard .wt-dash-skill-chip:hover {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+  border-color: var(--cm-ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--cm-ink);
+}
+
+.wt-dashboard .wt-dash-skill-chip:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+.wt-dashboard .wt-dash-skill-name {
+  font-weight: 500;
+}
+
+.wt-dashboard .wt-dash-skill-val {
+  font-family: var(--cm-font-display);
+  font-size: 0.95em;
+  color: var(--cm-ink);
+}
+
+.wt-dashboard .wt-dash-skill-chip:hover .wt-dash-skill-val {
+  color: var(--cm-text-on-ink);
+}
+
+/* "+N MORE" button — looks like a chip but emphasises action */
+.wt-dashboard .wt-dash-skill-more {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: transparent;
+  border: 1px dashed var(--cm-text-muted);
+  border-radius: 0;
+  font-family: var(--cm-font-display);
+  font-size: 0.7em;
+  letter-spacing: 0.06em;
+  color: var(--cm-text-muted);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.3;
+}
+
+.wt-dashboard .wt-dash-skill-more:hover {
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  border-style: solid;
+  border-color: var(--cm-ink);
+}
+
+.wt-dashboard .wt-dash-skill-more:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+/* When the parent stat row is expanded, the trigger button visually
+   "presses in" so it's clear which row owns the open popover. */
+.wt-dashboard .wt-dash-stat-row--expanded .wt-dash-skill-more {
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  border-style: solid;
+  border-color: var(--cm-ink);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SKILL POPOVER (Sprint 2.2 fix)
+   ─────────────────────────────────────────────────────────────────
+   When a stat row has the .wt-dash-stat-row--expanded class, this
+   popover element is revealed showing ALL skills bound to that stat.
+   Positioned absolutely, anchored to the right edge of the stat row
+   so it floats over neighbouring dashboard panels and never crops.
+   Dismissed by:
+     - Clicking the "X" close button inside
+     - Clicking anywhere else on the sheet (JS handler in character-sheet.js)
+     - Pressing Escape (JS handler in character-sheet.js)
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-skill-popover {
+  /* Hidden by default — revealed by parent row's --expanded class */
+  display: none;
+  position: absolute;
+  /* Anchor below the +N MORE button, extending to the right so it
+     floats OUT of the left column and over the figure panel. This
+     keeps the dense stat column from being shoved aside. */
+  top: 100%;
+  left: 28px;          /* matches the skill-chips left padding */
+  margin-top: 4px;
+  z-index: 10;
+  min-width: 280px;
+  max-width: 380px;
+  background: var(--cm-paper);
+  border: var(--cm-border-panel);
+  box-shadow: var(--cm-shadow-panel);
+  border-radius: 0;
+  /* On a constrained column the popover could overflow off-screen.
+     The browser's auto-positioning won't help, but max-width above
+     plus the offset from `left` should keep it on the page in
+     standard viewports. */
+}
+
+.wt-dashboard .wt-dash-stat-row--expanded > .wt-dash-skill-popover {
+  display: block;
+}
+
+.wt-dashboard .wt-dash-skill-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+  /* Header sits flush against the popover's ink border */
+}
+
+.wt-dashboard .wt-dash-skill-popover-title {
+  font-family: var(--cm-font-display);
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.wt-dashboard .wt-dash-skill-popover-close {
+  background: transparent;
+  border: none;
+  color: var(--cm-text-on-ink);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 0.85em;
+  line-height: 1;
+  border-radius: 0;
+  transition: color 0.12s, background 0.12s;
+}
+
+.wt-dashboard .wt-dash-skill-popover-close:hover {
+  color: var(--cm-accent-yellow);
+}
+
+.wt-dashboard .wt-dash-skill-popover-close:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+.wt-dashboard .wt-dash-skill-popover-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Each chip in the popover gets full row width — easier to hit, easier
+   to read the breakdown. Override the inline-flex of the standard
+   skill-chip to a stretched flex layout. */
+.wt-dashboard .wt-dash-skill-popover-body .wt-dash-skill-chip {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  font-size: 0.85em;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   HYPERSTAT / HYPERSKILL CHIPS (Sprint 2.2)
+   ─────────────────────────────────────────────────────────────────
+   📖 WT Rulebook Ch6 p.104 (Hyperstat) and p.105 (Hyperskill)
+   A small heroic-blue chip displayed next to the affected stat or
+   skill, with a lightning-bolt icon. The chip is visual indication
+   only — the actual bonus is folded into the roll pool by the
+   character-roller.js at roll time.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-hyper-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 5px;
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+  border: 1px solid var(--cm-ink);
+  border-radius: 0;
+  font-family: var(--cm-font-display);
+  font-size: 0.7em;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.wt-dashboard .wt-dash-hyper-chip i {
+  font-size: 0.8em;
+  /* Action-yellow bolt against blue background — pops */
+  color: var(--cm-accent-yellow);
+}
+
+.wt-dashboard .wt-dash-hyper-chip--sm {
+  padding: 0 3px;
+  font-size: 0.62em;
+  /* For nesting inside skill chips */
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   QUICK-SKILL ROW (Sprint 2.2)
+   ─────────────────────────────────────────────────────────────────
+   Player-curated favourite skills at the foot of the left column.
+   Stored as a per-actor flag so it travels with the character.
+   Default: first 3 alphabetical skills.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-dashboard .wt-dash-quick-skills {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid var(--cm-ink);
+  /* Visual separator from the stat list above */
+}
+
+.wt-dashboard .wt-dash-quick-skills-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.wt-dashboard .wt-dash-quick-skills-title {
+  font-family: var(--cm-font-display);
+  font-size: 0.78em;
+  letter-spacing: 0.12em;
+  color: var(--cm-text-muted);
+  line-height: 1;
+}
+
+.wt-dashboard .wt-dash-quick-skills-edit {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 2px 4px;
+  cursor: pointer;
+  color: var(--cm-text-muted);
+  font-size: 0.85em;
+  line-height: 1;
+  transition: color 0.12s, background 0.12s;
+}
+
+.wt-dashboard .wt-dash-quick-skills-edit:hover {
+  color: var(--cm-accent-blue);
+  background: var(--cm-accent-blue-soft);
+}
+
+.wt-dashboard .wt-dash-quick-skills-edit:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+.wt-dashboard .wt-dash-quick-skills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Quick chip is visually heavier than a normal skill chip — these
+   are the "always there" skills the player wants front-and-centre. */
+.wt-dashboard .wt-dash-quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: var(--cm-paper);
+  border: 2px solid var(--cm-ink);
+  box-shadow: 2px 2px 0 var(--cm-ink);
+  border-radius: 0;
+  font-family: var(--cm-font-body);
+  font-size: 0.82em;
+  color: var(--cm-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1.2;
+}
+
+.wt-dashboard .wt-dash-quick-chip:hover {
+  background: var(--cm-accent-yellow);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--cm-ink);
+}
+
+.wt-dashboard .wt-dash-quick-chip:focus-visible {
+  outline: none;
+  box-shadow:
+    2px 2px 0 var(--cm-ink),
+    var(--cm-focus-ring);
+}
+
+.wt-dashboard .wt-dash-quick-chip-name {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.85em;
+}
+
+.wt-dashboard .wt-dash-quick-chip-val {
+  font-family: var(--cm-font-display);
+  font-size: 1.05em;
+  color: var(--cm-ink);
+}
+
+/* Empty-state message when no favourites picked */
+.wt-dashboard .wt-dash-quick-skills-empty {
+  font-size: 0.8em;
+  color: var(--cm-text-muted);
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+}
+
+.wt-dashboard .wt-dash-quick-skills-link {
+  background: transparent;
+  border: none;
+  color: var(--cm-accent-blue);
+  font-family: var(--cm-font-body);
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  font-style: normal;
+}
+
+.wt-dashboard .wt-dash-quick-skills-link:hover {
+  color: var(--cm-accent-blue-dark);
+}
+
+.wt-dashboard .wt-dash-quick-skills-link:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-dashboard .wt-dash-quick-chip,
+  .wt-dashboard .wt-dash-quick-chip:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SILHOUETTE (Sprint 3.2 revised)
+   ─────────────────────────────────────────────────────────────────
+   The damage-silhouette template now uses a reference figure path with
+   invisible click overlays for hit zones. Damage display is per-zone
+   rects clipped to the figure, NOT gradient stops.
+
+   Layering inside the SVG (template order):
+     1. White base figure
+     2. Damage fill rects (red killing band + blue shock band) clipped
+     3. Destroyed overlay (solid black) clipped
+     4. Crack pattern overlay clipped
+     5. Lightning overlay (paint-order: stroke fill for crisp white)
+     6. Ink outline (redrawn last so it stays crisp over the colours)
+     7. Invisible click overlays with <title> tooltips
+═════════════════════════════════════════════════════════════════════════ */
+
+/* Outer silhouette sizing: the new viewBox is 60 0 87 207 (aspect ~2.4:1).
+   Width is capped by the column; height follows. */
+.wt-comic .damage-silhouette {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* The figure's invisible click overlays. data-loc rectangles tagged with
+   status classes by prepareContext (status-healthy, status-shock, etc).
+   Cursor pointer on hover so users know they're clickable. */
+.wt-comic .damage-silhouette .hit-zone rect {
+  cursor: pointer;
+  transition: filter 0.12s ease;
+}
+
+/* Hover indicator: subtle drop-shadow on the FIGURE outline path, applied
+   via the hit-zone's hover state on the parent SVG. Because the click
+   overlays are transparent we can't use them as visual hover targets
+   directly — instead we use a lighter wash on the overlay rect itself. */
+.wt-comic .damage-silhouette .hit-zone:hover rect {
+  fill: rgba(0, 90, 224, 0.10);
+}
+
+
+/* ── Damage overlay layers (visible) ─────────────────────────────────── */
+
+/* Disable pointer events on overlays so clicks pass through to the
+   invisible click overlays underneath. */
+.wt-comic .damage-silhouette .dmg-lightning,
+.wt-comic .damage-silhouette .dmg-cracks {
+  pointer-events: none;
+}
+
+/* Lightning bolts — paint-order: stroke fill ensures the dark stroke
+   draws BEHIND the white fill, isolating it from the surround colour
+   so the bolt always reads as crisp white regardless of what gradient
+   colour is underneath. */
+.wt-comic .damage-silhouette .bolt-trunk,
+.wt-comic .damage-silhouette .bolt-branches {
+  fill: none;
+  stroke: #FFFFFF;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+/* Trunk gets a slightly thicker dark stroke underneath via filter — we
+   achieve the dark-stroke-under-white-stroke effect by stacking with
+   a wider darker stroke first. But since SVG doesn't let one path have
+   two strokes, we instead use a drop-shadow with a tight dark halo
+   that visually reads as the dark outline. */
+.wt-comic .damage-silhouette .bolt-trunk {
+  stroke-width: 1.6;
+  filter:
+    drop-shadow(0.3px 0 0 #1A1A1A)
+    drop-shadow(-0.3px 0 0 #1A1A1A)
+    drop-shadow(0 0.3px 0 #1A1A1A)
+    drop-shadow(0 -0.3px 0 #1A1A1A);
+}
+
+.wt-comic .damage-silhouette .bolt-branches {
+  stroke-width: 1.1;
+  filter:
+    drop-shadow(0.25px 0 0 #1A1A1A)
+    drop-shadow(-0.25px 0 0 #1A1A1A)
+    drop-shadow(0 0.25px 0 #1A1A1A)
+    drop-shadow(0 -0.25px 0 #1A1A1A);
+}
+
+/* Origin spark: small white dot with a dark ring. */
+.wt-comic .damage-silhouette .bolt-spark {
+  fill: #FFFFFF;
+  stroke: #1A1A1A;
+  stroke-width: 0.5;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   CENTRE FIGURE PANEL (Sprint 3.2 revised)
+   ─────────────────────────────────────────────────────────────────
+   The dashboard reuses the combat-health.hbs partial which provides
+   the silhouette + a per-location data list. Sprint 3.2 revised:
+     - Drops the badge grid (we use tooltips on the silhouette instead)
+     - Hides the verbose click-hint text
+     - Ensures Short Rest / Long Rest buttons are properly visible
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-comic .wt-dash-figure-body {
+  padding: 8px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+}
+
+/* The header strip above the silhouette: hint text + rest buttons +
+   shield badge. The verbose hint is HIDDEN — click semantics are
+   discoverable via the silhouette tooltips. This gives the rest
+   buttons proper space to render at a comfortable size. */
+.wt-comic .wt-dash-figure-body .health-actions-sub-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: var(--cm-paper-warm);
+  border: 1px solid var(--cm-gutter-deep);
+}
+
+/* Hide the verbose click-hint text. Click behaviour is described in
+   the limb tooltips ("Torso · 0s / 0k (max 4)") plus user habit. */
+.wt-comic .wt-dash-figure-body .health-hint {
+  display: none;
+}
+
+/* The rest buttons now have room to render at a comfortable size.
+   Each button: comic-button style, ink border, paper background,
+   yellow on hover. */
+.wt-comic .wt-dash-figure-body .recovery-btn {
+  /* The base system has `.wt .recovery-btn { color: var(--wt-text-light)
+     !important }` which forces white text. We must use !important here to
+     win, since equal specificity + !important goes to the later rule but
+     load order isn't guaranteed across systems. !important on both
+     background and color guarantees a dark-on-paper button. */
+  background: var(--cm-paper) !important;
+  color: var(--cm-ink) !important;
+  border: 1.5px solid var(--cm-ink);
+  font-family: var(--cm-font-display);
+  font-size: 0.85em;
+  letter-spacing: 0.06em;
+  padding: 5px 12px;
+  text-transform: uppercase;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.12s;
+  box-shadow: 2px 2px 0 var(--cm-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.wt-comic .wt-dash-figure-body .recovery-btn:hover {
+  /* Yellow background on hover; keep the text dark ink for contrast. */
+  background: var(--cm-accent-yellow) !important;
+  color: var(--cm-ink) !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--cm-ink);
+}
+/* Icons inside the button (e.g. <i class="fas ...">) must follow the
+   button text colour, not the base system's white. */
+.wt-comic .wt-dash-figure-body .recovery-btn i,
+.wt-comic .wt-dash-figure-body .recovery-btn:hover i {
+  color: var(--cm-ink) !important;
+}
+.wt-comic .wt-dash-figure-body .recovery-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--cm-focus-ring), 2px 2px 0 var(--cm-ink);
+}
+
+.wt-comic .wt-dash-figure-body .shield-badge {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+  border: 1px solid var(--cm-ink);
+  border-radius: 0;
+  padding: 3px 8px;
+  font-family: var(--cm-font-display);
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+}
+
+/* Centre the silhouette vertically. */
+.wt-comic .wt-dash-figure-body .wt-health-split {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.wt-comic .wt-dash-figure-body .silhouette-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: var(--cm-paper);
+  border: 2px solid var(--cm-ink);
+}
+
+
+/* ── Per-location data list (still rendered, restyled compact) ──────────
+   The old 2-column badge grid is replaced with a single compact column
+   showing one line per location with armour info. Tooltips on the
+   silhouette already provide damage status, so this list focuses on
+   ARMOUR rating and shield protection per location. */
+
+.wt-comic .wt-dash-figure-body .wt-health-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.wt-comic .wt-dash-figure-body .wt-health-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 8px;
+  background: var(--cm-paper);
+  border: 1px solid var(--cm-gutter-deep);
+  border-radius: 0;
+  font-family: var(--cm-font-body);
+  font-size: 0.78em;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.wt-comic .wt-dash-figure-body .wt-health-row.status-shock {
+  border-left: 4px solid var(--cm-accent-blue);
+}
+.wt-comic .wt-dash-figure-body .wt-health-row.status-killing {
+  border-left: 4px solid var(--cm-accent-red);
+}
+.wt-comic .wt-dash-figure-body .wt-health-row.status-destroyed {
+  border-left: 4px solid var(--cm-ink);
+  opacity: 0.6;
+}
+.wt-comic .wt-dash-figure-body .wt-health-row.status-healthy {
+  border-left: 4px solid var(--cm-accent-green);
+}
+
+.wt-comic .wt-dash-figure-body .location-label-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.wt-comic .wt-dash-figure-body .loc-text {
+  font-family: var(--cm-font-display);
+  font-size: 0.95em;
+  letter-spacing: 0.04em;
+  color: var(--cm-ink);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.wt-comic .wt-dash-figure-body .shield-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  color: var(--cm-text-muted);
+  font-size: 0.8em;
+}
+
+.wt-comic .wt-dash-figure-body .shield-toggle.active {
+  color: var(--cm-accent-blue);
+}
+
+.wt-comic .wt-dash-figure-body .wt-ar-badge-col {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.wt-comic .wt-dash-figure-body .wt-ar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 5px;
+  background: var(--cm-paper);
+  border: 1px solid var(--cm-ink);
+  border-radius: 0;
+  font-family: var(--cm-font-display);
+  font-size: 0.7em;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  color: var(--cm-ink);
+  min-width: 22px;
+}
+
+.wt-comic .wt-dash-figure-body .wt-ar-badge.wt-ar-har {
+  background: var(--cm-ink);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-comic .wt-dash-figure-body .wt-ar-badge.wt-ar-lar {
+  background: var(--cm-accent-blue);
+  color: var(--cm-text-on-ink);
+}
+
+.wt-comic .wt-dash-figure-body .wt-ar-badge.wt-ar-none {
+  background: transparent;
+  color: var(--cm-text-disabled);
+  border-color: var(--cm-gutter-deep);
+}
+
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-comic .damage-silhouette .hit-zone rect {
+    transition: none;
+  }
+  .wt-comic .damage-silhouette .bolt-trunk,
+  .wt-comic .damage-silhouette .bolt-branches {
+    filter: none;
+    stroke: #1A1A1A;
+  }
+  .wt-comic .damage-silhouette .bolt-trunk { stroke-width: 1.2; }
+  .wt-comic .damage-silhouette .bolt-branches { stroke-width: 0.8; }
+  .wt-comic .wt-dash-figure-body .recovery-btn,
+  .wt-comic .wt-dash-figure-body .recovery-btn:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   SHEET-LEVEL OVERRIDES (when dashboard view is active)
+   ─────────────────────────────────────────────────────────────────
+   The actor sheet form uses flex column by default. When dashboard
+   view is active, we need its window-content to give the dashboard
+   full height.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt.sheet.actor.wt-view-dashboard {
+  /* Strip parchment background — dashboard provides its own */
+  background: var(--cm-gutter);
+  background-image: none;
+  box-shadow: none;
+}
+
+.wt.sheet.actor.wt-view-dashboard .window-content {
+  background: var(--cm-gutter);
+  padding: 0;
+  overflow: hidden;
+}
+
+.wt.sheet.actor.wt-view-dashboard form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.wt.sheet.actor.wt-view-dashboard .wt-sheet-root {
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}

@@ -1,0 +1,38 @@
+<div class="tab effects {{tabs.effects}}" data-tab="effects">
+  <div class="wt-effects-tab-container">
+    <h3 class="wt-effects-header">
+      <span>Ongoing Effects & Conditions</span>
+      <a data-action="createEffect" title="Add Effect" class="wt-create-effect-btn">
+        <i class="fas fa-plus"></i> Create Effect
+      </a>
+    </h3>
+
+    {{#if effects.length}}
+      <div class="effects-list wt-flex-col-gap8">
+        {{#each effects as |effect|}}
+          <div class="effect-item wt-flex-between wt-effect-box" data-effect-id="{{effect.id}}">
+            <div class="wt-flex-center-gap15 {{#if effect.disabled}}wt-opacity-50{{/if}}">
+              <img src="{{effect.img}}" class="wt-effect-img"/>
+              <div class="wt-flex-col">
+                <span class="wt-effect-name">{{effect.name}}</span>
+                {{#if effect.disabled}}
+                  <span class="wt-effect-disabled-text">(Disabled)</span>
+                {{/if}}
+              </div>
+            </div>
+            <div class="effect-controls wt-flex-gap12">
+              <a data-action="toggleEffect" title="{{#if effect.disabled}}Enable{{else}}Disable{{/if}}" class="wt-cursor-pointer wt-text-lg">
+                <i class="fas {{#if effect.disabled}}fa-check-circle{{else}}fa-times-circle{{/if}}"></i>
+              </a>
+              <a data-action="editEffect" title="Quick Builder" class="wt-cursor-pointer wt-text-lg"><i class="fas fa-edit"></i></a>
+              <a data-action="advancedEditEffect" title="Advanced Editor" class="wt-cursor-pointer wt-text-lg"><i class="fas fa-cogs"></i></a>
+              <a data-action="deleteEffect" title="Delete" class="wt-cursor-pointer wt-text-lg wt-color-blood"><i class="fas fa-trash"></i></a>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="wt-empty-effects-msg">No ongoing effects or conditions active on this character.</p>
+    {{/if}}
+  </div>
+</div>

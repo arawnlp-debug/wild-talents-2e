@@ -1,0 +1,740 @@
+/* ====================================================
+   WT: 2ND EDITION 
+   Chat Cards & 3D CSS Dice
+==================================================== */
+
+.wt-chat-card {
+  background: var(--wt-bg-parchment);
+  background-image: var(--wt-grain), var(--wt-texture-coarse);
+  border: var(--wt-border-iron);
+  border-radius: 4px;
+  box-shadow: var(--wt-shadow-drop);
+  padding: 12px;
+  color: var(--wt-text-dark);
+  font-family: var(--wt-font-flavor);
+  animation: wt-card-in 0.25s ease-out;
+}
+
+@keyframes wt-card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wt-chat-card .wt-roll-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: var(--wt-color-blood);
+  font-weight: bold;
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xl);
+  letter-spacing: 1px;
+  border-bottom: none;
+  background-image: var(--wt-divider);
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 100% 8px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+/* -----------------------------------------
+    TYPOGRAPHY & UTILITIES
+----------------------------------------- */
+
+/* ── Base h3: ensures ALL chat card titles (HBS + JS-generated) match ── */
+.wt-chat-card h3 {
+    font-family: var(--wt-font-display);
+    font-size: var(--wt-text-lg);
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0 0 var(--wt-space-sm) 0;
+    padding-bottom: var(--wt-space-sm);
+    border: none;
+    background-image: var(--wt-divider);
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% 6px;
+    color: var(--wt-text-dark);
+}
+
+.wt-text-danger { color: var(--wt-red) !important; }
+.wt-text-success { color: var(--wt-green) !important; }
+.wt-text-info { color: var(--wt-blue) !important; }
+.wt-text-warning { color: var(--wt-orange) !important; }
+.wt-text-critical { color: var(--wt-critical) !important; }
+.wt-text-magic { color: var(--wt-purple) !important; }
+.wt-text-muted { color: var(--wt-text-muted) !important; }
+
+.wt-text-bold { font-weight: bold; }
+.wt-text-small { font-size: 0.85em; }
+.wt-text-large { font-size: 1.1em; }
+.wt-text-center { text-align: center; }
+
+.wt-mb-0 { margin-bottom: 0 !important; }
+.wt-mb-small { margin-bottom: 5px; }
+.wt-mb-medium { margin-bottom: 10px; }
+.wt-mt-small { margin-top: 2px; }
+
+/* -----------------------------------------
+    BANNERS & ALERTS
+----------------------------------------- */
+.wt-banner { 
+    padding: 6px; 
+    font-weight: bold; 
+    text-align: center; 
+    margin-bottom: var(--wt-space-sm); 
+    border-radius: var(--wt-radius-md); 
+    font-size: var(--wt-text-sm); 
+}
+.wt-banner small { font-weight: normal; font-size: 0.9em; }
+.wt-banner-warning { background: var(--wt-bg-warn); color: var(--wt-burnt-orange); border: 1px solid var(--wt-color-warn-border); }
+.wt-banner-info { background: var(--wt-bg-teal); color: var(--wt-color-teal); border: 1px solid var(--wt-color-teal-border); }
+.wt-banner-fail { background: var(--wt-bg-blood-muted); color: var(--wt-color-blood); font-size: var(--wt-text-base); padding: 10px; }
+.wt-banner-deflect { background: var(--wt-bg-deflect); border: 2px solid var(--wt-color-deflect); color: var(--wt-color-deflect-dark); padding: 8px; box-shadow: var(--wt-shadow-drop); margin-bottom: 10px; }
+
+/* Status Banners */
+.wt-status-banner {
+    padding: var(--wt-space-sm);
+    text-align: center;
+    font-weight: bold;
+    font-size: var(--wt-text-base);
+    margin-top: var(--wt-space-sm);
+    border-radius: var(--wt-radius-md);
+    color: var(--wt-text-light);
+    box-shadow: var(--wt-shadow-drop);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.wt-status-banner.dead { background: var(--wt-dark-red); font-size: var(--wt-text-lg); }
+.wt-status-banner.unconscious { background: var(--wt-navy); }
+.wt-status-banner.dazed { background: var(--wt-burnt-orange); }
+.wt-status-banner.maimed { background: var(--wt-red); }
+.wt-status-banner.gobbled { 
+    background: var(--wt-bg-teal); 
+    border: 2px solid var(--wt-color-teal-light); 
+    color: var(--wt-color-teal); 
+    margin-bottom: 10px;
+}
+.wt-status-banner.spoiled {
+    background: var(--wt-bg-danger); 
+    border: 2px solid var(--wt-color-danger-border); 
+    color: var(--wt-color-danger); 
+    margin-bottom: 10px;
+}
+
+/* Custom Chat Card Borders */
+.wt-card-danger { border-color: var(--wt-red) !important; }
+.wt-card-magic { border-color: var(--wt-navy) !important; }
+.wt-card-critical { 
+    border: 2px solid var(--wt-red) !important; 
+    background: var(--wt-bg-blood-muted); 
+}
+.wt-header-fancy {
+    font-family: var(--wt-font-display); 
+    border-bottom: 1px solid var(--wt-red);
+}
+
+/* Callout Boxes */
+.wt-callout {
+    background: var(--wt-bg-vellum);
+    padding: var(--wt-space-sm);
+    border-radius: var(--wt-radius-md);
+    font-size: var(--wt-text-sm);
+}
+.wt-callout-danger { border-left: 3px solid var(--wt-red); }
+.wt-callout-success { border-left: 3px solid var(--wt-green); }
+.wt-callout-info { 
+    background: var(--wt-bg-info); 
+    border-left: 3px solid var(--wt-blue); 
+}
+.wt-callout-critical { border-left: 3px solid var(--wt-critical); }
+
+/* Dark Mode Banners */
+.theme-dark .wt-chat-card .wt-banner-warning { background: var(--wt-bg-warn); border-color: var(--wt-color-warn-border); color: var(--wt-orange); }
+.theme-dark .wt-chat-card .wt-banner-info { background: var(--wt-bg-teal); border-color: var(--wt-color-teal-border); color: var(--wt-color-teal-light); }
+.theme-dark .wt-chat-card .wt-banner-deflect { background: var(--wt-color-deflect-dark); border-color: var(--wt-color-deflect); color: var(--wt-bg-deflect); }
+.theme-dark .wt-callout-info { background: var(--wt-bg-info); }
+
+/* -----------------------------------------
+    COLLAPSIBLE POOL BREAKDOWN
+----------------------------------------- */
+.wt-pool-breakdown { 
+    margin-bottom: var(--wt-space-md); 
+    font-size: var(--wt-text-sm); 
+    background: var(--wt-bg-vellum); 
+    padding: var(--wt-space-sm); 
+    border-radius: var(--wt-radius-md); 
+    border: var(--wt-border-light); 
+}
+.wt-pool-breakdown summary { cursor: pointer; color: var(--wt-text-muted); font-weight: bold; font-family: var(--wt-font-data); }
+.wt-pool-breakdown ul { margin: var(--wt-space-xs) 0 0 0; padding-left: 20px; color: var(--wt-text-dark); font-family: var(--wt-font-data); font-size: var(--wt-text-sm); }
+.wt-pool-breakdown ul li { margin-bottom: 2px; }
+
+/* -----------------------------------------
+    GOBBLE DICE UI
+----------------------------------------- */
+.wt-gobble-tracker { 
+    margin-bottom: 12px; 
+    background: var(--wt-bg-emerald-subtle); 
+    border: 1px solid var(--wt-color-emerald); 
+    padding: 8px; 
+    text-align: center; 
+    color: var(--wt-color-emerald); 
+    border-radius: 4px; 
+    box-shadow: var(--wt-shadow-inset); 
+}
+.wt-gobble-tracker strong { display: block; margin-bottom: 6px; font-size: 1.1em; }
+.gobble-list { justify-content: center; gap: 5px; }
+.gobble-badge { background: var(--wt-color-emerald); color: var(--wt-text-light); padding: 4px 10px; border-radius: 12px; font-size: 1em; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+
+/* -----------------------------------------
+    SETS & DICE TRAYS
+----------------------------------------- */
+.wt-section-title { 
+    border-bottom: none;
+    background-image: var(--wt-divider);
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% 6px;
+    padding-bottom: var(--wt-space-sm); 
+    margin-bottom: var(--wt-space-sm); 
+    color: var(--wt-text-muted); 
+    font-family: var(--wt-font-data);
+    font-size: var(--wt-text-sm); 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+.ore-set { 
+    background: var(--wt-bg-vellum); 
+    border: 1px solid var(--wt-border-light); 
+    border-left: 4px solid var(--wt-color-blood); 
+    border-radius: var(--wt-radius-md); 
+    padding: var(--wt-space-sm); 
+    margin-bottom: var(--wt-space-sm); 
+}
+.set-text { font-size: 1.2em; color: var(--wt-color-blood); }
+.set-location { font-size: 0.9em; font-weight: bold; color: var(--wt-text-muted); }
+
+/* -----------------------------------------
+    3D CSS DICE (THE KITES)
+----------------------------------------- */
+.dice-tray { gap: 4px; display: flex; }
+.dice-tray.wrap { flex-wrap: wrap; }
+
+.wt-die { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: bold; 
+    font-family: var(--wt-font-data); 
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); 
+    position: relative; 
+    user-select: none; 
+    transition: transform 0.1s ease; 
+}
+
+.ore-set .wt-die { width: 32px; height: 32px; font-size: 1.1em; }
+
+.wt-die.matched { 
+    background: radial-gradient(circle at 30% 30%, var(--wt-color-blood), var(--wt-color-blood-dark)); 
+    color: var(--wt-text-light); 
+    border: none; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
+    filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.3)); 
+}
+
+.wt-die.waste { 
+    width: 24px;
+    height: 24px;
+    font-size: 0.9em;
+    background: radial-gradient(circle at 30% 30%, var(--wt-bg-vellum), var(--wt-bg-ash)); 
+    color: var(--wt-text-muted); 
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.3); 
+    filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.1)); 
+    opacity: 0.6; 
+}
+.theme-dark .wt-die.waste { background: radial-gradient(circle at 30% 30%, var(--wt-bg-ash), var(--wt-bg-iron-light)); color: var(--wt-text-muted); text-shadow: none; opacity: 0.5; }
+.wt-die:hover { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0px 4px 3px rgba(0,0,0,0.35)); transition: transform 0.15s ease, filter 0.15s ease; }
+.wt-die.matched:hover { filter: drop-shadow(0px 4px 4px rgba(139, 31, 31, 0.4)); }
+
+/* ── Timing gate inline dice (ITEM-13) ── */
+/* Sizes wt-die children for inline chat use outside of .ore-set context. */
+.wt-timing-dice { display: inline-flex; gap: 3px; align-items: center; vertical-align: middle; }
+.wt-timing-dice .wt-die.matched { width: 24px; height: 24px; font-size: 0.85em; }
+
+/* -----------------------------------------
+    TAGS & DETAILS
+----------------------------------------- */
+.set-details { font-size: 0.95em; color: var(--wt-text-dark); }
+.wt-tag { background: var(--wt-bg-iron); color: var(--wt-text-light); padding: 2px 6px; border-radius: 3px; font-size: 0.85em; font-weight: bold; margin-left: 5px; }
+
+.ap-tag { color: var(--wt-blue); background: transparent; padding: 0;}
+.massive-tag { color: var(--wt-color-warn-border); background: transparent; padding: 0;}
+.area-tag { color: var(--wt-purple); background: transparent; padding: 0;}
+
+/* Dark Mode Tags */
+.theme-dark .ap-tag { color: var(--wt-blue); }
+.theme-dark .massive-tag { color: var(--wt-burnt-orange); }
+.theme-dark .area-tag { color: var(--wt-purple); }
+
+/* -----------------------------------------
+    ACTION BUTTONS
+----------------------------------------- */
+.wt-chat-card button { 
+    flex: 1; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-family: var(--wt-font-flavor);
+    font-size: var(--wt-text-sm);
+    border-radius: var(--wt-radius-md); 
+    transition: background var(--wt-transition-fast), transform var(--wt-transition-fast), filter var(--wt-transition-fast); 
+    padding: 4px; 
+    line-height: normal; 
+}
+
+.wt-chat-card button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.wt-chat-card button:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+.wt-chat-card button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+/* Damage Button */
+.wt-btn-damage { background: var(--wt-bg-blood-subtle); border: 1px solid var(--wt-color-danger-border); color: var(--wt-color-blood); }
+.wt-btn-damage:hover { background: var(--wt-bg-blood-subtle); }
+
+/* Gobble Button */
+.wt-btn-gobble { background: transparent; border: 1px solid var(--wt-color-emerald); color: var(--wt-color-emerald); margin-top: 6px; width: 100%; }
+.wt-btn-gobble:hover { background: var(--wt-bg-emerald-subtle); }
+
+/* Magic Button */
+.wt-btn-magic { background: var(--wt-bg-blue-subtle); border: 1px solid var(--wt-color-info-border); color: var(--wt-color-blue-dark); }
+.wt-btn-magic:hover { background: var(--wt-bg-blue-subtle); }
+.theme-dark .wt-btn-magic { color: var(--wt-blue); }
+
+/* Small Utility Buttons */
+.wt-btn-small { flex: 0 0 32px !important; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center;}
+
+/* Heal Button */
+.wt-btn-heal { background: var(--wt-bg-emerald-subtle); border: 1px solid var(--wt-color-emerald); color: var(--wt-color-emerald); }
+.wt-btn-heal:hover { background: var(--wt-bg-emerald-subtle); }
+.theme-dark .wt-btn-heal { color: var(--wt-color-emerald); }
+
+/* Ch7 Morale Attack Button */
+.wt-btn-morale { background: var(--wt-bg-sorcery-subtle); border: 1px solid var(--wt-purple); color: var(--wt-purple); flex: 0 0 auto !important; padding: 0 8px !important; font-size: 0.8em; font-weight: bold; }
+.wt-btn-morale:hover { background: var(--wt-bg-sorcery-subtle); }
+.theme-dark .wt-btn-morale { color: var(--wt-purple); }
+/* C1: Manoeuvre status effect button — teal/teal-dark */
+.wt-btn-maneuver { background: var(--wt-bg-teal-subtle); border: 1px solid var(--wt-color-emerald); color: var(--wt-color-emerald); }
+.wt-btn-maneuver:hover { background: var(--wt-bg-teal-subtle); }
+.theme-dark .wt-btn-maneuver { background: var(--wt-bg-teal-subtle); color: var(--wt-color-teal-border); border-color: var(--wt-color-teal-border); }
+/* C2: Secondary hold button (Maintain / Execute / Wrench Free) — muted teal outline */
+.wt-btn-maneuver-secondary { background: transparent; border: 1px dashed var(--wt-color-emerald); color: var(--wt-color-emerald); opacity: 0.85; }
+.wt-btn-maneuver-secondary:hover { background: var(--wt-bg-teal-subtle); opacity: 1; }
+.theme-dark .wt-btn-maneuver-secondary { color: var(--wt-color-teal-border); border-color: var(--wt-color-teal-border); }
+
+/* -----------------------------------------
+    COMBAT TRACKER UI
+----------------------------------------- */
+.wt-combat-phase-control { margin: 4px 8px; display: flex; align-items: center; background: rgba(0,0,0,0.4); padding: 2px; border-radius: 4px; }
+.wt-phase-btn { flex: 1; border: 1px solid transparent; line-height: 24px; padding: 0; height: 28px; cursor: pointer; color: var(--wt-text-muted); transition: all 0.2s ease; background: transparent; }
+.wt-phase-btn:first-child { border-radius: 3px 0 0 3px; }
+.wt-phase-btn:last-child { border-radius: 0 3px 3px 0; }
+.wt-phase-btn.active-declare { background: var(--wt-green); color: var(--wt-text-light); border-color: var(--wt-green); box-shadow: 0 0 8px var(--wt-green); font-weight: bold; text-shadow: 1px 1px 2px black; }
+.wt-phase-btn.active-resolve { background: var(--wt-critical); color: var(--wt-text-light); border-color: var(--wt-critical); box-shadow: 0 0 8px var(--wt-critical); font-weight: bold; text-shadow: 1px 1px 2px black; }
+
+.wt-wound-banner { background: var(--wt-bg-danger); color: var(--wt-color-blood-dark); border: 1px solid var(--wt-color-danger); text-align: center; padding: 6px; margin: 4px 8px 8px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9em; box-shadow: var(--wt-shadow-drop); }
+.wt-wound-banner span { font-weight: normal; font-size: 0.95em; color: var(--wt-color-blood); }
+.theme-dark .wt-wound-banner { background: var(--wt-bg-danger); color: var(--wt-red); border-color: var(--wt-color-danger); }
+.theme-dark .wt-wound-banner span { color: var(--wt-text-light); }
+
+.wt-waiting { color: var(--wt-text-muted); font-weight: bold; font-size: 1.2em; }
+.wt-declare-btn { font-size: 1.4em; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; transition: color 0.2s ease; }
+.wt-declare-btn.confirmed { color: var(--wt-green); }
+.wt-declare-btn.pending { color: var(--wt-text-muted); }
+
+/* -----------------------------------------
+    CHAT CARD: SETS & GOBBLE UI
+----------------------------------------- */
+.wt-set-success { border-left: 5px solid var(--wt-green); background: var(--wt-bg-emerald-muted); }
+.wt-set-fail { border-left: 5px solid var(--wt-red); background: var(--wt-bg-blood-muted); opacity: 0.85; }
+
+.wt-gobble-gen { font-size: 0.9em; color: var(--wt-color-blue-dark); margin-top: 6px; text-align: center; padding: 6px; border-top: 1px dashed var(--wt-color-info-border); background: var(--wt-bg-info); border-radius: 3px; width: 100%; }
+.wt-gobble-gen-defense { font-size: 0.85em; font-style: italic; color: var(--wt-color-blue-dark); }
+.theme-dark .wt-gobble-gen { background: var(--wt-bg-info); border-color: var(--wt-color-info-border); color: var(--wt-blue); }
+.theme-dark .wt-gobble-gen-defense { color: var(--wt-blue); }
+
+.wt-dmg-tags { font-size: 0.85em; color: var(--wt-text-dark); margin-top: 6px; display: flex; flex-direction: column; gap: 4px; padding-top: 4px; border-top: var(--wt-border-dashed); width: 100%; }
+.wt-heal-tags { font-size: 0.85em; color: var(--wt-green); margin-top: 6px; display: flex; justify-content: space-between; align-items: center; padding-top: 4px; border-top: var(--wt-border-dashed); width: 100%; }
+
+.wt-action-buttons { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; width: 100%; margin-top: 8px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px; }
+
+/* Micro Action Buttons */
+.wt-btn-init { background: var(--wt-bg-amber); border: 1px solid var(--wt-color-amber); color: var(--wt-color-amber); }
+.wt-btn-init:hover { background: var(--wt-bg-warn); }
+.theme-dark .wt-btn-init { background: var(--wt-bg-amber-subtle); color: var(--wt-color-amber); }
+
+.wt-btn-company { background: var(--wt-bg-warn); border: 1px solid var(--wt-color-brass); color: var(--wt-burnt-orange); }
+.wt-btn-company:hover { background: var(--wt-bg-warn); }
+.theme-dark .wt-btn-company { background: var(--wt-bg-brass-subtle); color: var(--wt-orange); }
+
+.wt-btn-condition { background: var(--wt-bg-sorcery-muted); border: 1px solid var(--wt-purple); color: var(--wt-purple); }
+.wt-btn-condition:hover { background: var(--wt-bg-sorcery-subtle); }
+.theme-dark .wt-btn-condition { background: var(--wt-bg-sorcery-subtle); color: var(--wt-purple); }
+
+.wt-btn-first-aid { background: var(--wt-bg-info); border: 1px solid var(--wt-blue); color: var(--wt-color-blue-dark); }
+.wt-btn-first-aid:hover { background: var(--wt-bg-info); }
+.theme-dark .wt-btn-first-aid { background: var(--wt-bg-blue-subtle); color: var(--wt-blue); }
+
+.wt-btn-waste-dmg { background: var(--wt-bg-danger); border: 1px solid var(--wt-color-danger-border); color: var(--wt-color-danger); }
+.wt-btn-waste-dmg:hover { background: var(--wt-bg-danger); }
+.theme-dark .wt-btn-waste-dmg { background: var(--wt-bg-blood-subtle); color: var(--wt-color-danger); }
+
+.wt-ed-result { margin-top: 10px; border-top: var(--wt-border-dashed); padding-top: 8px; font-size: 0.9em; color: var(--wt-text-dark); }
+.wt-ed-badge { background: var(--wt-green); color: var(--wt-text-light); padding: 2px 8px; border-radius: 3px; font-weight: bold; margin-left: 5px; }
+.wt-md-result { margin-top: 6px; font-size: 0.9em; color: var(--wt-green); }
+
+/* -----------------------------------------
+    MANEUVER OUTCOME BLOCKS (Ch7)
+----------------------------------------- */
+.wt-maneuver-outcome {
+    margin-top: 6px;
+    padding: 6px 8px;
+    border-left: 3px solid var(--wt-blue);
+    background: var(--wt-bg-vellum);
+    border-radius: 0 3px 3px 0;
+    font-size: var(--wt-text-sm);
+    width: 100%;
+}
+.wt-maneuver-outcome.tier2 { border-left-color: var(--wt-burnt-orange); }
+
+.wt-maneuver-title { font-weight: bold; margin-bottom: 3px; }
+.wt-maneuver-detail { margin-top: 3px; }
+
+.wt-maneuver-rules { margin-top: 4px; }
+.wt-maneuver-rules summary { cursor: pointer; }
+.wt-maneuver-rules-text {
+    margin-top: 4px;
+    padding: var(--wt-space-xs);
+    background: rgba(0,0,0,0.03);
+    font-size: var(--wt-text-sm);
+    color: var(--wt-text-muted);
+}
+.theme-dark .wt-maneuver-rules-text { background: rgba(255,255,255,0.03); }
+
+/* -----------------------------------------
+    ACTION BUTTONS: PRIMARY / SECONDARY
+----------------------------------------- */
+.wt-actions-primary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.wt-btn-primary {
+    flex: 1 1 100% !important;
+    height: 34px;
+    font-size: var(--wt-text-sm);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.wt-actions-secondary {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.wt-actions-secondary .wt-btn-small {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.wt-actions-secondary .wt-btn-small:hover { opacity: 1; }
+
+/* -----------------------------------------
+    GOBBLE SECTION VARIANTS
+----------------------------------------- */
+.wt-gobble-warning { margin-top: 15px; }
+
+.wt-gobble-select-title {
+    color: var(--wt-orange) !important;
+}
+.wt-gobble-available-title {
+    color: var(--wt-blue) !important;
+}
+.wt-gobble-prompt {
+    padding: var(--wt-space-sm);
+    text-align: center;
+    color: var(--wt-text-dark);
+    opacity: 0.8;
+    font-style: italic;
+    font-size: var(--wt-text-sm);
+}
+
+/* -----------------------------------------
+    WASTE EFFECT COLOURS
+----------------------------------------- */
+.wt-waste-heal { color: var(--wt-green); }
+.wt-waste-dmg { color: var(--wt-red); }
+
+/* -----------------------------------------
+    CHAT MESSAGE UTILITY CLASSES
+    (for JS-generated ChatMessage content)
+----------------------------------------- */
+.wt-chat-card h3.wt-msg-fail { color: var(--wt-color-blood); }
+.wt-chat-card h3.wt-msg-success { color: var(--wt-color-emerald); }
+.wt-chat-card h3.wt-msg-info { color: var(--wt-blue); }
+.wt-chat-card h3.wt-msg-muted { color: var(--wt-text-muted); }
+.wt-chat-card .wt-msg-result { text-align: center; font-size: var(--wt-text-lg); font-weight: bold; margin: 5px 0; }
+.wt-chat-card.wt-card-success { border-color: var(--wt-color-emerald); }
+.wt-chat-card.wt-card-fail { border-color: var(--wt-color-blood); }
+/* F2: One-Roll Table validation cards */
+.wt-validation-list { margin: 4px 0 0 0; padding: 0 0 0 4px; list-style: none; font-size: 0.85em; }
+.wt-validation-list.error li { color: var(--wt-color-danger); margin-bottom: 3px; }
+.wt-validation-list.warn li { color: var(--wt-color-warn-border); margin-bottom: 3px; }
+.wt-card-warn { background: var(--wt-bg-warn); border-left: 3px solid var(--wt-color-warn-border); }
+.theme-dark .wt-card-warn { background: var(--wt-bg-warn); }
+
+/* F1/F3: Spell action buttons row */
+.wt-spell-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.wt-btn-info { background: var(--wt-bg-blue-subtle); border: 1px solid var(--wt-color-info-border); color: var(--wt-color-blue-dark); }
+.wt-btn-info:hover { background: var(--wt-bg-blue-subtle); }
+.theme-dark .wt-btn-info { color: var(--wt-color-blue-dark); border-color: var(--wt-color-info-border); }
+
+/* -----------------------------------------
+    F4: QUICK DICE ROLLER — Chat Controls Button
+----------------------------------------- */
+.wt-quick-roller-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 8px;
+    flex: 0 0 auto;
+    border: 2px solid var(--wt-color-blood);
+    border-radius: 4px;
+    background: var(--wt-color-blood);
+    color: var(--wt-text-light);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    margin-right: 4px;
+}
+.wt-quick-roller-btn i {
+    font-size: 14px;
+}
+.wt-qr-label {
+    font-family: var(--wt-font-data, monospace);
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.wt-quick-roller-btn:hover {
+    background: var(--wt-color-blood-dark);
+    border-color: var(--wt-color-blood-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(139, 31, 31, 0.4);
+}
+.wt-quick-roller-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+.theme-dark .wt-quick-roller-btn {
+    border-color: var(--wt-red);
+    background: var(--wt-red);
+    color: var(--wt-text-light);
+}
+.theme-dark .wt-quick-roller-btn:hover {
+    background: var(--wt-color-blood);
+    border-color: var(--wt-color-blood);
+    box-shadow: 0 2px 6px rgba(200, 50, 50, 0.5);
+}
+/* ====================================================
+   BATCH B — Chat Card Enhancements
+   ITEM-4: Gobble selection prompt + amber border
+   ITEM-2: Pin escape button
+   ITEM-11: Re-roll button in card header
+==================================================== */
+
+/* ── ITEM-4: Amber pulse when awaiting gobble selection ── */
+@keyframes wt-gobble-pulse {
+    0%, 100% { border-color: var(--wt-bg-iron); }
+    50%       { border-color: var(--wt-color-amber); box-shadow: 0 0 6px rgba(200, 139, 0, 0.4); }
+}
+
+.wt-chat-card.wt-awaiting-gobble {
+    animation: wt-gobble-pulse 2s ease-in-out 3;  /* pulses 3 times then settles */
+}
+
+.wt-gobble-select-prompt {
+    background: var(--wt-bg-amber);
+    border: 1px solid var(--wt-color-amber);
+    border-left: 3px solid var(--wt-color-amber);
+    border-radius: var(--wt-radius-md);
+    padding: 8px 12px;
+    font-size: var(--wt-text-sm);
+    color: var(--wt-text-dark);
+    display: block;
+    line-height: 1.5;
+}
+
+/* ── ITEM-11: Re-roll button in card header ── */
+.wt-reroll-btn {
+    margin-left: auto;        /* push to far right of flex header */
+    background: none;
+    border: 1px solid rgba(139, 31, 31, 0.3);
+    border-radius: var(--wt-radius-sm);
+    color: var(--wt-color-blood);
+    font-size: var(--wt-text-base);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 1px 7px;
+    line-height: 1;
+    opacity: 0.6;
+    transition: opacity var(--wt-transition-fast), background var(--wt-transition-fast);
+}
+
+.wt-reroll-btn:hover {
+    opacity: 1;
+    background: var(--wt-bg-blood-subtle);
+}
+
+/* ── ITEM-2: Pin escape button — styled as a secondary action ── */
+.attempt-escape-btn {
+    background: var(--wt-bg-iron) !important;
+    border-color: var(--wt-bg-iron-light) !important;
+    font-style: italic;
+}
+
+.attempt-escape-btn:hover {
+    filter: brightness(1.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WILD TALENTS 2E — Dice Type Indicators in Chat Cards
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Per-die type colouring in chat card results */
+.wt-die-hard-inline {
+  color: #c62828; font-weight: 700;
+  border-bottom: 2px solid #ef9a9a;
+}
+.wt-die-wiggle-inline {
+  color: #1565c0; font-weight: 700;
+  border-bottom: 2px solid #90caf9;
+}
+
+/* HD/WD result badges in chat cards */
+.wt-hd-result, .wt-wd-result {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--wt-text-sm);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin: 2px 0;
+}
+
+.wt-hd-result {
+  background: rgba(198, 40, 40, 0.08);
+  border: 1px solid rgba(198, 40, 40, 0.25);
+  color: #c62828;
+}
+
+.wt-hd-badge {
+  font-weight: 700;
+  color: #c62828;
+}
+
+.wt-wd-result {
+  background: rgba(21, 101, 192, 0.08);
+  border: 1px solid rgba(21, 101, 192, 0.25);
+  color: #1565c0;
+}
+
+.wt-wd-badge {
+  font-weight: 700;
+  color: #1565c0;
+}
+
+/* Colorblind mode: use shape indicators instead of color only */
+.colorblind-mode .wt-hd-badge::before { content: "◆ "; }
+.colorblind-mode .wt-wd-badge::before { content: "★ "; }
+.colorblind-mode .wt-die-hard-inline::before { content: "◆"; font-size: 0.7em; margin-right: 1px; }
+.colorblind-mode .wt-die-wiggle-inline::before { content: "★"; font-size: 0.7em; margin-right: 1px; }
+
+/* Pool preview text colours (used in roll dialogs) */
+.wt-text-hard   { color: #c62828; font-weight: 700; }
+.wt-text-wiggle { color: #1565c0; font-weight: 700; }
+
+/* ── Willpower Action Buttons (Shake It Off, Stay Alive) ── */
+.wt-wp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 0 2px;
+  border-top: 1px dashed var(--wt-border-light-color, #ccc);
+}
+
+.wt-btn-small {
+  font-size: 0.8em;
+  padding: 2px 8px;
+  border: 1px solid var(--wt-border-light-color, #999);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+  cursor: pointer;
+  font-family: var(--wt-font-flavor);
+  transition: background 0.15s;
+}
+
+.wt-btn-small:hover {
+  background: var(--wt-bg-hover, #e8e0d0);
+}
+
+.wt-btn-small:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wt-btn-danger {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.wt-btn-danger:hover {
+  background: #fecaca;
+}
+
+/* Inspiration label in roll dialog */
+.wt-inspiration-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}

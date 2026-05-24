@@ -1,0 +1,510 @@
+<div class="wt-sheet-root threat-sheet">
+  <header class="sheet-header">
+    <div class="header-top wt-p10">
+      <img src="{{actor.img}}"
+           data-action="editImage"
+           title="{{actor.name}}"
+           class="profile-img wt-circle threat-profile-img"
+           alt="{{actor.name}}"/>
+      <div class="header-fields">
+        <input name="name"
+               type="text"
+               value="{{actor.name}}"
+               placeholder="{{localize 'WT.ThreatName'}}"
+               class="wt-threat-header-input"/>
+        <div class="wt-flex-row wt-gap-small wt-mt5">
+          <div class="wt-threat-type-label">
+            {{#if isCreatureMode}}
+              🐾 {{localize 'WT.CreatureMode'}}
+            {{else}}
+              {{localize 'WT.ThreatTypeUnworthy'}}
+            {{/if}}
+          </div>
+          <button type="button" data-action="toggleCreatureMode"
+                  class="wt-btn-small {{#if isCreatureMode}}wt-btn-active{{/if}}"
+                  title="Switch between Mob (binary elimination) and Creature (wound boxes) mode">
+            {{#if isCreatureMode}}
+              <i class="fas fa-users"></i> Switch to Mob Mode
+            {{else}}
+              <i class="fas fa-paw"></i> Switch to Creature Mode
+            {{/if}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+
+    {{!-- ═══════════════════════════════════════════════════════
+         CREATURE MODE
+    ═══════════════════════════════════════════════════════ --}}
+    {{#if isCreatureMode}}
+    <div class="cs-sheet">
+
+      {{!-- ── ATTRIBUTES ── --}}
+      <div class="cs-attributes-bar">
+        <div class="cs-attr">
+          <span class="cs-attr-label">Body</span>
+          <input type="number" name="system.creatureAttributes.body" value="{{system.creatureAttributes.body}}" min="0" class="cs-attr-input"/>
+        </div>
+        <div class="cs-attr-divider"></div>
+        <div class="cs-attr">
+          <span class="cs-attr-label">Coord.</span>
+          <input type="number" name="system.creatureAttributes.coordination" value="{{system.creatureAttributes.coordination}}" min="0" class="cs-attr-input"/>
+        </div>
+        <div class="cs-attr-divider"></div>
+        <div class="cs-attr">
+          <span class="cs-attr-label">Sense</span>
+          <input type="number" name="system.creatureAttributes.sense" value="{{system.creatureAttributes.sense}}" min="0" class="cs-attr-input"/>
+        </div>
+        <div class="cs-attr-divider"></div>
+        <div class="cs-attr cs-attr-flex">
+          <span class="cs-attr-label">Move</span>
+          <input type="text" name="system.movement" value="{{system.movement}}" placeholder="—" class="cs-attr-input-text"/>
+        </div>
+        <div class="cs-attr-divider"></div>
+        <div class="cs-attr cs-attr-flex">
+          <span class="cs-attr-label">Train.</span>
+          <input type="text" name="system.trainability" value="{{system.trainability}}" placeholder="—" class="cs-attr-input-text cs-attr-input-sm"/>
+        </div>
+        <div class="cs-attr-divider"></div>
+        <div class="cs-attr">
+          <span class="cs-attr-label">Tricks</span>
+          <input type="number" name="system.tricks" value="{{system.tricks}}" min="0" class="cs-attr-input"/>
+        </div>
+      </div>
+
+      {{!-- ── SKILLS (two columns: combat left, perception right) ── --}}
+      <div class="cs-section">
+        <div class="cs-section-header">
+          Skills
+          <button type="button" data-action="addCreatureSkill" class="cs-add-btn" title="Add skill"><i class="fas fa-plus"></i></button>
+        </div>
+        {{#if creatureSkillDisplay.length}}
+        <div class="cs-skill-columns">
+          <div class="cs-skill-col">
+            <div class="cs-skill-col-label">Combat &amp; Action</div>
+            {{#each combatSkills as |sk|}}
+              <div class="cs-skill-row">
+                <span class="cs-skill-name">{{sk.label}}</span>
+                <span class="cs-skill-val {{sk.badge}}">{{sk.value}}</span>
+                <button type="button" class="cs-roll-btn" data-action="rollCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Roll {{sk.label}} ({{sk.attrLabel}} {{sk.attrVal}} + {{sk.value}})">
+                  <i class="fas fa-dice-d10"></i>
+                </button>
+                <button type="button" class="cs-icon-btn" data-action="editCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Edit {{sk.label}}"><i class="fas fa-cog"></i></button>
+                <button type="button" class="cs-icon-btn cs-icon-btn-danger" data-action="removeCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Remove {{sk.label}}"><i class="fas fa-times"></i></button>
+              </div>
+            {{else}}
+              <p class="cs-empty-note cs-empty-note-sm">—</p>
+            {{/each}}
+          </div>
+          <div class="cs-skill-col">
+            <div class="cs-skill-col-label">Perception</div>
+            {{#each perceptionSkills as |sk|}}
+              <div class="cs-skill-row">
+                <span class="cs-skill-name">{{sk.label}}</span>
+                <span class="cs-skill-val {{sk.badge}}">{{sk.value}}</span>
+                <button type="button" class="cs-roll-btn" data-action="rollCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Roll {{sk.label}} ({{sk.attrLabel}} {{sk.attrVal}} + {{sk.value}})">
+                  <i class="fas fa-dice-d10"></i>
+                </button>
+                <button type="button" class="cs-icon-btn" data-action="editCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Edit {{sk.label}}"><i class="fas fa-cog"></i></button>
+                <button type="button" class="cs-icon-btn cs-icon-btn-danger" data-action="removeCreatureSkill"
+                        data-skill-key="{{sk.key}}" title="Remove {{sk.label}}"><i class="fas fa-times"></i></button>
+              </div>
+            {{else}}
+              <p class="cs-empty-note cs-empty-note-sm">—</p>
+            {{/each}}
+          </div>
+        </div>
+        {{else}}
+        <p class="cs-empty-note">No skills defined. Click <strong>+</strong> to add.</p>
+        {{/if}}
+      </div>
+
+      {{!-- ── ATTACKS ── --}}
+      {{#if system.creatureAttacks.length}}
+      <div class="cs-section">
+        <div class="cs-section-header">
+          Attacks
+          <button type="button" data-action="addCreatureAttack" class="cs-add-btn" title="Add attack"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="cs-attack-list">
+          {{#each system.creatureAttacks as |atk|}}
+          <div class="cs-attack-row-wrap" data-attack-index="{{@index}}">
+            <div class="cs-attack-row">
+              <div class="cs-attack-info">
+                <span class="cs-attack-name">{{atk.name}}</span>
+                {{#if atk.notes}}<span class="cs-attack-notes">{{atk.notes}}</span>{{/if}}
+              </div>
+              <span class="cs-attack-damage">{{atk.damage}}</span>
+              {{#if atk.isSlow}}<span class="cs-slow-badge" title="Slow {{atk.isSlow}}">Slow {{atk.isSlow}}</span>{{/if}}
+              <button type="button" class="cs-roll-btn cs-roll-btn-attack" data-action="rollCreatureAttack"
+                      data-attack-index="{{@index}}" title="Roll {{atk.name}} → {{atk.damage}}">
+                <i class="fas fa-fist-raised"></i> Roll
+              </button>
+              <button type="button" class="cs-icon-btn" data-action-local="toggleAttackEdit"
+                      data-attack-index="{{@index}}" title="Configure attack"><i class="fas fa-cog"></i></button>
+              <button type="button" class="cs-icon-btn cs-icon-btn-danger" data-action="removeCreatureAttack"
+                      data-attack-index="{{@index}}" title="Remove attack"><i class="fas fa-times"></i></button>
+            </div>
+
+            {{!-- Config row (hidden — NO name attributes, changes handled via JS) --}}
+            <div class="cs-attack-config" data-attack-edit-index="{{@index}}" hidden>
+              <div class="cs-attack-config-row">
+                <label class="cs-config-label">Name</label>
+                <input type="text" data-atk-field="name" data-atk-index="{{@index}}"
+                       value="{{atk.name}}" placeholder="Attack name" class="cs-config-input"/>
+              </div>
+              <div class="cs-attack-config-row">
+                <label class="cs-config-label">Attr</label>
+                <select data-atk-field="attribute" data-atk-index="{{@index}}" class="cs-config-select">
+                  <option value="body" {{#if (eq atk.attribute "body")}}selected{{/if}}>Body</option>
+                  <option value="coordination" {{#if (eq atk.attribute "coordination")}}selected{{/if}}>Coordination</option>
+                  <option value="sense" {{#if (eq atk.attribute "sense")}}selected{{/if}}>Sense</option>
+                </select>
+                <label class="cs-config-label">Skill</label>
+                <input type="text" data-atk-field="skill" data-atk-index="{{@index}}"
+                       value="{{atk.skill}}" placeholder="e.g. bite, fight" class="cs-config-input"/>
+              </div>
+              <div class="cs-attack-config-row">
+                <label class="cs-config-label">Damage</label>
+                <input type="text" data-atk-field="damage" data-atk-index="{{@index}}"
+                       value="{{atk.damage}}" placeholder="e.g. Width+1 Killing" class="cs-config-input cs-config-input-wide"/>
+                <label class="cs-config-label">Slow</label>
+                <input type="number" data-atk-field="isSlow" data-atk-index="{{@index}}"
+                       value="{{atk.isSlow}}" min="0" max="10" class="cs-config-num"/>
+              </div>
+              <div class="cs-attack-config-row">
+                <label class="cs-config-label">Notes</label>
+                <input type="text" data-atk-field="notes" data-atk-index="{{@index}}"
+                       value="{{atk.notes}}" placeholder="Special qualities, conditions..." class="cs-config-input cs-config-input-wide"/>
+              </div>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      {{else}}
+      <div class="cs-section">
+        <div class="cs-section-header">
+          Attacks
+          <button type="button" data-action="addCreatureAttack" class="cs-add-btn" title="Add attack"><i class="fas fa-plus"></i></button>
+        </div>
+        <p class="cs-empty-note">No attacks defined. Click <strong>+</strong> to add.</p>
+      </div>
+      {{/if}}
+
+      {{!-- ── HIT LOCATIONS ── --}}
+      <div class="cs-section">
+        <div class="cs-section-header">
+          Hit Locations
+          <button type="button" data-action="addCreatureLocation" class="cs-add-btn" title="Add location"><i class="fas fa-plus"></i></button>
+        </div>
+
+        {{!-- Die-face reference strip --}}
+        {{#if faceMap}}
+        <div class="cs-facemap" title="Which die face hits which location">
+          {{#each faceMap as |face|}}
+            <div class="cs-face-pip {{#if face.hasLoc}}cs-face-loc-{{face.color}}{{else}}cs-face-empty{{/if}}"
+                 title="{{face.face}} → {{face.locName}}">{{face.face}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        <div class="cs-loc-list">
+          {{#each creatureLocations as |loc|}}
+          <div class="cs-loc-row {{loc.statusClass}}" data-loc-index="{{loc.index}}">
+
+            {{!-- Location header --}}
+            <div class="cs-loc-header">
+              <span class="cs-loc-dot cs-face-loc-{{loc.color}}"></span>
+              <span class="cs-loc-name">{{loc.name}}</span>
+              <div class="cs-loc-heights">
+                {{#each loc.heightPips as |h|}}
+                  {{!-- FIX: use loc.color directly (named param in scope), not ../loc.color --}}
+                  <span class="cs-height-badge cs-face-loc-{{loc.color}}">{{h}}</span>
+                {{/each}}
+                {{#unless loc.heightPips.length}}<span class="cs-loc-redir">↪ redirect</span>{{/unless}}
+              </div>
+              {{#if loc.ar}}<span class="cs-ar-tag">AR{{loc.ar}}</span>{{/if}}
+              <div class="cs-loc-right">
+                <span class="cs-dmg-count {{#if loc.killing}}cs-dmg-killing{{else if loc.shock}}cs-dmg-shock{{/if}}">
+                  {{loc.killing}}K / {{loc.shock}}S
+                </span>
+                <span class="cs-status-tag cs-status-{{loc.statusClass}}">{{loc.statusLabel}}</span>
+                <button type="button" class="cs-icon-btn" data-action-local="toggleEdit"
+                        data-index="{{loc.index}}" title="Configure location"><i class="fas fa-cog"></i></button>
+                <button type="button" data-action="removeCreatureLocation" data-index="{{loc.index}}"
+                        class="cs-icon-btn cs-icon-btn-danger" title="Remove"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+
+            {{!-- Wound track --}}
+            {{!-- FIX: use loc.index directly — not ../loc.index — loc is in scope from outer each --}}
+            <div class="cs-wound-track">
+              {{#each loc.boxes as |box|}}
+              <div class="cs-wound-box"
+                   data-state="{{box.state}}"
+                   data-loc-index="{{loc.index}}"
+                   data-box-index="{{box.index}}"
+                   title="L: Shock  R: Killing  Shift: Remove"></div>
+              {{/each}}
+            </div>
+
+            {{!-- Config row (hidden — NO name attributes, changes handled via JS) --}}
+            <div class="cs-loc-config" data-edit-index="{{loc.index}}" hidden>
+              <div class="cs-config-row-inline">
+                <label class="cs-config-label">Name</label>
+                <input type="text" data-loc-field="name" data-loc-index="{{loc.index}}"
+                       value="{{loc.name}}" placeholder="Name" class="cs-config-input"/>
+                <label class="cs-config-label">Boxes</label>
+                <input type="number" data-loc-field="woundBoxes" data-loc-index="{{loc.index}}"
+                       value="{{loc.woundBoxes}}" min="1" max="50" class="cs-config-num"/>
+                <label class="cs-config-label">AR</label>
+                <input type="number" data-loc-field="ar" data-loc-index="{{loc.index}}"
+                       value="{{loc.ar}}" min="0" class="cs-config-num"/>
+              </div>
+              <div class="cs-config-row-inline">
+                <label class="cs-config-label">Heights</label>
+                <div class="cs-height-picker" data-loc-index="{{loc.index}}">
+                  {{#each loc.facePicker as |fp|}}
+                    <button type="button" class="cs-face-btn {{#if fp.active}}cs-face-btn-active cs-face-loc-{{loc.color}}{{/if}}"
+                            data-face="{{fp.face}}" data-loc-index="{{loc.index}}"
+                            data-action-local="toggleHeight" title="Face {{fp.face}}">{{fp.face}}</button>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+          </div>
+          {{else}}
+            <p class="cs-empty-note">No locations. Click <strong>+</strong> to add.</p>
+          {{/each}}
+        </div>
+      </div>
+
+      {{!-- ── SPECIAL RULES ── --}}
+      <div class="cs-section">
+        <div class="cs-section-header">Special Rules</div>
+        {{editor system.specialRules target="system.specialRules" button=true}}
+      </div>
+
+      {{!-- ── SPECIAL ABILITIES (only shown when relevant) ── --}}
+      {{#if (or hasFreeGobble hasVenom system.creatureFlags.moraleAttackOnce hasCharge constrictActive)}}
+      <div class="cs-section">
+        <div class="cs-section-header">Special Abilities</div>
+        <div class="cs-abilities">
+
+          {{#if hasFreeGobble}}
+          <div class="cs-ability-row">
+            <i class="fas fa-shield-alt cs-ability-icon"></i>
+            <span class="cs-ability-label">Free Gobble Dice</span>
+            <span class="cs-ability-detail">{{system.creatureFlags.freeGobbleDicePerRound}}/round — value 10 — usable at any time</span>
+          </div>
+          {{/if}}
+
+          {{#if system.creatureFlags.moraleAttackOnce}}
+          <div class="cs-ability-row">
+            <i class="fas fa-bullhorn cs-ability-icon"></i>
+            <span class="cs-ability-label">Morale Attack</span>
+            <span class="cs-ability-detail">MA 4 (MA 10 vs unfamiliar) — once per combat</span>
+            <button type="button" data-action="elephantTrumpet"
+                    class="cs-ability-btn {{#if moraleAttackUsed}}cs-ability-btn-used{{/if}}"
+                    {{#if moraleAttackUsed}}disabled{{/if}}>
+              {{#if moraleAttackUsed}}<i class="fas fa-check"></i> Used{{else}}Activate{{/if}}
+            </button>
+            <button type="button" data-action="elephantTrunkGrab" class="cs-ability-btn cs-ability-btn-secondary">
+              Trunk Grab
+            </button>
+          </div>
+          {{/if}}
+
+          {{#if hasVenom}}
+          <div class="cs-ability-row">
+            <i class="fas fa-skull-crossbones cs-ability-icon cs-ability-icon-danger"></i>
+            <span class="cs-ability-label">{{system.creatureFlags.venomType}}</span>
+            <span class="cs-ability-detail">Potency {{system.creatureFlags.venomPotency}}</span>
+            <button type="button" data-action="rollVenom" class="cs-ability-btn">Roll Venom</button>
+          </div>
+          {{/if}}
+
+          {{#if hasCharge}}
+          <div class="cs-ability-row">
+            <i class="fas fa-bolt cs-ability-icon"></i>
+            <span class="cs-ability-label">Charge Accumulation</span>
+            <span class="cs-ability-detail">
+              {{#if chargeWidth}}Best Width: <strong>{{chargeWidth}}</strong>{{else}}Not building{{/if}}
+            </span>
+            <button type="button" data-action="rhinoBuildCharge" class="cs-ability-btn cs-ability-btn-secondary">Build</button>
+            <button type="button" data-action="rhinoGoreCharge"
+                    class="cs-ability-btn {{#unless chargeWidth}}cs-ability-btn-used{{/unless}}"
+                    {{#unless chargeWidth}}disabled{{/unless}}>Gore</button>
+          </div>
+          {{/if}}
+
+          {{#if constrictActive}}
+          <div class="cs-ability-row">
+            <i class="fas fa-link cs-ability-icon cs-ability-icon-danger"></i>
+            <span class="cs-ability-label">Constrict</span>
+            <span class="cs-ability-detail cs-ability-active">Active — {{constrictTargetName}}</span>
+            <button type="button" data-action="boaConstrict" class="cs-ability-btn">Roll</button>
+            <button type="button" data-action="boaReleaseTarget" class="cs-ability-btn cs-ability-btn-danger-sm">Release</button>
+          </div>
+          {{else}}
+            {{#if hasConstrict}}
+            <div class="cs-ability-row">
+              <i class="fas fa-link cs-ability-icon"></i>
+              <span class="cs-ability-label">Constrict</span>
+              <span class="cs-ability-detail">Not active</span>
+              <button type="button" data-action="boaDropAndGrab" class="cs-ability-btn cs-ability-btn-secondary">Drop &amp; Grab</button>
+            </div>
+            {{/if}}
+          {{/if}}
+
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- ── CONFIGURE (collapsed) ── --}}
+      <details class="cs-configure-panel">
+        <summary class="cs-configure-summary"><i class="fas fa-cog"></i> Configure Creature</summary>
+        <div class="cs-configure-body">
+          <div class="cs-config-grid">
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Free Gobble Dice / Round (0 = none)</label>
+              <input type="number" name="system.creatureFlags.freeGobbleDicePerRound"
+                     value="{{system.creatureFlags.freeGobbleDicePerRound}}" min="0" max="10"/>
+            </div>
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Venom Potency (0 = none)</label>
+              <input type="number" name="system.creatureFlags.venomPotency"
+                     value="{{system.creatureFlags.venomPotency}}" min="0" max="10"/>
+            </div>
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Venom Type</label>
+              <input type="text" name="system.creatureFlags.venomType"
+                     value="{{system.creatureFlags.venomType}}" placeholder="e.g. Rattlesnake Venom"/>
+            </div>
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Once-per-combat Morale Attack</label>
+              <input type="checkbox" name="system.creatureFlags.moraleAttackOnce"
+                     {{#if system.creatureFlags.moraleAttackOnce}}checked{{/if}}/>
+            </div>
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Charge Accumulation (Rhino)</label>
+              <input type="checkbox" name="system.creatureFlags.hasChargeAccumulation"
+                     {{#if system.creatureFlags.hasChargeAccumulation}}checked{{/if}}/>
+            </div>
+            <div class="form-group">
+              <label class="wt-text-small wt-bold">Constrict Ability (Boa)</label>
+              <input type="checkbox" name="system.creatureFlags.hasConstrict"
+                     {{#if system.creatureFlags.hasConstrict}}checked{{/if}}/>
+            </div>
+          </div>
+        </div>
+      </details>
+
+    </div>
+    {{!-- ═══════════════════════════════════════════════════════
+         MOB MODE — Existing binary-elimination UI (unchanged)
+    ═══════════════════════════════════════════════════════ --}}
+    {{else}}
+
+    <div class="threat-stat-grid">
+
+      <div class="stat-block bg-white threat-main-border">
+        <div class="stat-header wt-flex-center threat-header-black">
+          <h2 class="rollable" data-action="rollThreat" title="{{localize 'WT.RollThreatAction'}}">
+            <i class="fas fa-dice-d10 wt-mr10"></i> {{localize 'WT.RollThreatAction'}}
+          </h2>
+        </div>
+
+        <div class="threat-input-row wt-flex-around">
+          <div class="wt-text-center">
+            <label class="wt-bold wt-mb5 wt-block wt-text-lg">{{localize 'WT.ThreatRating'}}</label>
+            <input type="number" name="system.threatLevel" value="{{system.threatLevel}}"
+                   min="1" max="4" class="wt-threat-number-input"
+                   title="{{localize 'WT.ThreatRatingDesc'}}"/>
+          </div>
+          <div class="wt-text-center wt-flex1">
+            <label class="wt-bold wt-mb5 wt-block wt-text-lg">{{localize 'WT.ParentCompany'}}</label>
+            <select name="system.parentCompany" class="wt-threat-select">
+              <option value="">{{localize 'WT.ParentCompanyNone'}}</option>
+              {{selectOptions companies selected=system.parentCompany}}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="threat-sub-grid">
+
+        <div class="stat-block bg-white wt-text-center wt-pb10 threat-main-border">
+          <div class="stat-header bg-crimson wt-flex-center threat-header-red">
+            <h2>{{localize 'WT.Fighters'}}</h2>
+          </div>
+          <div class="wt-desc-text threat-desc-italics">{{localize 'WT.FightersDesc'}}</div>
+          <div class="wt-fraction-input wt-flex-center wt-pb10">
+            <input type="number" name="system.magnitude.value" value="{{system.magnitude.value}}"
+                   min="0" class="wt-fraction-val threat-mag-input"
+                   title="{{localize 'WT.CurrentFighters'}}"/>
+            <span class="threat-fraction-separator">/</span>
+            <input type="number" name="system.magnitude.max" value="{{system.magnitude.max}}"
+                   min="1" class="wt-fraction-max threat-max-input"
+                   title="{{localize 'WT.MaxFighters'}}"/>
+          </div>
+          <div class="wt-flex-center wt-mb5">
+            <a class="wt-text-small rollable" data-action="eliminateMinions"
+               title="{{localize 'WT.EliminateMinions'}}">
+              <i class="fas fa-skull"></i> {{localize 'WT.EliminateMinions'}}
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-block bg-white wt-text-center wt-pb10 threat-main-border">
+          <div class="stat-header bg-navy wt-flex-center threat-header-blue">
+            <h2 class="rollable" data-action="rollMorale" title="{{localize 'WT.RollMorale'}}">
+              {{localize 'WT.Morale'}}
+            </h2>
+          </div>
+          <div class="wt-desc-text threat-desc-italics">{{localize 'WT.MoraleDesc'}}</div>
+          <div class="wt-fraction-input wt-flex-center wt-pb10">
+            <input type="number" name="system.morale.value" value="{{system.morale.value}}"
+                   min="0" class="wt-fraction-val threat-mag-input"
+                   title="{{localize 'WT.CurrentMorale'}}"/>
+            <span class="threat-fraction-separator">/</span>
+            <input type="number" name="system.morale.max" value="{{system.morale.max}}"
+                   min="1" class="wt-fraction-max threat-max-input"
+                   title="{{localize 'WT.MaxMorale'}}"/>
+          </div>
+          <div class="wt-flex-center wt-mb5">
+            <a class="wt-text-small rollable" data-action="receiveMoraleAttack"
+               title="{{localize 'WT.ReceiveMoraleAttack'}}">
+              <i class="fas fa-bolt"></i> {{localize 'WT.ReceiveMoraleAttack'}}
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="stat-block bg-white wt-mt10 threat-main-border">
+        <div class="stat-header wt-flex-center threat-header-black">
+          <h2>{{localize 'WT.DescriptionTactics'}}</h2>
+        </div>
+        <div class="threat-damage-formula-row">
+          <label class="wt-bold wt-mb5 wt-block">{{localize 'WT.DamageFormula'}}</label>
+          <input type="text" name="system.damageFormula" value="{{system.damageFormula}}"
+                 class="wt-threat-weapon wt-mb10" placeholder="{{localize 'WT.DamagePlaceholder'}}"/>
+        </div>
+        {{editor system.description target="system.description" button=true}}
+      </div>
+
+    </div>
+    {{/if}}
+
+  </section>
+</div>

@@ -1,0 +1,42 @@
+{
+  "name": "Mutant",
+  "pages": [
+    {
+      "name": "Mutant",
+      "type": "text",
+      "text": {
+        "content": "<h2>Mutant</h2><p><strong>Source:</strong> Genetic (5 pts, first free)</p><p><strong>Permission:</strong> Power Theme (5 pts) \u2014 All powers must fit a cohesive mutation theme.</p><p><strong>Intrinsics:</strong> None required.</p><h3>Description</h3><p>Your powers come from a genetic mutation, whether inborn or triggered by some external factor. All your abilities must follow a common theme \u2014 ice powers, shapeshifting, psychic abilities, etc.</p><h3>Preset Meta-Qualities</h3><ul><li>Genetic (Source) \u2014 5 pts (first free = 0)</li><li>Power Theme (Permission) \u2014 5 pts</li></ul><p><strong>Archetype Cost: 5 pts</strong></p><h3>Reference</h3><p>\ud83d\udcd6 Wild Talents 2e, Chapter 5, p.97\u201398</p>",
+        "format": 1
+      },
+      "_id": "wt2earchMutant001p000",
+      "_key": "!journal.pages!wt2earchMutant001p000"
+    }
+  ],
+  "_id": "wt2earchMutant001",
+  "flags": {
+    "wild-talents-2e": {
+      "archetypeData": {
+        "name": "Mutant",
+        "metaQualities": [
+          {
+            "id": "genetic",
+            "name": "Genetic",
+            "type": "source",
+            "cost": 5,
+            "notes": "",
+            "parameters": {}
+          },
+          {
+            "id": "powerTheme",
+            "name": "Power Theme",
+            "type": "permission",
+            "cost": 5,
+            "notes": "",
+            "parameters": {}
+          }
+        ]
+      }
+    }
+  },
+  "_key": "!journal!wt2earchMutant001"
+}

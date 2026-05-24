@@ -1,0 +1,31 @@
+{
+  "name": "Flight",
+  "type": "power",
+  "_id": "wt2ePowFlight001",
+  "system": {
+    "powerType": "miracle",
+    "dice": {
+      "normal": 2,
+      "hard": 1,
+      "wiggle": 0
+    },
+    "stat": "",
+    "skill": "",
+    "qualities": [
+      {
+        "name": "Useful",
+        "type": "quality",
+        "cost": 2,
+        "extras": [
+          {
+            "name": "Duration +2",
+            "cost": 4
+          }
+        ],
+        "flaws": []
+      }
+    ],
+    "notes": "\ud83d\udcd6 WT2e Ch4 p.80. Miracle power. Self-propelled flight. Useful quality with Duration extra for sustained flight. 1HD ensures reliable activation."
+  },
+  "_key": "!items!wt2ePowFlight001"
+}

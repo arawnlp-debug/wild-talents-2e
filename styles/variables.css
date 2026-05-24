@@ -1,0 +1,631 @@
+/* ====================================================
+   WT: 2ND EDITION
+   Variables & Theme Architecture
+   ────────────────────────────────────────────────────
+   SINGLE SOURCE OF TRUTH — All colour, spacing, and
+   typographic decisions live here. Component files
+   MUST NOT contain hardcoded hex or named colours.
+   ────────────────────────────────────────────────────
+   COMIC THEME (Increment 1 — Sprint 1.1)
+   The :root block first declares the new Comic palette
+   and typography tokens (--cm-*). The legacy "Blood,
+   Iron, Parchment" tokens follow and remain the
+   default so existing surfaces (Crucible, faction
+   dashboard, item sheets) render unchanged.
+   The Comic look is opted-in surface-by-surface via
+   the `.wt-comic` class on a container element,
+   which remaps the legacy --wt-* tokens to point at
+   the new --cm-* values. This means subsequent sprints
+   can flip surfaces over one at a time without a
+   big-bang restyle.
+==================================================== */
+
+:root {
+
+  /* ═════════════════════════════════════════════════════════════════════
+     COMIC PALETTE — Four-Colour Print, Updated for Screens
+     ─────────────────────────────────────────────────────────────────
+     Use these tokens in new dashboard components. Legacy components
+     keep using the --wt-* tokens further down until migrated.
+  ═════════════════════════════════════════════════════════════════════ */
+
+  /* Core Inks & Paper */
+  --cm-ink:               #1A1A1A;   /* Borders, headers, body text */
+  --cm-ink-soft:          #2D2D2D;   /* Slightly lighter ink for hierarchy */
+  --cm-paper:             #FFFFFF;   /* Panel backgrounds (the page) */
+  --cm-paper-warm:        #FAF8F3;   /* Slightly warmed paper for variation */
+  --cm-gutter:            #E2E8F0;   /* Sheet background — the page margins */
+  --cm-gutter-deep:       #CBD5E1;   /* Deeper gutter for nested panels */
+
+  /* Primary Accents */
+  --cm-accent-blue:       #005AE0;   /* Primary accent: links, primary CTAs, hover states */
+  --cm-accent-blue-dark:  #003FAA;   /* Active / pressed state */
+  --cm-accent-blue-soft:  rgba(0, 90, 224, 0.18);  /* Hover wash on hit zones */
+
+  --cm-accent-yellow:     #FFC107;   /* Willpower, action buttons, sound-effect bursts */
+  --cm-accent-yellow-dark:#E0A800;   /* Hover for yellow buttons */
+  --cm-accent-yellow-soft:rgba(255, 193, 7, 0.45); /* Shock damage fill */
+
+  --cm-accent-red:        #E11D48;   /* Killing damage, critical alerts */
+  --cm-accent-red-dark:   #B91C3A;   /* Hover / pressed danger */
+  --cm-accent-red-soft:   rgba(225, 29, 72, 0.55); /* Killing damage fill */
+
+  /* Secondary Accents */
+  --cm-accent-green:      #15803D;   /* Defends quality, healing, successful gobble */
+  --cm-accent-green-soft: rgba(21, 128, 61, 0.15);
+  --cm-accent-purple:     #6D28D9;   /* Useful quality accent */
+  --cm-accent-purple-soft:rgba(109, 40, 217, 0.15);
+
+  /* Comic Shadows — Hard Offset, NOT Soft Blur */
+  --cm-shadow-panel:      6px 6px 0 var(--cm-ink);   /* Hard ink shadow for panels */
+  --cm-shadow-panel-sm:   3px 3px 0 var(--cm-ink);   /* Smaller version for cards */
+  --cm-shadow-button:     3px 3px 0 var(--cm-ink);   /* Default button rest state */
+  --cm-shadow-button-hover: 5px 5px 0 var(--cm-ink); /* Button "pops off page" on hover */
+
+  /* Comic Borders */
+  --cm-border-panel:      3px solid var(--cm-ink);
+  --cm-border-panel-thin: 2px solid var(--cm-ink);
+  --cm-border-card:       2px solid var(--cm-ink);
+
+  /* Comic Typography */
+  --cm-font-display:      'Bebas Neue', 'Oswald', 'Impact', 'Arial Narrow Bold', sans-serif;
+  --cm-font-body:         'Montserrat', 'Roboto', 'Segoe UI', system-ui, sans-serif;
+  --cm-font-mono:         'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Comic Text */
+  --cm-text-on-paper:     var(--cm-ink);
+  --cm-text-on-ink:       var(--cm-paper);
+  --cm-text-muted:        #64748B;       /* Slate-500 for secondary text */
+  --cm-text-disabled:     #94A3B8;       /* Slate-400 for disabled state */
+
+  /* Comic Focus Ring (WCAG-friendly accent blue) */
+  --cm-focus-ring:        0 0 0 3px rgba(0, 90, 224, 0.45);
+
+  /* Clip-path shape for slanted panel headers */
+  --cm-slant-right:       polygon(0 0, 95% 0, 100% 100%, 0 100%);
+  --cm-slant-left:        polygon(0 0, 100% 0, 100% 100%, 5% 100%);
+
+  /* ═════════════════════════════════════════════════════════════════════
+     LEGACY PALETTE — Blood, Iron, and Parchment
+     ─────────────────────────────────────────────────────────────────
+     Continues to drive the Crucible, faction dashboard, item sheets,
+     and chat cards until each is migrated. DO NOT REMOVE.
+  ═════════════════════════════════════════════════════════════════════ */
+
+  /* ─── The Palette: Blood, Iron, and Parchment ──────────────────────── */
+  /* Light Mode Defaults                                                  */
+
+  --wt-bg-parchment: #f4f1ea;       /* Base sheet background */
+  --wt-bg-vellum: #e8e0d0;          /* Secondary panels, zebra rows, callouts */
+  --wt-bg-paper: #fdfdfc;           /* Inputs and text areas */
+  --wt-bg-ash: #4a4540;             /* Soft structural, secondary headers */
+  --wt-bg-iron: #2b2b2b;            /* Headers and heavy structural elements */
+  --wt-bg-iron-light: #3a3a3a;      /* Hover states for iron */
+
+  --wt-color-blood: #8b1f1f;        /* Primary accent: Health, Attacks, Danger */
+  --wt-color-blood-dark: #6a1616;   /* Hover states for blood */
+  --wt-color-emerald: #2d5a27;      /* Success, Healing, Gobble Dice */
+  --wt-color-brass: #d97706;        /* Sovereignty, Armor, Shields */
+
+  /* ─── Extended Palette ─────────────────────────────────────────────── */
+  /* Sorcery: Charactermancer, esoteric UI, school icons                 */
+  --wt-color-sorcery: #512da8;
+  --wt-color-sorcery-dark: #311b92;
+  --wt-color-sorcery-light: #ede7f6;
+  /* Destroyed / Disabled: Greyed-out locations, dead states             */
+  --wt-color-destroyed: #555555;
+  --wt-color-destroyed-light: #999999;
+  /* Deflect: Shield deflection banners                                  */
+  --wt-color-deflect: #2e7d32;
+  --wt-color-deflect-dark: #1b5e20;
+  --wt-bg-deflect: #e8f5e9;
+  /* Spell intensity — fired/success green                               */
+  --wt-color-fired: #1e6b3a;
+  --wt-bg-fired: rgba(30,107,58,0.15);
+  /* Attunement header                                                   */
+  --wt-bg-attunement: #2a2a3a;
+  --wt-text-attunement: #cccccc;
+
+  /* ─── Semantic Colors for V14 Chat / Dialogs ───────────────────────── */
+  --wt-red: #8b1f1f;
+  --wt-green: #2d5a27;
+  --wt-blue: #0277bd;
+  --wt-orange: #d97706;
+  --wt-critical: #c62828;
+  --wt-purple: #ab47bc;
+
+  /* Status Banners */
+  --wt-dark-red: #4a0000;
+  --wt-navy: #1a237e;
+  --wt-burnt-orange: #e65100;
+
+  /* ─── Semantic UI Colours — Chat Cards & Banners ───────────────────── */
+
+  /* Teal: success confirmations, manoeuvre effects, healing */
+  --wt-color-teal: #00695c;
+  --wt-color-teal-light: #00897b;
+  --wt-color-teal-border: #4db6ac;
+  --wt-bg-teal: #e0f2f1;
+  /* Danger: failed rolls, critical wounds */
+  --wt-bg-danger: #ffebee;
+  --wt-color-danger: #c62828;
+  --wt-color-danger-border: #ef5350;
+  /* Warning: cautions, partial results */
+  --wt-bg-warn: #fff3e0;
+  --wt-color-warn-border: #ffb74d;
+  /* Info: gobble dice, deflect, blue callouts */
+  --wt-bg-info: #e3f2fd;
+  --wt-color-blue-dark: #1565c0;
+  --wt-color-info-border: #90caf9;
+  /* Amber: mid-intensity spells, temporary attunement */
+  --wt-color-amber: #c88b00;
+  --wt-bg-amber: #fff8e1;
+  /* Arcane: extreme-intensity spells, esoteric power */
+  --wt-color-arcane: #4a1a6e;
+  --wt-color-arcane-light: #e2d4ff;
+
+  /* ─── Subtle Backgrounds (Button Tints & Card Washes) ──────────────── */
+  /* These replace the ~80 raw rgba() values in component files.          */
+  /* Each has a -subtle (10% tint) and -muted (5% tint) variant.          */
+
+  --wt-bg-blood-subtle: rgba(229, 115, 115, 0.10);
+  --wt-bg-blood-muted: rgba(139, 31, 31, 0.05);
+  --wt-bg-blood-wash: rgba(139, 31, 31, 0.08);
+  --wt-bg-emerald-subtle: rgba(46, 125, 50, 0.10);
+  --wt-bg-emerald-muted: rgba(46, 125, 50, 0.04);
+  --wt-bg-brass-subtle: rgba(217, 119, 6, 0.10);
+  --wt-bg-brass-muted: rgba(217, 119, 6, 0.06);
+  --wt-bg-blue-subtle: rgba(66, 165, 245, 0.10);
+  --wt-bg-blue-muted: rgba(66, 165, 245, 0.04);
+  --wt-bg-sorcery-subtle: rgba(156, 39, 176, 0.10);
+  --wt-bg-sorcery-muted: rgba(156, 39, 176, 0.05);
+  --wt-bg-teal-subtle: rgba(0, 137, 123, 0.10);
+  --wt-bg-teal-muted: rgba(0, 137, 123, 0.04);
+  --wt-bg-amber-subtle: rgba(245, 127, 23, 0.10);
+
+  /* ─── Text ─────────────────────────────────────────────────────────── */
+  --wt-text-dark: #111111;          /* Standard reading text */
+  --wt-text-muted: #555555;         /* Helper text and hints */
+  --wt-text-light: #ffffff;         /* Text on iron/blood backgrounds */
+
+  /* ─── Borders ──────────────────────────────────────────────────────── */
+  --wt-border-iron: 2px solid var(--wt-bg-iron);
+  --wt-border-brass: 1px solid var(--wt-color-brass);
+  --wt-border-light: 1px solid #ccc;
+  --wt-border-dashed: 1px dashed #aaa;
+  --wt-border-heavy: 2px solid #000;             /* Threat boxes, pool previews */
+  --wt-border-medium: 1px solid #999;             /* Health boxes, input outlines */
+
+  /* ─── Typography Hierarchy ─────────────────────────────────────────── */
+  --wt-font-display: 'Cinzel', 'Book Antiqua', Palatino, serif;
+  --wt-font-flavor: "Book Antiqua", Palatino, serif;
+  --wt-font-data: var(--font-primary), sans-serif;
+  --wt-font-mono: "Courier New", Courier, monospace;
+
+  /* Typographic Scale (Major Second ~1.125) */
+  --wt-text-xs: 0.75em;
+  --wt-text-sm: 0.85em;
+  --wt-text-base: 1em;
+  --wt-text-lg: 1.15em;
+  --wt-text-xl: 1.4em;
+  --wt-text-2xl: 1.8em;
+  --wt-text-3xl: 2.5em;
+
+  /* ─── Spacing Scale ────────────────────────────────────────────────── */
+  --wt-space-xs: 4px;
+  --wt-space-sm: 8px;
+  --wt-space-md: 16px;
+  --wt-space-lg: 24px;
+  --wt-space-xl: 32px;
+
+  /* ─── Shadows & Depth ──────────────────────────────────────────────── */
+  --wt-shadow-inset: inset 0 1px 3px rgba(0,0,0,0.1);
+  --wt-shadow-drop: 0 2px 4px rgba(0,0,0,0.15);
+  --wt-shadow-elevated: 0 4px 12px rgba(0,0,0,0.20);
+
+  /* ─── Focus & Accessibility ────────────────────────────────────────── */
+  --wt-focus-ring: rgba(139, 31, 31, 0.5);        /* Blood-tinted focus outline */
+  --wt-focus-glow: 0 0 0 2px rgba(139, 31, 31, 0.35);
+  --wt-focus-ring-inner: rgba(139, 31, 31, 0.15); /* Subtle inner fill on focus */
+
+  /* ─── Custom Scrollbar ─────────────────────────────────────────────── */
+  --wt-scrollbar-track: transparent;
+  --wt-scrollbar-thumb: rgba(43, 43, 43, 0.25);   /* Iron at 25% */
+  --wt-scrollbar-hover: rgba(139, 31, 31, 0.4);   /* Blood on hover */
+  --wt-scrollbar-width: 6px;
+
+  /* ─── Transitions ──────────────────────────────────────────────────── */
+  --wt-transition-fast: 0.1s ease;
+  --wt-transition-base: 0.2s ease;
+  --wt-transition-slow: 0.3s ease;
+
+  /* ─── Border Radius ────────────────────────────────────────────────── */
+  --wt-radius-sm: 2px;
+  --wt-radius-md: 4px;
+  --wt-radius-lg: 8px;
+
+  /* ─── Motif: Diamond Divider (inline SVG — Light) ──────────────────── */
+  --wt-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cline x1='0' y1='4' x2='90' y2='4' stroke='%232b2b2b' stroke-opacity='0.35' stroke-width='1'/%3E%3Cpolygon points='100,0.5 106,4 100,7.5 94,4' fill='%238b1f1f' fill-opacity='0.3' stroke='%232b2b2b' stroke-opacity='0.25' stroke-width='0.5'/%3E%3Cline x1='110' y1='4' x2='200' y2='4' stroke='%232b2b2b' stroke-opacity='0.35' stroke-width='1'/%3E%3C/svg%3E");
+
+  /* ─── Texture: Parchment (Multi-Layer) ───────────────────────────────── */
+  /* Layer 1: Fine grain — small-scale fractal noise for paper fibre       */
+  --wt-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
+
+  /* Layer 2: Coarse fibre — larger-scale turbulence for visible texture   */
+  --wt-texture-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.025' numOctaves='5' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)' opacity='0.045'/%3E%3C/svg%3E");
+
+  /* Layer 3: Warm vignette — subtle edge darkening like aged paper        */
+  --wt-vignette: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 40%,
+    rgba(139, 120, 90, 0.06) 70%,
+    rgba(100, 80, 55, 0.12) 100%
+  );
+
+  /* Composed parchment surface: all layers stacked (bottom to top)        */
+  --wt-parchment-surface:
+    var(--wt-grain),
+    var(--wt-texture-coarse),
+    var(--wt-vignette);
+
+  /* Edge depth shadow for physical feel on sheet containers               */
+  --wt-shadow-parchment: inset 0 0 30px rgba(100, 80, 55, 0.08), inset 0 0 4px rgba(0, 0, 0, 0.04);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   DARK MODE — Foundry VTT (.theme-dark)
+   ─────────────────────────────────────────────────────────────────────
+   Broadened scope: covers sheets, chat cards, dialogs, crucible,
+   companymancer, and the global UI skin via .system-wild-talents-2e.
+═════════════════════════════════════════════════════════════════════════ */
+
+.theme-dark .wt.sheet,
+.theme-dark .wt-chat-card,
+.theme-dark .wt-dialog-window .window-content,
+.theme-dark .crucible-wrapper,
+.theme-dark .cr-wrapper,
+.theme-dark .companymancer-wrapper,
+.theme-dark.system-wild-talents-2e #sidebar,
+.theme-dark.system-wild-talents-2e .window-header,
+.theme-dark.system-wild-talents-2e .window-content {
+
+  /* ─── Core Palette — Dark ────────────────────────────────────────── */
+  --wt-bg-parchment: #1e1e1e;
+  --wt-bg-vellum: #252525;
+  --wt-bg-paper: #2a2a2a;
+  --wt-bg-ash: #333330;
+  --wt-bg-iron: #111111;
+  --wt-bg-iron-light: #1a1a1a;
+
+  --wt-color-blood: #a53232;
+  --wt-color-blood-dark: #cc4444;
+  --wt-color-emerald: #3a8a33;
+  --wt-color-brass: #e68a00;
+
+  /* ─── Extended Palette — Dark ────────────────────────────────────── */
+  --wt-color-sorcery: #9575cd;
+  --wt-color-sorcery-dark: #7e57c2;
+  --wt-color-sorcery-light: #1a1028;
+  --wt-color-destroyed: #666666;
+  --wt-color-destroyed-light: #888888;
+  --wt-color-deflect: #4caf50;
+  --wt-color-deflect-dark: #388e3c;
+  --wt-bg-deflect: #1a2e1a;
+  --wt-color-fired: #4caf50;
+  --wt-bg-fired: rgba(76,175,80,0.18);
+  --wt-bg-attunement: #1a1a2a;
+  --wt-text-attunement: #aaaaaa;
+
+  /* ─── Semantic Colors for V14 Chat / Dialogs — Dark ──────────────── */
+  --wt-red: #a53232;
+  --wt-green: #3a8a33;
+  --wt-blue: #4fc3f7;
+  --wt-orange: #e68a00;
+  --wt-critical: #ff6659;
+  --wt-purple: #ce93d8;
+
+  /* Status Banners — Dark */
+  --wt-dark-red: #6a0000;
+  --wt-navy: #283593;
+  --wt-burnt-orange: #ef6c00;
+
+  /* Semantic UI — Dark */
+  --wt-color-teal: #4db6ac;
+  --wt-color-teal-light: #80cbc4;
+  --wt-color-teal-border: #009688;
+  --wt-bg-teal: #1a2a2a;
+  --wt-bg-danger: #2a1212;
+  --wt-color-danger: #ff6659;
+  --wt-color-danger-border: #c62828;
+  --wt-bg-warn: #2a1f0c;
+  --wt-color-warn-border: #ff8a50;
+  --wt-bg-info: #0d1b2a;
+  --wt-color-blue-dark: #4fc3f7;
+  --wt-color-info-border: #1976d2;
+  --wt-color-amber: #ffb74d;
+  --wt-bg-amber: #2a200c;
+  --wt-color-arcane: #ce93d8;
+  --wt-color-arcane-light: #2a1a3a;
+
+  /* Subtle bg tints — slightly stronger for visibility on dark */
+  --wt-bg-blood-subtle: rgba(165, 50, 50, 0.18);
+  --wt-bg-blood-muted: rgba(165, 50, 50, 0.10);
+  --wt-bg-blood-wash: rgba(165, 50, 50, 0.12);
+  --wt-bg-emerald-subtle: rgba(76, 175, 80, 0.18);
+  --wt-bg-emerald-muted: rgba(76, 175, 80, 0.08);
+  --wt-bg-brass-subtle: rgba(230, 138, 0, 0.18);
+  --wt-bg-brass-muted: rgba(230, 138, 0, 0.10);
+  --wt-bg-blue-subtle: rgba(79, 195, 247, 0.15);
+  --wt-bg-blue-muted: rgba(79, 195, 247, 0.08);
+  --wt-bg-sorcery-subtle: rgba(149, 117, 205, 0.18);
+  --wt-bg-sorcery-muted: rgba(149, 117, 205, 0.10);
+  --wt-bg-teal-subtle: rgba(77, 182, 172, 0.18);
+  --wt-bg-teal-muted: rgba(77, 182, 172, 0.08);
+  --wt-bg-amber-subtle: rgba(255, 183, 77, 0.18);
+
+  /* ─── Text — Dark ────────────────────────────────────────────────── */
+  --wt-text-dark: #e8e8e8;
+  --wt-text-muted: #a0a0a0;
+  --wt-text-light: #ffffff;
+
+  /* ─── Borders — Dark ─────────────────────────────────────────────── */
+  --wt-border-iron: 2px solid var(--wt-bg-iron);
+  --wt-border-brass: 1px solid var(--wt-color-brass);
+  --wt-border-light: 1px solid #444;
+  --wt-border-dashed: 1px dashed #555;
+  --wt-border-heavy: 2px solid #555;
+  --wt-border-medium: 1px solid #666;
+
+  /* ─── Shadows — Dark ─────────────────────────────────────────────── */
+  --wt-shadow-inset: inset 0 1px 3px rgba(0,0,0,0.4);
+  --wt-shadow-drop: 0 2px 4px rgba(0,0,0,0.5);
+  --wt-shadow-elevated: 0 4px 12px rgba(0,0,0,0.6);
+
+  /* ─── Focus & Accessibility — Dark ──────────────────────────────── */
+  --wt-focus-ring: rgba(165, 50, 50, 0.6);
+  --wt-focus-glow: 0 0 0 2px rgba(165, 50, 50, 0.4);
+  --wt-focus-ring-inner: rgba(165, 50, 50, 0.1);
+
+  /* ─── Scrollbar — Dark ───────────────────────────────────────────── */
+  --wt-scrollbar-track: transparent;
+  --wt-scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --wt-scrollbar-hover: rgba(165, 50, 50, 0.4);
+
+  /* ─── Motif: Diamond Divider — Dark ──────────────────────────────── */
+  /* Lighter strokes, slightly brighter blood diamond for visibility    */
+  --wt-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cline x1='0' y1='4' x2='90' y2='4' stroke='%23888888' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpolygon points='100,0.5 106,4 100,7.5 94,4' fill='%23a53232' fill-opacity='0.45' stroke='%23888888' stroke-opacity='0.2' stroke-width='0.5'/%3E%3Cline x1='110' y1='4' x2='200' y2='4' stroke='%23888888' stroke-opacity='0.3' stroke-width='1'/%3E%3C/svg%3E");
+
+  /* ─── Texture: Grain — Dark ──────────────────────────────────────── */
+  /* Fully desaturated, lower opacity for dark surfaces                */
+  --wt-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.03'/%3E%3C/svg%3E");
+
+  /* Coarse texture — cooler, desaturated for dark leather/stone feel  */
+  --wt-texture-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.025' numOctaves='5' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)' opacity='0.035'/%3E%3C/svg%3E");
+
+  /* Vignette — deeper edge darkening for dramatic dark mode           */
+  --wt-vignette: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 35%,
+    rgba(0, 0, 0, 0.08) 65%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+
+  --wt-parchment-surface:
+    var(--wt-grain),
+    var(--wt-texture-coarse),
+    var(--wt-vignette);
+
+  --wt-shadow-parchment: inset 0 0 30px rgba(0, 0, 0, 0.15), inset 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   COLOURBLIND MODE — Okabe-Ito Inspired Palette
+   ─────────────────────────────────────────────────────────────────────
+   Toggled via client setting `wild-talents-2e.colorblindMode` which applies
+   .colorblind-mode to document.body. Remaps the three semantic hues
+   (Blood, Emerald, Brass) plus Sorcery to a high-contrast palette
+   that is distinguishable under protanopia, deuteranopia, and
+   tritanopia. All downstream variables (subtle bgs, focus rings)
+   cascade automatically.
+═════════════════════════════════════════════════════════════════════════ */
+
+/* ── Colourblind: Light Mode ─────────────────────────────────────────── */
+.colorblind-mode .wt.sheet,
+.colorblind-mode .wt-chat-card,
+.colorblind-mode .wt-dialog-window .window-content,
+.colorblind-mode .crucible-wrapper,
+.colorblind-mode .cr-wrapper,
+.colorblind-mode .companymancer-wrapper,
+.colorblind-mode.system-wild-talents-2e #sidebar,
+.colorblind-mode.system-wild-talents-2e .window-header,
+.colorblind-mode.system-wild-talents-2e .window-content {
+
+  /* Blood → Vermillion (Okabe-Ito) */
+  --wt-color-blood: #D55E00;
+  --wt-color-blood-dark: #A34700;
+  --wt-red: #D55E00;
+  --wt-critical: #CC3311;
+  --wt-dark-red: #6B2F00;
+
+  /* Emerald → Bluish Green (Okabe-Ito) */
+  --wt-color-emerald: #009E73;
+  --wt-green: #009E73;
+  --wt-color-teal: #009E73;
+  --wt-color-teal-light: #00C08B;
+  --wt-color-deflect: #009E73;
+  --wt-color-deflect-dark: #007A59;
+  --wt-color-fired: #007A59;
+
+  /* Brass → Orange/Yellow (Okabe-Ito) */
+  --wt-color-brass: #E69F00;
+  --wt-orange: #E69F00;
+  --wt-burnt-orange: #CC8800;
+  --wt-color-amber: #E69F00;
+  --wt-color-warn-border: #E69F00;
+
+  /* Sorcery → Sky Blue (Okabe-Ito) */
+  --wt-color-sorcery: #56B4E9;
+  --wt-color-sorcery-dark: #3A98CC;
+  --wt-color-arcane: #56B4E9;
+  --wt-purple: #56B4E9;
+  --wt-navy: #0072B2;
+
+  /* Info → Reddish Purple (Okabe-Ito) for contrast against blue-green */
+  --wt-blue: #CC79A7;
+  --wt-color-blue-dark: #AA5585;
+  --wt-color-info-border: #CC79A7;
+
+  /* Subtle backgrounds cascade from the remapped primaries */
+  --wt-bg-blood-subtle: rgba(213, 94, 0, 0.10);
+  --wt-bg-blood-muted: rgba(213, 94, 0, 0.05);
+  --wt-bg-blood-wash: rgba(213, 94, 0, 0.08);
+  --wt-bg-emerald-subtle: rgba(0, 158, 115, 0.10);
+  --wt-bg-emerald-muted: rgba(0, 158, 115, 0.04);
+  --wt-bg-brass-subtle: rgba(230, 159, 0, 0.10);
+  --wt-bg-brass-muted: rgba(230, 159, 0, 0.06);
+  --wt-bg-sorcery-subtle: rgba(86, 180, 233, 0.10);
+  --wt-bg-sorcery-muted: rgba(86, 180, 233, 0.05);
+  --wt-bg-blue-subtle: rgba(204, 121, 167, 0.10);
+  --wt-bg-teal-subtle: rgba(0, 158, 115, 0.10);
+
+  /* Focus ring uses vermillion instead of blood-red */
+  --wt-focus-ring: rgba(213, 94, 0, 0.5);
+  --wt-focus-glow: 0 0 0 2px rgba(213, 94, 0, 0.35);
+
+  /* Scrollbar hover uses vermillion */
+  --wt-scrollbar-hover: rgba(213, 94, 0, 0.4);
+
+  /* Divider uses vermillion diamond, neutral strokes */
+  --wt-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cline x1='0' y1='4' x2='90' y2='4' stroke='%232b2b2b' stroke-opacity='0.35' stroke-width='1'/%3E%3Cpolygon points='100,0.5 106,4 100,7.5 94,4' fill='%23D55E00' fill-opacity='0.3' stroke='%232b2b2b' stroke-opacity='0.25' stroke-width='0.5'/%3E%3Cline x1='110' y1='4' x2='200' y2='4' stroke='%232b2b2b' stroke-opacity='0.35' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* ── Colourblind: Dark Mode (both classes active) ────────────────────── */
+.colorblind-mode.theme-dark .wt.sheet,
+.colorblind-mode.theme-dark .wt-chat-card,
+.colorblind-mode.theme-dark .wt-dialog-window .window-content,
+.colorblind-mode.theme-dark .crucible-wrapper,
+.colorblind-mode.theme-dark .cr-wrapper,
+.colorblind-mode.theme-dark .companymancer-wrapper,
+.colorblind-mode.theme-dark.system-wild-talents-2e #sidebar,
+.colorblind-mode.theme-dark.system-wild-talents-2e .window-header,
+.colorblind-mode.theme-dark.system-wild-talents-2e .window-content {
+
+  /* Vermillion — slightly brighter for dark backgrounds */
+  --wt-color-blood: #E87530;
+  --wt-color-blood-dark: #FF8C42;
+  --wt-red: #FF8C42;
+  --wt-critical: #FF6633;
+
+  /* Bluish Green — slightly brighter */
+  --wt-color-emerald: #2BBFA0;
+  --wt-green: #2BBFA0;
+  --wt-color-teal: #2BBFA0;
+
+  /* Orange/Yellow — slightly brighter */
+  --wt-color-brass: #FFB833;
+  --wt-orange: #FFB833;
+
+  /* Sky Blue — holds well in dark mode */
+  --wt-color-sorcery: #7CC8F0;
+  --wt-purple: #7CC8F0;
+  --wt-color-arcane: #7CC8F0;
+
+  /* Reddish Purple */
+  --wt-blue: #E09CC0;
+  --wt-color-blue-dark: #CC79A7;
+
+  /* Subtle bgs with dark-adjusted opacities */
+  --wt-bg-blood-subtle: rgba(232, 117, 48, 0.15);
+  --wt-bg-blood-muted: rgba(232, 117, 48, 0.08);
+  --wt-bg-emerald-subtle: rgba(43, 191, 160, 0.15);
+  --wt-bg-emerald-muted: rgba(43, 191, 160, 0.06);
+  --wt-bg-brass-subtle: rgba(255, 184, 51, 0.12);
+  --wt-bg-sorcery-subtle: rgba(124, 200, 240, 0.12);
+
+  --wt-focus-ring: rgba(232, 117, 48, 0.6);
+  --wt-focus-glow: 0 0 0 2px rgba(232, 117, 48, 0.4);
+  --wt-scrollbar-hover: rgba(232, 117, 48, 0.4);
+
+  /* Divider — dark mode colourblind */
+  --wt-divider: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' viewBox='0 0 200 8'%3E%3Cline x1='0' y1='4' x2='90' y2='4' stroke='%23888888' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpolygon points='100,0.5 106,4 100,7.5 94,4' fill='%23E87530' fill-opacity='0.45' stroke='%23888888' stroke-opacity='0.2' stroke-width='0.5'/%3E%3Cline x1='110' y1='4' x2='200' y2='4' stroke='%23888888' stroke-opacity='0.3' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   COMIC SHIM — Opt-In Theme Mapping
+   ─────────────────────────────────────────────────────────────────────
+   When `.wt-comic` is applied to a container, the legacy --wt-* tokens
+   are REMAPPED to point at the Comic palette. This means:
+     1. Components that still use --wt-* tokens will render in the new
+        comic style automatically when contained inside `.wt-comic`.
+     2. Components NOT inside `.wt-comic` (Crucible, faction dashboard,
+        item sheets, chat cards) keep their legacy look.
+     3. New components built directly on --cm-* tokens are unaffected.
+   ─────────────────────────────────────────────────────────────────────
+   Apply `.wt-comic` to the actor sheet root in Sprint 1.2 / Increment 2
+   to flip the character sheet over. Other surfaces stay legacy until
+   their own migration sprint.
+═════════════════════════════════════════════════════════════════════════ */
+
+.wt-comic {
+  /* Backgrounds → Paper / Gutter */
+  --wt-bg-parchment:        var(--cm-gutter);
+  --wt-bg-vellum:           var(--cm-gutter-deep);
+  --wt-bg-paper:            var(--cm-paper);
+  --wt-bg-ash:              var(--cm-ink-soft);
+  --wt-bg-iron:             var(--cm-ink);
+  --wt-bg-iron-light:       var(--cm-ink-soft);
+
+  /* Accent remap: Blood → Red, Emerald → Green, Brass → Yellow */
+  --wt-color-blood:         var(--cm-accent-red);
+  --wt-color-blood-dark:    var(--cm-accent-red-dark);
+  --wt-color-emerald:       var(--cm-accent-green);
+  --wt-color-brass:         var(--cm-accent-yellow-dark);   /* darker yellow for readable text */
+
+  /* Semantic colours */
+  --wt-red:                 var(--cm-accent-red);
+  --wt-green:               var(--cm-accent-green);
+  --wt-blue:                var(--cm-accent-blue);
+  --wt-orange:              var(--cm-accent-yellow-dark);
+  --wt-critical:            var(--cm-accent-red);
+  --wt-purple:              var(--cm-accent-purple);
+
+  /* Text */
+  --wt-text-dark:           var(--cm-text-on-paper);
+  --wt-text-muted:          var(--cm-text-muted);
+  --wt-text-light:          var(--cm-text-on-ink);
+
+  /* Borders — Comic prefers heavy 2-3px ink borders */
+  --wt-border-iron:         var(--cm-border-panel);
+  --wt-border-light:        1px solid var(--cm-gutter-deep);
+  --wt-border-heavy:        var(--cm-border-panel);
+  --wt-border-medium:       var(--cm-border-card);
+
+  /* Typography — comic display + body */
+  --wt-font-display:        var(--cm-font-display);
+  --wt-font-flavor:         var(--cm-font-body);
+  --wt-font-data:           var(--cm-font-body);
+
+  /* Shadows — hard offset, not soft blur */
+  --wt-shadow-drop:         var(--cm-shadow-panel-sm);
+  --wt-shadow-elevated:     var(--cm-shadow-panel);
+  --wt-shadow-inset:        none;
+  --wt-shadow-parchment:    none;
+
+  /* Disable parchment texture overlays */
+  --wt-parchment-surface:   none;
+  --wt-grain:               none;
+  --wt-texture-coarse:      none;
+  --wt-vignette:            none;
+
+  /* Focus ring — accent blue */
+  --wt-focus-ring:          rgba(0, 90, 224, 0.5);
+  --wt-focus-glow:          var(--cm-focus-ring);
+  --wt-focus-ring-inner:    rgba(0, 90, 224, 0.15);
+
+  /* Scrollbar — ink */
+  --wt-scrollbar-thumb:     rgba(26, 26, 26, 0.30);
+  --wt-scrollbar-hover:     rgba(0, 90, 224, 0.50);
+}

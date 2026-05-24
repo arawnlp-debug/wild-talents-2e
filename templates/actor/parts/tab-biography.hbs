@@ -1,0 +1,132 @@
+<div class="tab biography {{tabs.biography}}" data-tab="biography">
+  <div class="stat-grid">
+    <div class="wt-bio-left">
+      {{!-- Motivations — Passion & Loyalty with numerical ratings --}}
+      {{!-- WT Rulebook Ch3 p.54: "Divide your Base Will score between them" --}}
+      <div class="stat-block wt-mb20">
+        <div class="stat-header"><h2>Motivations</h2></div>
+        <div class="wt-p10">
+          <p class="wt-text-small wt-text-muted wt-mb10">
+            Divide your Base Will ({{system.willpower.base}}) between Passion and Loyalty.
+          </p>
+          <div class="wt-motivation-row">
+            <div class="wt-motivation-field">
+              <label>Passion <span class="wt-text-muted">(personal drive)</span></label>
+              <div class="wt-motivation-inputs">
+                <input type="text" name="system.biography.passion.description" value="{{system.biography.passion.description}}" placeholder="What drives you?" class="wt-motivation-desc"/>
+                <input type="number" name="system.biography.passion.rating" value="{{system.biography.passion.rating}}" min="0" class="wt-motivation-rating" title="Passion rating"/>
+              </div>
+            </div>
+            <div class="wt-motivation-field">
+              <label>Loyalty <span class="wt-text-muted">(external cause)</span></label>
+              <div class="wt-motivation-inputs">
+                <input type="text" name="system.biography.loyalty.description" value="{{system.biography.loyalty.description}}" placeholder="Who or what do you serve?" class="wt-motivation-desc"/>
+                <input type="number" name="system.biography.loyalty.rating" value="{{system.biography.loyalty.rating}}" min="0" class="wt-motivation-rating" title="Loyalty rating"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Background (rich text) --}}
+      <div class="stat-block wt-mb20">
+        <div class="stat-header"><h2>Background</h2></div>
+        {{editor system.biography.background target="system.biography.background" button=true}}
+      </div>
+
+      {{!-- Advantages --}}
+      <div class="item-list-container wt-mb20">
+        <div class="list-header flexrow">
+          <h3 class="wt-col-3">Advantages</h3>
+          <span class="wt-col-1">Cost</span>
+          <a class="item-create control-btn" data-action="itemCreate" data-type="advantage" title="Add Advantage"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each advantages as |item|}}
+        <div class="item-row flexrow">
+          <span class="wt-col-3 wt-bold">{{item.name}}</span>
+          <span class="wt-col-1">{{item.system.cost}}</span>
+          <div class="item-controls">
+            <a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a>
+            <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+            <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Problems --}}
+      <div class="item-list-container">
+        <div class="list-header flexrow">
+          <h3 class="wt-col-3">Problems</h3>
+          <span class="wt-col-1">Bonus</span>
+          <a class="item-create control-btn" data-action="itemCreate" data-type="problem" title="Add Problem"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each problems as |item|}}
+        <div class="item-row flexrow">
+          <span class="wt-col-3 wt-bold">{{item.name}}</span>
+          <span class="wt-col-1">{{item.system.bonus}}</span>
+          <div class="item-controls">
+            <a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a>
+            <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+            <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="wt-bio-right">
+      {{!-- Armor List — HAR/LAR display --}}
+      <div class="item-list-container wt-mb20">
+        <div class="list-header flexrow">
+          <h3 class="wt-col-2">Armor</h3>
+          <span class="wt-col-1 wt-text-center" title="Equipped"><i class="fas fa-tshirt"></i></span>
+          <span class="wt-col-1 wt-text-center" title="Heavy Armor Rating">HAR</span>
+          <span class="wt-col-1 wt-text-center" title="Light Armor Rating">LAR</span>
+          <a class="item-create control-btn" data-action="itemCreate" data-type="armor" title="Add Armor"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each armors as |item|}}
+        <div class="item-row flexrow">
+          <span class="wt-col-2 wt-bold">{{item.name}}</span>
+          <span class="wt-col-1 wt-flex-center">
+            <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-checkbox"/>
+          </span>
+          <span class="wt-col-1 wt-text-center">{{item.system.har}}</span>
+          <span class="wt-col-1 wt-text-center">{{item.system.lar}}</span>
+          <div class="item-controls">
+            <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+            <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Gear --}}
+      <div class="item-list-container wt-mb20">
+        <div class="list-header flexrow">
+          <h3 class="wt-col-3">Equipment</h3>
+          <span class="wt-col-1">Qty</span>
+          <a class="item-create control-btn" data-action="itemCreate" data-type="gear"><i class="fas fa-plus"></i></a>
+        </div>
+        {{#each gear as |item|}}
+        <div class="item-row flexrow">
+          <span class="wt-col-3">{{item.name}}</span>
+          <span class="wt-col-1">{{item.system.quantity}}</span>
+          <div class="item-controls">
+            <a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a>
+            <a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Notes --}}
+      <div class="stat-block">
+        <div class="stat-header"><h2>Notes</h2></div>
+        <div class="wt-p10">
+          <textarea name="system.biography.notes" rows="6" class="wt-full-width" placeholder="Freeform notes...">{{system.biography.notes}}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

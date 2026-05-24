@@ -1,0 +1,1094 @@
+/* ====================================================
+   WT: THE CRUCIBLE — Character Builder Styles
+   Increment 6, Sprint 6.2
+==================================================== */
+
+/* ── Root Wrapper ── */
+.crucible-wrapper, .cr-wrapper {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: var(--wt-font-primary, 'Georgia', serif);
+  color: var(--wt-text-dark, #111);
+  background: var(--wt-bg-parchment);
+}
+
+/* ── Step Indicator Bar ── */
+.cr-step-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 12px 20px;
+  background: var(--wt-bg-iron, #3a3a3a);
+  flex-shrink: 0;
+}
+
+.cr-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: default;
+}
+
+.cr-step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  background: var(--wt-bg-iron-light, #555);
+  color: var(--wt-text-light, #eee);
+  border: 2px solid var(--wt-bg-iron-light, #555);
+  transition: all 0.2s ease;
+}
+
+.cr-step-active .cr-step-number {
+  background: var(--wt-color-blood, #8b1f1f);
+  border-color: var(--wt-color-blood, #8b1f1f);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(139, 31, 31, 0.5);
+}
+
+.cr-step-done .cr-step-number {
+  background: var(--wt-color-emerald, #2d7d46);
+  border-color: var(--wt-color-emerald, #2d7d46);
+  color: #fff;
+}
+
+.cr-step-label {
+  font-size: 0.65em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--wt-text-light, #ccc);
+  opacity: 0.7;
+}
+
+.cr-step-active .cr-step-label {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.cr-step-connector {
+  width: 30px;
+  height: 2px;
+  background: var(--wt-bg-iron-light, #555);
+  margin: 0 4px;
+  margin-bottom: 14px;
+}
+
+.cr-step-connector-done {
+  background: var(--wt-color-emerald, #2d7d46);
+}
+
+/* ── Workspace: Editor + Sidebar ── */
+.cr-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 0;
+  overflow: hidden;
+}
+
+.cr-editor {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+/* ── Sidebar ── */
+.cr-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--wt-bg-paper, #f5f0e8);
+  border-left: 2px solid var(--wt-bg-iron, #3a3a3a);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.cr-points-box {
+  text-align: center;
+  padding: 14px 10px;
+  background: var(--wt-bg-parchment);
+  border: 2px solid var(--wt-bg-iron, #3a3a3a);
+  border-radius: 6px;
+}
+
+.cr-points-label {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--wt-text-dark);
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.cr-points-value {
+  font-family: var(--wt-font-display, 'Georgia', serif);
+  font-size: 2.4em;
+  font-weight: bold;
+  color: var(--wt-color-emerald, #2d7d46);
+  line-height: 1;
+}
+
+.cr-over-budget .cr-points-value {
+  color: var(--wt-color-blood, #8b1f1f);
+}
+
+.cr-points-total {
+  font-size: 0.75em;
+  color: var(--wt-text-dark);
+  opacity: 0.6;
+}
+
+.cr-breakdown {
+  font-size: 0.85em;
+}
+
+.cr-breakdown-title {
+  font-family: var(--wt-font-display);
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--wt-text-dark);
+  border-bottom: 1px solid var(--wt-bg-iron-light, #999);
+  padding-bottom: 4px;
+  margin: 0 0 6px 0;
+}
+
+.cr-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  color: var(--wt-text-dark);
+}
+
+.cr-breakdown-val {
+  font-weight: bold;
+  min-width: 35px;
+  text-align: right;
+}
+
+.cr-breakdown-total {
+  border-top: 1px solid var(--wt-bg-iron-light, #999);
+  margin-top: 4px;
+  padding-top: 4px;
+  font-weight: bold;
+}
+
+.cr-warnings {
+  background: rgba(139, 31, 31, 0.08);
+  border: 1px solid var(--wt-color-blood, #8b1f1f);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.cr-warning-item {
+  font-size: 0.78em;
+  color: var(--wt-color-blood, #8b1f1f);
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.cr-warning-item:last-child { margin-bottom: 0; }
+
+/* ── Navigation Footer ── */
+.cr-nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: var(--wt-bg-iron, #3a3a3a);
+  flex-shrink: 0;
+}
+
+.cr-nav-btn {
+  padding: 8px 20px;
+  font-family: var(--wt-font-display);
+  font-size: 0.95em;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--wt-text-light, #eee);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cr-nav-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
+
+.cr-nav-back {
+  background: var(--wt-bg-iron-light, #555);
+  border: 1px solid var(--wt-bg-iron, #3a3a3a);
+}
+
+.cr-nav-next {
+  background: var(--wt-bg-iron-light, #555);
+  border: 1px solid var(--wt-bg-iron, #3a3a3a);
+}
+
+.cr-nav-forge {
+  background: var(--wt-color-blood, #8b1f1f);
+  border: 1px solid var(--wt-color-blood-dark, #5a1010);
+  font-size: 1.05em;
+}
+
+.cr-nav-spacer { flex: 1; }
+
+/* ── Step Content Common ── */
+.cr-step-content {
+  min-height: 0;
+}
+
+.cr-step-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.cr-step-title {
+  font-family: var(--wt-font-display);
+  font-size: 1.6em;
+  color: var(--wt-color-blood, #8b1f1f);
+  margin: 0;
+  border: none;
+}
+
+.cr-step-subtitle {
+  font-size: 0.9em;
+  color: var(--wt-text-dark);
+  opacity: 0.7;
+  font-style: italic;
+  margin: 4px 0 0 0;
+}
+
+/* ── Step 1: Points ── */
+.cr-info-card {
+  background: var(--wt-bg-paper, #f5f0e8);
+  border: 1px solid var(--wt-bg-iron-light, #999);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+
+.cr-info-muted {
+  opacity: 0.85;
+}
+
+.cr-info-title {
+  font-family: var(--wt-font-display);
+  font-size: 1.05em;
+  color: var(--wt-text-dark);
+  margin: 0 0 10px 0;
+  border-bottom: 1px solid var(--wt-bg-iron-light, #999);
+  padding-bottom: 6px;
+}
+
+.cr-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.95em;
+}
+
+.cr-info-highlight {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.cr-info-label { color: var(--wt-text-dark); }
+.cr-info-value { font-weight: bold; }
+
+.cr-info-points {
+  color: var(--wt-color-blood, #8b1f1f);
+  font-size: 1.1em;
+}
+
+.cr-step-list {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.6;
+  font-size: 0.9em;
+}
+
+.cr-info-note {
+  font-size: 0.8em;
+  color: var(--wt-text-dark);
+  opacity: 0.6;
+  margin: 10px 0 0 0;
+  font-style: italic;
+}
+
+/* ── Step 2: Stats Grid ── */
+.cr-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cr-stat-card {
+  background: var(--wt-bg-paper, #f5f0e8);
+  border: 1px solid var(--wt-bg-iron-light, #999);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cr-stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--wt-bg-iron, #3a3a3a);
+  color: var(--wt-text-light, #eee);
+  padding: 6px 12px;
+}
+
+.cr-stat-name {
+  font-family: var(--wt-font-display);
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  font-size: 0.95em;
+}
+
+.cr-stat-total {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.cr-stat-body {
+  padding: 8px 12px;
+}
+
+.cr-dice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.cr-dice-label {
+  width: 55px;
+  font-size: 0.85em;
+  color: var(--wt-text-dark);
+}
+
+.cr-dice-hard .cr-dice-label { color: var(--wt-color-blood, #8b1f1f); font-weight: bold; }
+.cr-dice-wiggle .cr-dice-label { color: var(--wt-blue, #1565c0); font-weight: bold; }
+
+.cr-dice-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cr-dice-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  border: 1px solid var(--wt-bg-iron-light, #999);
+  background: var(--wt-bg-parchment);
+  color: var(--wt-text-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.cr-dice-btn:hover:not(:disabled) {
+  background: var(--wt-bg-iron-light, #999);
+  color: var(--wt-text-light, #eee);
+}
+
+.cr-dice-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.cr-dice-val {
+  width: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.cr-dice-cost {
+  width: 50px;
+  text-align: right;
+  font-size: 0.78em;
+  color: var(--wt-text-dark);
+  opacity: 0.6;
+}
+
+.cr-stat-footer {
+  text-align: right;
+  padding: 4px 12px 6px;
+  border-top: 1px dashed var(--wt-bg-iron-light, #ccc);
+}
+
+.cr-stat-cost {
+  font-size: 0.85em;
+  font-weight: bold;
+  color: var(--wt-text-dark);
+}
+
+/* ── Step 3: Skills List ── */
+.cr-skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cr-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.1s;
+}
+
+.cr-skill-row:hover {
+  background: rgba(0,0,0,0.02);
+}
+
+.cr-skill-custom {
+  background: rgba(139, 31, 31, 0.04);
+}
+
+.cr-skill-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.cr-skill-name {
+  font-size: 0.88em;
+  font-weight: 500;
+  color: var(--wt-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.cr-skill-attr-select {
+  font-size: 0.72em;
+  padding: 1px 4px;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--wt-text-dark);
+  width: 85px;
+}
+
+.cr-skill-dice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.cr-dice-mini {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.cr-dice-btn-sm {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 2px;
+  background: var(--wt-bg-parchment);
+  color: var(--wt-text-dark);
+  cursor: pointer;
+  font-size: 0.75em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.1s;
+}
+
+.cr-dice-btn-sm:hover:not(:disabled) {
+  background: var(--wt-bg-iron-light, #999);
+  color: var(--wt-text-light, #eee);
+}
+
+.cr-dice-btn-sm:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.cr-dice-val-sm {
+  width: 16px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.88em;
+}
+
+.cr-text-hard   { color: var(--wt-color-blood, #8b1f1f); }
+.cr-text-wiggle { color: var(--wt-blue, #1565c0); }
+
+.cr-skill-cost {
+  width: 30px;
+  text-align: right;
+  font-size: 0.78em;
+  font-weight: bold;
+  color: var(--wt-text-dark);
+  opacity: 0.7;
+}
+
+.cr-skill-delete {
+  background: none;
+  border: none;
+  color: var(--wt-color-blood, #8b1f1f);
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.cr-skill-delete:hover { opacity: 1; }
+
+.cr-skill-delete-spacer {
+  width: 22px;
+  flex-shrink: 0;
+}
+
+/* ── Add Skill Bar ── */
+.cr-add-skill {
+  display: flex;
+  gap: 6px;
+  padding: 10px 8px 4px;
+  border-top: 1px solid var(--wt-bg-iron-light, #ccc);
+  margin-top: 4px;
+}
+
+.cr-add-skill-input {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 0.85em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+  color: var(--wt-text-dark);
+}
+
+.cr-add-skill-attr {
+  width: 100px;
+  font-size: 0.82em;
+  padding: 4px;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-add-skill-btn {
+  padding: 5px 12px;
+  font-size: 0.82em;
+  font-weight: bold;
+  background: var(--wt-bg-iron, #3a3a3a);
+  color: var(--wt-text-light, #eee);
+  border: 1px solid var(--wt-bg-iron, #3a3a3a);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.cr-add-skill-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* ── Crucible Launch Button (in character sheet header) ── */
+.crucible-launch-btn {
+  flex: 0 0 auto;
+  padding: 4px 14px;
+  font-family: var(--wt-font-display, 'Georgia', serif);
+  font-size: 0.82em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--wt-color-blood, #8b1f1f);
+  color: var(--wt-text-light, #eee);
+  border: 1px solid var(--wt-color-blood-dark, #5a1010);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.crucible-launch-btn:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 6px rgba(139, 31, 31, 0.5);
+}
+
+/* ====================================================
+   STEP 4: ARCHETYPE
+==================================================== */
+
+.cr-archetype-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cr-archetype-name-row label {
+  font-weight: bold;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.cr-archetype-name-input {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.95em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-mq-section {
+  margin-bottom: 14px;
+}
+
+.cr-mq-section-title {
+  font-size: 0.92em;
+  font-weight: bold;
+  margin: 0 0 6px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--wt-bg-iron-light, #ccc);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cr-mq-note {
+  font-weight: normal;
+  font-size: 0.82em;
+  color: var(--wt-text-muted, #666);
+  font-style: italic;
+}
+
+.cr-mq-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-mq-select {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 0.85em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-mq-add-btn {
+  padding: 5px 10px;
+  font-size: 0.85em;
+  background: var(--wt-bg-iron, #3a3a3a);
+  color: var(--wt-text-light, #eee);
+  border: 1px solid var(--wt-bg-iron, #3a3a3a);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.cr-mq-add-btn:hover { filter: brightness(1.2); }
+
+.cr-mq-selected {
+  margin-top: 16px;
+}
+
+.cr-mq-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  background: var(--wt-bg-parchment-dark, #ede4d4);
+  border-left: 4px solid var(--wt-bg-iron-light, #999);
+}
+
+.cr-mq-type-source   { border-left-color: var(--wt-color-blood, #8b1f1f); }
+.cr-mq-type-permission { border-left-color: #3a6a8a; }
+.cr-mq-type-intrinsic { border-left-color: #5a7a3a; }
+
+.cr-mq-type-badge {
+  font-size: 0.72em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--wt-text-light, #eee);
+  background: var(--wt-bg-iron, #555);
+  flex-shrink: 0;
+}
+
+.cr-mq-item-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.88em;
+}
+
+.cr-mq-item-cost {
+  font-size: 0.82em;
+  font-weight: bold;
+  min-width: 48px;
+  text-align: right;
+}
+
+.cr-mq-item-ref {
+  font-size: 0.72em;
+  color: var(--wt-text-muted, #666);
+  min-width: 60px;
+}
+
+.cr-mq-remove {
+  background: none;
+  border: none;
+  color: var(--wt-color-blood, #8b1f1f);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.9em;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.cr-mq-remove:hover { opacity: 1; }
+
+.cr-archetype-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  margin-top: 12px;
+  background: var(--wt-bg-iron, #3a3a3a);
+  color: var(--wt-text-light, #eee);
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.92em;
+}
+
+.cr-archetype-total-val {
+  font-size: 1.1em;
+}
+
+/* ====================================================
+   STEP 5: POWERS
+==================================================== */
+
+.cr-power-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.cr-power-name-input {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 0.9em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-power-type-select {
+  width: 150px;
+  padding: 5px 8px;
+  font-size: 0.85em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-power-add-btn {
+  padding: 5px 14px;
+  font-size: 0.85em;
+  font-weight: bold;
+  background: var(--wt-bg-iron, #3a3a3a);
+  color: var(--wt-text-light, #eee);
+  border: 1px solid var(--wt-bg-iron, #3a3a3a);
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cr-power-add-btn:hover { filter: brightness(1.2); }
+
+.cr-powers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cr-power-card {
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 5px;
+  background: var(--wt-bg-parchment-dark, #ede4d4);
+  padding: 10px 14px;
+}
+
+.cr-power-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.cr-power-name {
+  flex: 1;
+  font-weight: bold;
+  font-size: 0.95em;
+}
+
+.cr-power-type-label {
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--wt-text-muted, #666);
+}
+
+.cr-power-remove {
+  background: none;
+  border: none;
+  color: var(--wt-color-blood, #8b1f1f);
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.cr-power-remove:hover { opacity: 1; }
+
+.cr-power-dice-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cr-power-cost {
+  font-weight: bold;
+  font-size: 0.88em;
+  margin-left: auto;
+}
+
+.cr-power-note {
+  font-size: 0.75em;
+  font-style: italic;
+  color: var(--wt-text-muted, #666);
+  margin: 6px 0 0 0;
+}
+
+.cr-empty-note {
+  font-style: italic;
+  font-size: 0.88em;
+  color: var(--wt-text-muted, #666);
+  padding: 10px 0;
+}
+
+/* ====================================================
+   STEP 6: WILLPOWER
+==================================================== */
+
+.cr-wp-section {
+  margin-bottom: 20px;
+}
+
+.cr-wp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--wt-bg-iron-light, #e0d8c8);
+}
+
+.cr-wp-row:last-child {
+  border-bottom: none;
+}
+
+.cr-wp-label {
+  flex: 1;
+  font-size: 0.9em;
+}
+
+.cr-wp-value {
+  font-weight: bold;
+  font-size: 0.95em;
+  min-width: 32px;
+  text-align: center;
+}
+
+.cr-wp-big {
+  font-size: 1.3em;
+  color: var(--wt-color-blood, #8b1f1f);
+}
+
+.cr-wp-cost {
+  font-size: 0.82em;
+  color: var(--wt-text-muted, #666);
+  min-width: 50px;
+  text-align: right;
+}
+
+.cr-wp-total {
+  background: var(--wt-bg-parchment-dark, #ede4d4);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+
+.cr-motivation-section {
+  margin-top: 6px;
+}
+
+.cr-motivation-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.cr-motivation-row label {
+  font-weight: bold;
+  font-size: 0.88em;
+  min-width: 55px;
+}
+
+.cr-motivation-input {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 0.88em;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+.cr-motivation-rating-label {
+  min-width: auto !important;
+  font-size: 0.82em !important;
+}
+
+.cr-motivation-rating {
+  width: 50px;
+  padding: 4px 6px;
+  font-size: 0.88em;
+  text-align: center;
+  border: 1px solid var(--wt-bg-iron-light, #ccc);
+  border-radius: 3px;
+  background: var(--wt-bg-parchment);
+}
+
+/* ====================================================
+   STEP 7: REVIEW
+==================================================== */
+
+.cr-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.cr-review-section {
+  background: var(--wt-bg-parchment-dark, #ede4d4);
+  border: 1px solid var(--wt-bg-iron-light, #d8d0c0);
+  border-radius: 5px;
+  padding: 10px 14px;
+}
+
+.cr-review-section h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.88em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--wt-bg-iron-light, #ccc);
+  padding-bottom: 4px;
+  color: var(--wt-color-blood, #8b1f1f);
+}
+
+.cr-review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 2px 0;
+  font-size: 0.85em;
+}
+
+.cr-review-row small {
+  font-size: 0.82em;
+  color: var(--wt-text-muted, #666);
+}
+
+.cr-review-val {
+  font-weight: 600;
+  text-align: right;
+}
+
+.cr-validation-errors {
+  background: #f8d7da;
+  border: 1px solid #e0a4a9;
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.cr-validation-errors h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.88em;
+  color: #721c24;
+}
+
+.cr-validation-errors p {
+  margin: 2px 0;
+  font-size: 0.85em;
+  color: #721c24;
+}
+
+/* ── Forge button disabled state ── */
+.cr-nav-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Dice label small (for powers) ── */
+.cr-dice-label-sm {
+  font-size: 0.72em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-width: 18px;
+  text-align: center;
+  color: var(--wt-text-muted, #666);
+}

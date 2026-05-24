@@ -1,0 +1,1263 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   WILD TALENTS 2E COMBAT DASHBOARD — Phase 1 Styling
+   Uses design tokens from variables.css exclusively.
+   No hardcoded colours. Supports light, dark, and colourblind modes.
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Window Shell ──────────────────────────────────────────────────────── */
+
+.combat-dashboard .window-header {
+  background: var(--wt-bg-iron);
+  border-bottom: 2px solid var(--wt-color-blood);
+}
+
+.combat-dashboard .window-content {
+  background: var(--wt-bg-parchment);
+  background-image: var(--wt-parchment-surface);
+  box-shadow: var(--wt-shadow-parchment);
+  padding: 0;
+}
+
+/* ─── Collapsed Bar ─────────────────────────────────────────────────────── */
+
+.cd-collapsed-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--wt-space-sm);
+  padding: 6px var(--wt-space-md);
+  background: var(--wt-bg-iron);
+  flex-wrap: wrap;
+}
+
+.cd-cbar-title {
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  letter-spacing: 2px;
+  color: var(--wt-text-light);
+  text-transform: uppercase;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.cd-cbar-phase {
+  font-family: var(--wt-font-mono);
+  font-size: 0.65em;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: var(--wt-radius-sm);
+  flex-shrink: 0;
+}
+.cd-phase-decl {
+  background: rgba(217, 119, 6, 0.25);
+  color: var(--wt-color-brass);
+  border: 1px solid rgba(217, 119, 6, 0.4);
+}
+.cd-phase-res {
+  background: var(--wt-bg-blood-subtle);
+  color: var(--wt-red);
+  border: 1px solid var(--wt-color-blood);
+}
+
+.cd-cbar-info {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  flex-shrink: 0;
+}
+
+.cd-cbar-set {
+  font-family: var(--wt-font-mono);
+  font-size: 0.65em;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--wt-radius-sm);
+  border: 1px solid;
+}
+.cd-cbs-spotlight {
+  background: rgba(217, 119, 6, 0.2);
+  border-color: var(--wt-color-brass);
+  color: var(--wt-color-brass);
+}
+.cd-cbs-attack {
+  background: var(--wt-bg-blood-muted);
+  border-color: var(--wt-color-blood);
+  color: var(--wt-red);
+}
+.cd-cbs-spell {
+  background: var(--wt-bg-sorcery-muted);
+  border-color: var(--wt-color-sorcery);
+  color: var(--wt-purple);
+}
+.cd-cbs-defense {
+  background: var(--wt-bg-emerald-muted);
+  border-color: var(--wt-color-emerald);
+  color: var(--wt-green);
+}
+
+.cd-cbar-expand {
+  margin-left: auto;
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid var(--wt-text-muted);
+  border-radius: var(--wt-radius-sm);
+  background: transparent;
+  color: var(--wt-text-muted);
+  cursor: pointer;
+  transition: all var(--wt-transition-fast);
+  flex-shrink: 0;
+}
+.cd-cbar-expand:hover {
+  color: var(--wt-text-light);
+  border-color: var(--wt-text-light);
+}
+
+/* ─── Action Bar (Resolution) ───────────────────────────────────────────── */
+
+.cd-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--wt-space-md);
+  background: var(--wt-bg-brass-muted);
+  border-bottom: 1px solid rgba(217, 119, 6, 0.15);
+}
+.cd-action-left {
+  display: flex;
+  align-items: center;
+  gap: var(--wt-space-sm);
+}
+.cd-resolving-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--wt-bg-brass-subtle);
+  border: 1px solid var(--wt-color-brass);
+  border-radius: 12px;
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  font-weight: 600;
+  color: var(--wt-color-brass);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.cd-resolving-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--wt-color-brass);
+  animation: cd-dot-pulse 1.2s ease-in-out infinite;
+}
+@keyframes cd-dot-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.cd-action-desc {
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  color: var(--wt-color-brass);
+  letter-spacing: 0.5px;
+}
+.cd-action-right {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+}
+
+/* ─── Declaration Phase ─────────────────────────────────────────────────── */
+
+.cd-decl-body {
+  padding: var(--wt-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wt-space-sm);
+}
+
+.cd-decl-intro {
+  text-align: center;
+  padding: var(--wt-space-sm);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--wt-color-brass);
+  border-bottom: 1px solid var(--wt-bg-vellum);
+  margin-bottom: var(--wt-space-xs);
+}
+
+.cd-decl-row {
+  display: flex;
+  align-items: center;
+  gap: var(--wt-space-sm);
+  padding: var(--wt-space-sm);
+  background: var(--wt-bg-paper);
+  border: 1px solid var(--wt-bg-vellum);
+  border-radius: var(--wt-radius-md);
+  transition: border-color var(--wt-transition-base);
+}
+.cd-decl-row.cd-confirmed {
+  border-color: var(--wt-color-emerald);
+  background: var(--wt-bg-emerald-muted);
+}
+.cd-decl-row.cd-waiting {
+  border-color: var(--wt-color-brass);
+  border-style: dashed;
+}
+
+.cd-decl-status {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--wt-text-sm);
+  flex-shrink: 0;
+}
+.cd-dsi-confirmed {
+  background: var(--wt-bg-emerald-subtle);
+  border: 1px solid var(--wt-color-emerald);
+  color: var(--wt-color-emerald);
+}
+.cd-dsi-waiting {
+  background: var(--wt-bg-brass-muted);
+  border: 1px dashed var(--wt-color-brass);
+  color: var(--wt-color-brass);
+  animation: cd-dot-pulse 1.5s ease-in-out infinite;
+}
+
+.cd-portrait-sm {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--wt-bg-vellum);
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.cd-portrait-sm:hover {
+  border-color: var(--wt-color-blood);
+}
+
+.cd-decl-name {
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  color: var(--wt-text-dark);
+  flex: 0 0 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cd-decl-intent {
+  flex: 1;
+  font-size: var(--wt-text-sm);
+  font-style: italic;
+  color: var(--wt-text-muted);
+}
+.cd-decl-intent.cd-filled {
+  color: var(--wt-text-dark);
+  font-style: normal;
+}
+
+.cd-decl-sense {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  flex-shrink: 0;
+}
+
+/* Badges (shared) */
+.cd-badge {
+  font-family: var(--wt-font-mono);
+  font-size: 0.65em;
+  padding: 1px 5px;
+  border-radius: var(--wt-radius-sm);
+  flex-shrink: 0;
+}
+.cd-badge-aim {
+  background: var(--wt-bg-blue-subtle);
+  color: var(--wt-blue);
+  border: 1px solid var(--wt-blue);
+}
+.cd-badge-condition {
+  background: var(--wt-bg-blood-muted);
+  color: var(--wt-red);
+  border: 1px solid var(--wt-color-blood);
+}
+.cd-badge-shield {
+  background: var(--wt-bg-brass-muted);
+  border: 1px solid var(--wt-color-brass);
+}
+
+/* Clickable declaration status (simple mode) */
+.cd-decl-status.cd-clickable {
+  cursor: pointer;
+  transition: all var(--wt-transition-fast);
+}
+.cd-decl-status.cd-clickable:hover {
+  transform: scale(1.15);
+}
+.cd-dsi-confirmed.cd-clickable:hover {
+  background: var(--wt-bg-blood-subtle);
+  border-color: var(--wt-color-blood);
+  color: var(--wt-red);
+}
+.cd-dsi-waiting.cd-clickable:hover {
+  background: var(--wt-bg-emerald-subtle);
+  border-color: var(--wt-color-emerald);
+  color: var(--wt-color-emerald);
+}
+
+/* Declare button (advanced mode) */
+.cd-declare-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--wt-radius-md);
+  border: 1px solid var(--wt-color-brass);
+  background: var(--wt-bg-brass-muted);
+  color: var(--wt-color-brass);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--wt-text-sm);
+  flex-shrink: 0;
+  transition: all var(--wt-transition-fast);
+}
+.cd-declare-btn:hover {
+  background: var(--wt-color-brass);
+  color: var(--wt-text-light);
+}
+
+/* Progress bar */
+.cd-progress-wrap {
+  padding: var(--wt-space-xs) 0 0;
+}
+.cd-progress-lbl {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  letter-spacing: 1px;
+  margin-bottom: var(--wt-space-xs);
+  display: flex;
+  justify-content: space-between;
+}
+.cd-progress-bar {
+  height: 3px;
+  background: var(--wt-bg-vellum);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cd-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--wt-color-blood), var(--wt-color-brass));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ─── Speed Ladder ──────────────────────────────────────────────────────── */
+
+.cd-speed-ladder {
+  padding: var(--wt-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wt-space-sm);
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+/* Tier Group */
+.cd-tier-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cd-tier-header {
+  display: flex;
+  align-items: center;
+  gap: var(--wt-space-sm);
+  padding: 4px var(--wt-space-sm);
+  border-radius: var(--wt-radius-sm);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xs);
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.cd-tier-header.cd-w5,
+.cd-tier-header.cd-w4,
+.cd-tier-header.cd-w3 {
+  background: var(--wt-bg-blood-wash);
+  border-left: 3px solid var(--wt-color-blood);
+  color: var(--wt-red);
+}
+.cd-tier-header.cd-w2 {
+  background: var(--wt-bg-blue-muted);
+  border-left: 3px solid var(--wt-blue);
+  color: var(--wt-blue);
+}
+.cd-tier-header.cd-w1 {
+  background: var(--wt-bg-brass-muted);
+  border-left: 3px solid var(--wt-color-brass);
+  color: var(--wt-color-brass);
+}
+
+.cd-tier-pips {
+  display: flex;
+  gap: 3px;
+}
+.cd-tier-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.cd-tier-lbl { flex: 1; }
+.cd-tier-count {
+  font-family: var(--wt-font-mono);
+  font-size: 0.9em;
+  opacity: 0.5;
+}
+
+/* Cards row */
+.cd-tier-cards {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Divider */
+.cd-wt-divider {
+  height: 8px;
+  margin: var(--wt-space-xs) var(--wt-space-sm);
+  opacity: 0.4;
+  background-image: var(--wt-divider);
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* ─── Combatant Card ────────────────────────────────────────────────────── */
+
+.cd-card {
+  flex: 1;
+  min-width: 180px;
+  max-width: 280px;
+  background: var(--wt-bg-paper);
+  border: 1px solid var(--wt-bg-vellum);
+  border-radius: var(--wt-radius-md);
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--wt-transition-base), box-shadow var(--wt-transition-base);
+}
+
+/* Spotlight */
+.cd-card.cd-spotlight {
+  border-color: var(--wt-color-brass);
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.2), var(--wt-shadow-drop);
+}
+.cd-card.cd-spotlight::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--wt-color-brass), transparent);
+  animation: cd-shimmer 2.5s ease-in-out infinite;
+}
+@keyframes cd-shimmer {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Defense */
+.cd-card.cd-defense {
+  border-color: var(--wt-color-emerald);
+  background: var(--wt-bg-emerald-muted);
+}
+
+/* Spell */
+.cd-card.cd-spell {
+  border-color: var(--wt-color-sorcery);
+}
+
+/* Simultaneous */
+.cd-card.cd-simultaneous {
+  border-style: double;
+  border-width: 3px;
+}
+
+/* Card Header */
+.cd-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--wt-bg-vellum);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cd-portrait {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--wt-bg-vellum);
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color var(--wt-transition-fast);
+}
+.cd-portrait:hover {
+  border-color: var(--wt-color-blood);
+}
+.cd-spotlight .cd-portrait {
+  border-color: var(--wt-color-brass);
+}
+.cd-defense .cd-portrait {
+  border-color: var(--wt-color-emerald);
+}
+
+.cd-card-identity {
+  flex: 1;
+  min-width: 0;
+}
+.cd-card-name {
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  font-weight: 600;
+  color: var(--wt-text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cd-card-action {
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cd-card-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.cd-init-badge {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--wt-radius-sm);
+  border: 1px solid;
+}
+.cd-ib-attack {
+  background: var(--wt-bg-blood-subtle);
+  color: var(--wt-red);
+  border-color: var(--wt-color-blood);
+}
+.cd-ib-spell {
+  background: var(--wt-bg-sorcery-subtle);
+  color: var(--wt-purple);
+  border-color: var(--wt-color-sorcery);
+}
+.cd-ib-defense {
+  background: var(--wt-bg-emerald-subtle);
+  color: var(--wt-green);
+  border-color: var(--wt-color-emerald);
+}
+
+.cd-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.cd-sd-spotlight {
+  background: var(--wt-color-brass);
+  box-shadow: 0 0 4px var(--wt-color-brass);
+  animation: cd-dot-pulse 1s ease-in-out infinite;
+}
+.cd-sd-pending { background: var(--wt-bg-vellum); }
+.cd-sd-defense {
+  background: var(--wt-color-emerald);
+  box-shadow: 0 0 4px var(--wt-color-emerald);
+}
+.cd-sd-spell {
+  background: var(--wt-color-sorcery);
+  box-shadow: 0 0 4px var(--wt-color-sorcery);
+}
+
+/* Card Body */
+.cd-card-body {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Dice Section */
+.cd-dice-section { display: flex; flex-direction: column; gap: 3px; }
+.cd-dice-lbl {
+  font-family: var(--wt-font-mono);
+  font-size: 0.6em;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--wt-text-muted);
+}
+.cd-dice-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.cd-die {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--wt-font-mono);
+  font-size: 0.65em;
+  font-weight: 600;
+}
+.cd-die-matched {
+  background: var(--wt-bg-parchment);
+  color: var(--wt-bg-iron);
+  border: 2px solid var(--wt-color-blood);
+  box-shadow: 0 0 3px var(--wt-bg-blood-subtle);
+}
+.cd-die-defense {
+  border-color: var(--wt-color-emerald) !important;
+  box-shadow: 0 0 3px var(--wt-bg-emerald-subtle) !important;
+}
+.cd-die-spell {
+  border-color: var(--wt-color-sorcery) !important;
+  box-shadow: 0 0 3px var(--wt-bg-sorcery-subtle) !important;
+}
+.cd-die-waste {
+  background: var(--wt-bg-vellum);
+  color: var(--wt-text-muted);
+  border: 1px solid var(--wt-bg-vellum);
+  opacity: 0.6;
+}
+.cd-die-gobble {
+  background: var(--wt-bg-emerald-subtle);
+  color: var(--wt-color-emerald);
+  border: 2px solid var(--wt-color-emerald);
+  box-shadow: 0 0 4px var(--wt-bg-emerald-subtle);
+}
+
+/* Hit Location */
+.cd-hit-row { display: flex; align-items: center; gap: 6px; }
+.cd-hit-location {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: var(--wt-radius-sm);
+  font-size: var(--wt-text-sm);
+  border: 1px solid;
+}
+.cd-hit-attack {
+  background: var(--wt-bg-blood-muted);
+  border-color: var(--wt-color-blood);
+}
+.cd-hit-spell {
+  background: var(--wt-bg-sorcery-muted);
+  border-color: var(--wt-color-sorcery);
+}
+.cd-hit-icon { font-size: 0.9em; }
+.cd-hit-txt { color: var(--wt-text-muted); }
+.cd-hit-zone {
+  font-family: var(--wt-font-mono);
+  font-weight: 600;
+}
+.hz-head { color: var(--wt-critical); }
+.hz-torso { color: var(--wt-red); }
+.hz-arm { color: var(--wt-color-brass); }
+.hz-leg { color: var(--wt-blue); }
+
+/* Damage Preview */
+.cd-dmg-preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  background: var(--wt-bg-blood-muted);
+  border: 1px solid var(--wt-color-blood);
+  border-radius: var(--wt-radius-sm);
+}
+.cd-dmg-icon { font-size: 0.9em; }
+.cd-dmg-formula {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  font-weight: 600;
+  color: var(--wt-red);
+}
+
+/* Quality Tags */
+.cd-quality-tags {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.cd-quality-tag {
+  font-family: var(--wt-font-mono);
+  font-size: 0.6em;
+  padding: 1px 4px;
+  background: var(--wt-bg-brass-muted);
+  border: 1px solid var(--wt-color-brass);
+  border-radius: var(--wt-radius-sm);
+  color: var(--wt-color-brass);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Gobble Block */
+.cd-gobble-block {
+  background: var(--wt-bg-emerald-muted);
+  border: 1px solid var(--wt-color-emerald);
+  border-radius: var(--wt-radius-sm);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cd-gobble-title {
+  font-family: var(--wt-font-mono);
+  font-size: 0.6em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--wt-color-emerald);
+}
+
+/* Condition Bar */
+.cd-condition-bar {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.cd-condition-badge {
+  font-family: var(--wt-font-mono);
+  font-size: 0.6em;
+  padding: 1px 4px;
+  background: var(--wt-bg-blood-muted);
+  border: 1px solid var(--wt-color-blood);
+  border-radius: var(--wt-radius-sm);
+  color: var(--wt-red);
+}
+
+/* Chips */
+.cd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: var(--wt-font-mono);
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+.cd-chip-simultaneous {
+  background: var(--wt-bg-sorcery-muted);
+  border-color: var(--wt-color-sorcery);
+  color: var(--wt-purple);
+}
+
+/* Empty State */
+.cd-empty-state {
+  text-align: center;
+  padding: var(--wt-space-xl);
+  color: var(--wt-text-muted);
+}
+.cd-empty-state p { margin: var(--wt-space-xs) 0; }
+.cd-empty-hint {
+  font-size: var(--wt-text-sm);
+  font-style: italic;
+}
+
+/* No Combat */
+.cd-no-combat {
+  text-align: center;
+  padding: var(--wt-space-xl);
+  color: var(--wt-text-muted);
+  font-style: italic;
+}
+
+/* ─── Footer ────────────────────────────────────────────────────────────── */
+
+.cd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--wt-space-md);
+  background: var(--wt-bg-vellum);
+  border-top: 1px solid var(--wt-bg-vellum);
+}
+.cd-footer-info {
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+}
+.cd-footer-btns { display: flex; gap: 4px; }
+.cd-foot-btn {
+  padding: 3px 8px;
+  border-radius: var(--wt-radius-sm);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--wt-bg-vellum);
+  background: transparent;
+  color: var(--wt-text-muted);
+  transition: all var(--wt-transition-fast);
+}
+.cd-foot-btn:hover {
+  color: var(--wt-text-dark);
+  border-color: var(--wt-text-muted);
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────── */
+
+.cd-speed-ladder::-webkit-scrollbar { width: var(--wt-scrollbar-width); }
+.cd-speed-ladder::-webkit-scrollbar-track { background: var(--wt-scrollbar-track); }
+.cd-speed-ladder::-webkit-scrollbar-thumb { background: var(--wt-scrollbar-thumb); border-radius: 3px; }
+.cd-speed-ladder::-webkit-scrollbar-thumb:hover { background: var(--wt-scrollbar-hover); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE 3: Resolved, Broken, Gobble Validation, Spotlight Controls
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Resolved card — dimmed and greyed */
+.cd-card.cd-resolved {
+  opacity: 0.35;
+  filter: grayscale(0.6);
+  pointer-events: none;
+}
+
+/* Broken card — struck-through appearance */
+.cd-card.cd-broken {
+  opacity: 0.25;
+  filter: grayscale(0.8);
+  pointer-events: none;
+}
+.cd-card.cd-broken .cd-card-name {
+  text-decoration: line-through;
+}
+
+/* ─── Gobble Validation ─────────────────────────────────────────────── */
+
+.cd-gobble-block.cd-gobble-valid {
+  border-color: var(--wt-color-emerald);
+  background: var(--wt-bg-emerald-muted);
+}
+.cd-gobble-block.cd-gobble-invalid {
+  border-color: var(--wt-color-blood);
+  background: var(--wt-bg-blood-muted);
+  opacity: 0.7;
+}
+
+.cd-gobble-status {
+  font-size: 0.9em;
+  margin-left: 4px;
+}
+.cd-gobble-ok {
+  color: var(--wt-color-emerald);
+  font-weight: 600;
+}
+.cd-gobble-fail {
+  color: var(--wt-red);
+  font-style: italic;
+}
+
+/* Invalid gobble die — dimmed, red border */
+.cd-die-gobble-invalid {
+  opacity: 0.4;
+  border-color: var(--wt-color-blood) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+/* Apply Gobble button */
+.cd-gobble-apply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  margin-top: var(--wt-space-xs);
+  padding: 5px 8px;
+  background: var(--wt-bg-emerald-subtle);
+  border: 1px solid var(--wt-color-emerald);
+  border-radius: var(--wt-radius-sm);
+  color: var(--wt-color-emerald);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xs);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--wt-transition-fast);
+}
+.cd-gobble-apply-btn:hover {
+  background: var(--wt-color-emerald);
+  color: var(--wt-text-light);
+}
+
+/* ─── Advance Spotlight Button ──────────────────────────────────────── */
+
+.cd-foot-advance {
+  background: var(--wt-bg-brass-subtle);
+  border-color: var(--wt-color-brass) !important;
+  color: var(--wt-color-brass) !important;
+  font-weight: 600;
+}
+.cd-foot-advance:hover {
+  background: var(--wt-color-brass);
+  color: var(--wt-text-light) !important;
+}
+.cd-foot-advance:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--wt-text-muted) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE 4: Resolve Panel, Damage Preview, Spoil Button
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Resolve Panel */
+.cd-resolve-panel {
+  background: var(--wt-bg-brass-muted);
+  border: 1px solid var(--wt-color-brass);
+  border-radius: var(--wt-radius-md);
+  padding: var(--wt-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wt-space-xs);
+  margin-top: var(--wt-space-xs);
+}
+
+.cd-resolve-target {
+  display: flex;
+  align-items: center;
+  gap: var(--wt-space-xs);
+  font-size: var(--wt-text-sm);
+  color: var(--wt-text-dark);
+}
+.cd-resolve-target-label {
+  color: var(--wt-text-muted);
+}
+
+.cd-resolve-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+}
+
+.cd-resolve-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 4px;
+  border-radius: var(--wt-radius-sm);
+}
+.cd-resolve-net {
+  background: var(--wt-bg-blood-muted);
+  font-weight: 600;
+}
+.cd-resolve-net-value {
+  color: var(--wt-red);
+}
+.cd-resolve-state {
+  color: var(--wt-text-muted);
+}
+.cd-resolve-overflow {
+  background: var(--wt-bg-blood-subtle);
+  color: var(--wt-red);
+  font-weight: 600;
+}
+.cd-resolve-lethal {
+  text-align: center;
+  padding: 3px;
+  background: var(--wt-color-blood);
+  color: var(--wt-text-light);
+  border-radius: var(--wt-radius-sm);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-xs);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Resolve Button */
+.cd-resolve-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wt-space-xs);
+  width: 100%;
+  padding: 7px var(--wt-space-sm);
+  margin-top: var(--wt-space-xs);
+  background: linear-gradient(180deg, var(--wt-color-blood), var(--wt-color-blood-dark));
+  border: 1px solid var(--wt-color-blood-dark);
+  border-radius: var(--wt-radius-sm);
+  color: var(--wt-text-light);
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--wt-transition-fast);
+  box-shadow: var(--wt-shadow-drop);
+}
+.cd-resolve-btn:hover {
+  box-shadow: var(--wt-shadow-elevated);
+  transform: translateY(-1px);
+}
+
+/* No target hint */
+.cd-resolve-no-target {
+  text-align: center;
+  padding: var(--wt-space-xs);
+  border: 1px dashed var(--wt-bg-vellum);
+  border-radius: var(--wt-radius-sm);
+  margin-top: var(--wt-space-xs);
+}
+.cd-resolve-hint {
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  font-style: italic;
+}
+
+/* Spoil Button */
+.cd-spoil-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  margin-top: var(--wt-space-xs);
+  padding: 4px var(--wt-space-sm);
+  background: transparent;
+  border: 1px dashed var(--wt-color-blood);
+  border-radius: var(--wt-radius-sm);
+  color: var(--wt-red);
+  font-family: var(--wt-font-mono);
+  font-size: var(--wt-text-xs);
+  cursor: pointer;
+  transition: all var(--wt-transition-fast);
+}
+.cd-spoil-btn:hover {
+  background: var(--wt-bg-blood-muted);
+  border-style: solid;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE 5: Polish — Collision Connectors, Animations, Round Complete
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Collision Connector ───────────────────────────────────────────── */
+
+.cd-collision-conn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 2px;
+  gap: 2px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+.cd-collision-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--wt-bg-sorcery-muted);
+  border: 1px solid var(--wt-color-sorcery);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  color: var(--wt-purple);
+}
+.cd-collision-lbl {
+  font-family: var(--wt-font-display);
+  font-size: 0.45em;
+  letter-spacing: 0.5px;
+  color: var(--wt-purple);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ─── Round Complete Banner ─────────────────────────────────────────── */
+
+.cd-round-complete {
+  text-align: center;
+  padding: var(--wt-space-md);
+  margin-bottom: var(--wt-space-sm);
+  background: var(--wt-bg-emerald-muted);
+  border: 1px solid var(--wt-color-emerald);
+  border-radius: var(--wt-radius-md);
+}
+.cd-round-complete-icon {
+  font-size: 1.5em;
+  margin-bottom: var(--wt-space-xs);
+}
+.cd-round-complete-text {
+  font-family: var(--wt-font-display);
+  font-size: var(--wt-text-sm);
+  font-weight: 600;
+  color: var(--wt-color-emerald);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.cd-round-complete-hint {
+  font-size: var(--wt-text-xs);
+  color: var(--wt-text-muted);
+  font-style: italic;
+  margin-top: var(--wt-space-xs);
+}
+
+/* ─── Refined Animations ────────────────────────────────────────────── */
+
+/* Card state transitions */
+.cd-card {
+  transition:
+    border-color var(--wt-transition-base),
+    box-shadow var(--wt-transition-base),
+    opacity var(--wt-transition-slow),
+    filter var(--wt-transition-slow),
+    transform var(--wt-transition-fast);
+}
+
+/* Spotlight pulse refinement */
+@keyframes cd-spotlight-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(217,119,6,0.2), 0 4px 12px rgba(217,119,6,0.1); }
+  50% { box-shadow: 0 0 0 2px rgba(217,119,6,0.35), 0 4px 20px rgba(217,119,6,0.2); }
+}
+.cd-card.cd-spotlight {
+  animation: cd-spotlight-glow 2.5s ease-in-out infinite;
+}
+
+/* Resolved card smooth fade */
+.cd-card.cd-resolved {
+  opacity: 0.3;
+  filter: grayscale(0.7) brightness(0.9);
+  transform: scale(0.98);
+  pointer-events: none;
+}
+
+/* Broken card with strike-through animation */
+@keyframes cd-break-flash {
+  0% { border-color: var(--wt-color-blood); opacity: 0.6; }
+  50% { border-color: var(--wt-red); opacity: 0.3; }
+  100% { border-color: var(--wt-bg-vellum); opacity: 0.2; }
+}
+.cd-card.cd-broken {
+  animation: cd-break-flash 0.5s ease-out forwards;
+  filter: grayscale(0.9);
+  transform: scale(0.96);
+  pointer-events: none;
+}
+.cd-card.cd-broken .cd-card-name {
+  text-decoration: line-through;
+  text-decoration-color: var(--wt-red);
+}
+.cd-card.cd-broken .cd-init-badge {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Reacting card subtle highlight */
+.cd-card .cd-card-header {
+  transition: background var(--wt-transition-base);
+}
+.cd-card.cd-spotlight .cd-card-header {
+  background: var(--wt-bg-brass-muted);
+}
+
+/* Declaration row enter animation */
+.cd-decl-row {
+  transition:
+    border-color var(--wt-transition-base),
+    background var(--wt-transition-base);
+}
+
+/* Progress bar smooth fill */
+.cd-progress-fill {
+  transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Gobble apply button pulse when valid */
+@keyframes cd-gobble-ready {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45,90,39,0); }
+  50% { box-shadow: 0 0 0 3px rgba(45,90,39,0.15); }
+}
+.cd-gobble-block.cd-gobble-valid .cd-gobble-apply-btn {
+  animation: cd-gobble-ready 2s ease-in-out infinite;
+}
+
+/* Resolve button pulse when panel is showing */
+@keyframes cd-resolve-ready {
+  0%, 100% { box-shadow: 0 2px 6px rgba(139,31,31,0.3); }
+  50% { box-shadow: 0 2px 12px rgba(139,31,31,0.5); }
+}
+.cd-resolve-btn {
+  animation: cd-resolve-ready 2s ease-in-out infinite;
+}
+
+/* ─── Visual Hierarchy Refinements ──────────────────────────────────── */
+
+/* Tier header icons */
+.cd-tier-header {
+  font-weight: 700;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Speed ladder subtle inner shadow for depth */
+.cd-speed-ladder {
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Action bar styling refinement */
+.cd-action-bar {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Collapsed bar refinement */
+.cd-collapsed-bar {
+  min-height: 32px;
+  border-top: 2px solid var(--wt-color-blood);
+}
+
+/* Footer refinement */
+.cd-footer {
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.05);
+}
+
+/* Next Round button */
+.cd-foot-next-round {
+  background: var(--wt-bg-blood-muted);
+  border-color: var(--wt-color-blood) !important;
+  color: var(--wt-red) !important;
+}
+.cd-foot-next-round:hover {
+  background: var(--wt-color-blood);
+  color: var(--wt-text-light) !important;
+}
