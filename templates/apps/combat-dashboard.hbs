@@ -1,0 +1,395 @@
+{{!-- templates/apps/combat-dashboard.hbs --}}
+{{!-- WT ORE Combat Dashboard — Phase 1 Template --}}
+
+<div class="cd-root">
+{{#if hasCombat}}
+
+{{!-- ════════════════════════════════════════════════════════
+     COLLAPSED BAR
+════════════════════════════════════════════════════════ --}}
+{{#if collapsed}}
+<div class="cd-collapsed-bar">
+    <span class="cd-cbar-title">⚔ R{{round}}</span>
+    <span class="cd-cbar-phase {{#if (eq phase "declaration")}}cd-phase-decl{{else}}cd-phase-res{{/if}}">
+        {{#if (eq phase "declaration")}}DECLARE{{else}}RESOLVE{{/if}}
+    </span>
+
+    {{#if (eq phase "declaration")}}
+        <span class="cd-cbar-info">{{declaration.declaredCount}} / {{declaration.totalCount}} declared</span>
+    {{else}}
+        {{#if resolution.hasEntries}}
+            <span class="cd-cbar-info">{{resolution.totalSets}} sets</span>
+            {{#each resolution.tiers}}
+                {{#each entries}}
+                    <span class="cd-cbar-set {{#if isSpotlight}}cd-cbs-spotlight{{else if isDefense}}cd-cbs-defense{{else if isSpell}}cd-cbs-spell{{else}}cd-cbs-attack{{/if}}">
+                        {{name}} {{initBadge}}
+                    </span>
+                {{/each}}
+            {{/each}}
+        {{else}}
+            <span class="cd-cbar-info">No rolls yet</span>
+        {{/if}}
+    {{/if}}
+
+    <button class="cd-cbar-expand" data-action="toggleCollapse" title="Expand dashboard">↑ Expand</button>
+</div>
+
+{{else}}
+
+{{!-- ════════════════════════════════════════════════════════
+     ACTION BAR (Resolution Only)
+════════════════════════════════════════════════════════ --}}
+{{#if (eq phase "resolution")}}
+{{#if resolution.hasEntries}}
+<div class="cd-action-bar">
+    <div class="cd-action-left">
+        <span class="cd-resolving-chip"><span class="cd-resolving-dot"></span> Resolving</span>
+        <span class="cd-action-desc">{{resolution.spotlightLabel}}</span>
+    </div>
+    <div class="cd-action-right">{{resolution.totalSets}} sets active</div>
+</div>
+{{/if}}
+{{/if}}
+
+{{!-- ════════════════════════════════════════════════════════
+     DECLARATION PHASE
+════════════════════════════════════════════════════════ --}}
+{{#if (eq phase "declaration")}}
+<div class="cd-decl-body">
+    <div class="cd-decl-intro">Awaiting declarations — {{declaration.declaredCount}} of {{declaration.totalCount}} confirmed</div>
+
+    {{#each declaration.combatants}}
+    <div class="cd-decl-row {{#if declared}}cd-confirmed{{else}}cd-waiting{{/if}}" data-actor-id="{{actorId}}" data-combatant-id="{{id}}">
+
+        {{!-- Status toggle / declare button --}}
+        {{#if canDeclare}}
+            {{#if declared}}
+                {{!-- Declared: clickable checkmark to undeclare --}}
+                <div class="cd-decl-status cd-dsi-confirmed cd-clickable" data-action="declareToggle" title="Click to undeclare">✓</div>
+            {{else}}
+                {{#if @root.isAdvancedMode}}
+                    {{!-- Advanced mode: Declare button opens dialog --}}
+                    <button class="cd-declare-btn" data-action="openDeclareDialog" title="Open declaration dialog">
+                        <i class="fas fa-scroll"></i>
+                    </button>
+                {{else}}
+                    {{!-- Simple mode: clickable circle to declare --}}
+                    <div class="cd-decl-status cd-dsi-waiting cd-clickable" data-action="declareToggle" title="Click to confirm declaration">…</div>
+                {{/if}}
+            {{/if}}
+        {{else}}
+            {{!-- No permission: read-only status --}}
+            <div class="cd-decl-status {{#if declared}}cd-dsi-confirmed{{else}}cd-dsi-waiting{{/if}}">
+                {{#if declared}}✓{{else}}…{{/if}}
+            </div>
+        {{/if}}
+
+        <img class="cd-portrait-sm" src="{{img}}" alt="{{name}}" data-action="panToToken" title="Pan to {{name}}" />
+        <div class="cd-decl-name">{{name}}</div>
+        <div class="cd-decl-intent {{#if declText}}cd-filled{{/if}}">
+            {{#if declText}}{{declText}}{{else}}Awaiting declaration…{{/if}}
+        </div>
+
+        {{#if hasAim}}
+            <span class="cd-badge cd-badge-aim" title="Aimed last round">+{{aimBonus}}d Aim</span>
+        {{/if}}
+        {{#if hasConditions}}
+            <span class="cd-badge cd-badge-condition" title="{{#each conditions}}{{this}} {{/each}}">
+                {{#each conditions}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+            </span>
+        {{/if}}
+        {{#if hasShield}}
+            <span class="cd-badge cd-badge-shield" title="Shield equipped">🛡</span>
+        {{/if}}
+
+        <div class="cd-decl-sense" title="Sense {{sense}}">S{{sense}}</div>
+    </div>
+    {{/each}}
+
+    <div class="cd-progress-wrap">
+        <div class="cd-progress-lbl">
+            <span>Declarations</span>
+            <span>{{declaration.declaredCount}} / {{declaration.totalCount}}</span>
+        </div>
+        <div class="cd-progress-bar">
+            <div class="cd-progress-fill" style="width: {{declaration.progressPercent}}%;"></div>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+{{!-- ════════════════════════════════════════════════════════
+     RESOLUTION PHASE — SPEED LADDER
+════════════════════════════════════════════════════════ --}}
+{{#if (eq phase "resolution")}}
+<div class="cd-speed-ladder">
+
+    {{#if resolution.hasEntries}}
+
+    {{!-- Phase 5: Round Complete banner --}}
+    {{#if resolution.allResolved}}
+    <div class="cd-round-complete">
+        <div class="cd-round-complete-icon">🏁</div>
+        <div class="cd-round-complete-text">Round {{@root.round}} — All Sets Resolved</div>
+        <div class="cd-round-complete-hint">Use the combat tracker to advance to the next round.</div>
+    </div>
+    {{/if}}
+
+    {{#each resolution.tiers}}
+    <div class="cd-tier-group">
+        {{!-- Tier Header --}}
+        <div class="cd-tier-header cd-{{tierClass}}">
+            <div class="cd-tier-pips">
+                {{#each pips}}<div class="cd-tier-pip"></div>{{/each}}
+            </div>
+            <span class="cd-tier-lbl">{{tierLabel}}</span>
+            <span class="cd-tier-count">{{count}} {{#if (eq count 1)}}set{{else}}sets{{/if}}</span>
+        </div>
+
+        {{!-- Combatant Cards --}}
+        <div class="cd-tier-cards">
+            {{#each entries}}
+
+            {{!-- Phase 5: Collision connector between simultaneous sets --}}
+            {{#if showConnectorBefore}}
+            <div class="cd-collision-conn">
+                <div class="cd-collision-icon">⚔</div>
+                <div class="cd-collision-lbl">Both {{connectorLabel}}</div>
+            </div>
+            {{/if}}
+
+            <div class="cd-card {{#if isSpotlight}}cd-spotlight{{/if}} {{#if isDefense}}cd-defense{{/if}} {{#if isSpell}}cd-spell{{/if}} {{#if isSimultaneous}}cd-simultaneous{{/if}} {{#if isResolved}}cd-resolved{{/if}} {{#if isBroken}}cd-broken{{/if}}" data-actor-id="{{actorId}}" data-combatant-id="{{combatantId}}">
+
+                {{!-- Card Header --}}
+                <div class="cd-card-header">
+                    <img class="cd-portrait" src="{{img}}" alt="{{name}}" data-action="panToToken" title="Pan to {{name}}" />
+                    <div class="cd-card-identity">
+                        <div class="cd-card-name">{{name}}</div>
+                        <div class="cd-card-action">{{{actionDesc}}}</div>
+                    </div>
+                    <div class="cd-card-meta">
+                        <span class="cd-init-badge {{#if isDefense}}cd-ib-defense{{else if isSpell}}cd-ib-spell{{else}}cd-ib-attack{{/if}}">{{initBadge}}</span>
+                        <div class="cd-status-dot {{#if isSpotlight}}cd-sd-spotlight{{else if isDefense}}cd-sd-defense{{else if isSpell}}cd-sd-spell{{else}}cd-sd-pending{{/if}}"></div>
+                    </div>
+                </div>
+
+                {{!-- Card Body --}}
+                <div class="cd-card-body">
+
+                    {{!-- Dice Tray --}}
+                    {{#if hasDiceData}}
+                    <div class="cd-dice-section">
+                        <div class="cd-dice-lbl">Matched Set · {{totalRolled}} dice rolled</div>
+                        <div class="cd-dice-tray">
+                            {{#each matchedDice}}
+                                <div class="cd-die cd-die-matched {{#if ../isDefense}}cd-die-defense{{else if ../isSpell}}cd-die-spell{{/if}}" title="Matched — Height {{this}}">{{this}}</div>
+                            {{/each}}
+                            {{#each wasteDice}}
+                                <div class="cd-die cd-die-waste" title="Waste die">{{this}}</div>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{!-- Hit Location (Attacks) --}}
+                    {{#if isAttack}}
+                    <div class="cd-hit-row">
+                        <div class="cd-hit-location {{#if isSpell}}cd-hit-spell{{else}}cd-hit-attack{{/if}}">
+                            <span class="cd-hit-icon">🎯</span>
+                            <span class="cd-hit-txt">Hit:</span>
+                            <span class="cd-hit-zone {{zoneClass}}">{{locLabel}}</span>
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{!-- Damage Preview (Attacks) --}}
+                    {{#if dmgPreview}}
+                    <div class="cd-dmg-preview">
+                        <span class="cd-dmg-icon">💀</span>
+                        <span class="cd-dmg-formula">{{dmgPreview}} → {{locShort}}</span>
+                    </div>
+                    {{/if}}
+
+                    {{!-- Weapon Qualities --}}
+                    {{#if hasQualities}}
+                    <div class="cd-quality-tags">
+                        {{#each qualities}}
+                            <span class="cd-quality-tag">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+
+                    {{!-- Gobble Dice (Defense) --}}
+                    {{#if hasGobble}}
+                    <div class="cd-gobble-block {{#if gobbleValidation}}{{#if gobbleValidation.valid}}cd-gobble-valid{{else}}cd-gobble-invalid{{/if}}{{/if}}">
+                        <div class="cd-gobble-title">🛡 Gobble Dice ({{gobbleCount}})
+                            {{#if gobbleValidation}}
+                                {{#if gobbleValidation.valid}}
+                                    <span class="cd-gobble-status cd-gobble-ok">✓ Can intercept</span>
+                                {{else}}
+                                    <span class="cd-gobble-status cd-gobble-fail" title="{{gobbleValidation.reason}}">✗ {{gobbleValidation.reason}}</span>
+                                {{/if}}
+                            {{/if}}
+                        </div>
+                        <div class="cd-dice-tray">
+                            {{#if gobbleDiceTagged}}
+                                {{#each gobbleDiceTagged}}
+                                    <div class="cd-die cd-die-gobble {{#unless isValid}}cd-die-gobble-invalid{{/unless}}" title="Gobble Die — Height {{value}}{{#unless isValid}} (too low){{/unless}}">{{value}}</div>
+                                {{/each}}
+                            {{else}}
+                                {{#each gobbleDice}}
+                                    <div class="cd-die cd-die-gobble" title="Gobble Die — Height {{this}}">{{this}}</div>
+                                {{/each}}
+                            {{/if}}
+                        </div>
+                        {{#if gobbleTarget}}
+                        <button class="cd-gobble-apply-btn" data-action="applyGobble"
+                                data-defender-combatant-id="{{gobbleTarget.defenderCombatantId}}"
+                                data-attacker-combatant-id="{{gobbleTarget.attackerCombatantId}}"
+                                data-attack-set-index="{{gobbleTarget.attackSetIndex}}"
+                                title="Consume one gobble die to remove a die from the attacker's set">
+                            <i class="fas fa-shield-alt"></i> Apply Gobble Die
+                        </button>
+                        {{/if}}
+                    </div>
+                    {{/if}}
+
+                    {{!-- Conditions --}}
+                    {{#if hasConditions}}
+                    <div class="cd-condition-bar">
+                        {{#each conditions}}
+                            <span class="cd-condition-badge" title="{{label}}"><i class="{{icon}}"></i> {{label}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+
+                    {{!-- Simultaneous Indicator --}}
+                    {{#if isSimultaneous}}
+                    <span class="cd-chip cd-chip-simultaneous">⚡ Simultaneous with {{simultaneousWith}}</span>
+                    {{/if}}
+
+                    {{!-- Phase 4: Resolve Panel (spotlit attack with target) --}}
+                    {{#if damagePreview}}
+                    <div class="cd-resolve-panel">
+                        <div class="cd-resolve-target">
+                            <span class="cd-resolve-target-label">Target:</span>
+                            <strong>{{damagePreview.targetName}}</strong>
+                        </div>
+                        <div class="cd-resolve-breakdown">
+                            <div class="cd-resolve-row">
+                                <span>Damage:</span>
+                                <span>{{damagePreview.grossShock}}S + {{damagePreview.grossKilling}}K</span>
+                            </div>
+                            {{#unless damagePreview.isThreats}}
+                            <div class="cd-resolve-row">
+                                <span>{{damagePreview.locLabel}} AR:</span>
+                                <span>{{damagePreview.ar}}{{#if damagePreview.ap}} − {{damagePreview.ap}} AP{{/if}} = {{damagePreview.effectiveAR}}</span>
+                            </div>
+                            <div class="cd-resolve-row cd-resolve-net">
+                                <span>Net:</span>
+                                <span class="cd-resolve-net-value">{{damagePreview.netShock}}S + {{damagePreview.netKilling}}K → {{damagePreview.locLabel}}</span>
+                            </div>
+                            <div class="cd-resolve-row cd-resolve-state">
+                                <span>Current:</span>
+                                <span>{{damagePreview.currentShock}}S / {{damagePreview.currentKilling}}K of {{damagePreview.locMax}}</span>
+                            </div>
+                            <div class="cd-resolve-row cd-resolve-state">
+                                <span>After:</span>
+                                <span>{{damagePreview.postShock}}S / {{damagePreview.postKilling}}K of {{damagePreview.locMax}}</span>
+                            </div>
+                            {{#if damagePreview.hasOverflow}}
+                            <div class="cd-resolve-row cd-resolve-overflow">
+                                <span>⚠ Overflow:</span>
+                                <span>{{damagePreview.overflow}} Killing</span>
+                            </div>
+                            {{/if}}
+                            {{#if damagePreview.isLethal}}
+                            <div class="cd-resolve-lethal">☠ LETHAL — location destroyed</div>
+                            {{/if}}
+                            {{/unless}}
+                        </div>
+                        {{#if @root.isGM}}
+                        <button class="cd-resolve-btn" data-action="resolveSet" title="Apply damage and advance to next set">
+                            ⚡ Resolve — Apply Damage
+                        </button>
+                        {{/if}}
+                    </div>
+                    {{else if isSpotlight}}
+                        {{#if isAttack}}
+                        <div class="cd-resolve-no-target">
+                            <span class="cd-resolve-hint">🎯 Target a token to see damage preview</span>
+                        </div>
+                        {{/if}}
+                    {{/if}}
+
+                    {{!-- Phase 4: Spoil Button (pending sets that can lose a die) --}}
+                    {{#if canSpoil}}
+                    <button class="cd-spoil-btn" data-action="spoilSet"
+                            data-combatant-id="{{combatantId}}"
+                            data-set-index="{{spoilSetIndex}}"
+                            title="RAW: Lose a die from this set after being hit">
+                        <i class="fas fa-heart-broken"></i> Lose a Die (Spoil)
+                    </button>
+                    {{/if}}
+
+                </div>{{!-- /card-body --}}
+            </div>{{!-- /cd-card --}}
+            {{/each}}
+        </div>{{!-- /tier-cards --}}
+    </div>{{!-- /tier-group --}}
+
+    {{!-- Divider between tiers (skip after last) --}}
+    {{#unless @last}}
+    <div class="cd-wt-divider"></div>
+    {{/unless}}
+    {{/each}}
+
+    {{else}}
+    <div class="cd-empty-state">
+        <p>Waiting for combatants to roll…</p>
+        <p class="cd-empty-hint">Rolls will appear here as sets on the speed ladder.</p>
+    </div>
+    {{/if}}
+
+</div>{{!-- /speed-ladder --}}
+{{/if}}
+
+{{!-- ════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════ --}}
+<div class="cd-footer">
+    <div class="cd-footer-info">
+        {{#if (eq phase "declaration")}}
+            {{declaration.totalCount}} combatants · Round {{round}} · Declaration
+        {{else}}
+            {{resolution.totalSets}} sets · Round {{round}} · Resolution · {{resolution.resolvedCount}} resolved
+        {{/if}}
+    </div>
+    <div class="cd-footer-btns">
+        {{#if isGM}}
+        {{#if (eq phase "resolution")}}
+            <button class="cd-foot-btn cd-foot-advance" data-action="advanceSpotlight"
+                    title="Advance to the next set in resolution order"
+                    {{#if resolution.allResolved}}disabled{{/if}}>
+                ⚡ {{#if resolution.hasSpotlight}}Advance Spotlight{{else}}Start Resolution{{/if}}
+            </button>
+        {{/if}}
+        <button class="cd-foot-btn cd-foot-next-round" data-action="nextRound" title="Advance to the next round — clears all rolls and resets declarations">
+            ↻ Next Round
+        </button>
+        {{/if}}
+        <button class="cd-foot-btn cd-foot-collapse" data-action="toggleCollapse" title="Collapse to bar">
+            ↓ Collapse
+        </button>
+    </div>
+</div>
+
+{{/if}}{{!-- /collapsed --}}
+
+{{else}}
+{{!-- No active combat --}}
+<div class="cd-no-combat">
+    <p>No active combat encounter.</p>
+</div>
+{{/if}}
+</div>

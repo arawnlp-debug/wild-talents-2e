@@ -1,0 +1,588 @@
+/* ====================================================
+   WT: 2ND EDITION 
+   Dialogs, Pop-ups & Forms
+==================================================== */
+
+/* -----------------------------------------
+    DIALOG WINDOW CONTAINER
+----------------------------------------- */
+.wt-dialog-window { 
+    max-width: 95vw !important; 
+    max-height: 90vh !important; 
+    box-shadow: var(--wt-shadow-elevated) !important;
+    border-radius: var(--wt-radius-lg) !important; 
+    overflow: hidden;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid var(--wt-bg-iron-light) !important;
+}
+
+.wt-dialog-window .window-header { 
+    background: var(--wt-bg-iron); 
+    color: var(--wt-text-light);
+    font-family: var(--wt-font-display);
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid var(--wt-color-blood);
+    flex-shrink: 0;
+}
+
+/* Title text inside the header */
+.wt-dialog-window .window-title {
+    font-family: var(--wt-font-display);
+    font-size: var(--wt-text-base);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.wt-dialog-window .window-content { 
+    background: transparent;
+    color: var(--wt-text-dark); 
+    font-family: var(--wt-font-flavor); 
+    /* Single scroll context: window-content fills and scrolls, outer frame stays fixed */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto !important;
+    /* System scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--wt-scrollbar-thumb) var(--wt-scrollbar-track);
+}
+
+.wt-dialog-window .window-content::-webkit-scrollbar {
+    width: var(--wt-scrollbar-width);
+}
+.wt-dialog-window .window-content::-webkit-scrollbar-track {
+    background: var(--wt-scrollbar-track);
+}
+.wt-dialog-window .window-content::-webkit-scrollbar-thumb {
+    background: var(--wt-scrollbar-thumb);
+    border-radius: 3px;
+}
+.wt-dialog-window .window-content::-webkit-scrollbar-thumb:hover {
+    background: var(--wt-scrollbar-hover);
+}
+
+/* -----------------------------------------
+    DIALOG FORM — Parchment base with grain
+----------------------------------------- */
+.wt-dialog-form { 
+    /* Full parchment treatment matching the character sheet */
+    background: var(--wt-bg-parchment);
+    background-image: var(--wt-parchment-surface);
+    box-shadow: var(--wt-shadow-parchment);
+    padding: 16px 14px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px;
+}
+
+.wt-dialog-form p { 
+    margin: 4px 0; 
+    line-height: 1.5;
+    font-family: var(--wt-font-flavor);
+}
+
+/* -----------------------------------------
+    LABELS — Cinzel display font, uppercase
+----------------------------------------- */
+.wt-dialog-form .form-group { 
+    margin-bottom: 0;
+}
+
+.wt-dialog-form label { 
+    font-family: var(--wt-font-display);
+    font-weight: bold; 
+    text-transform: uppercase; 
+    font-size: 0.8em; 
+    color: var(--wt-text-dark); 
+    display: block; 
+    margin-bottom: 5px; 
+    letter-spacing: 0.08em;
+}
+
+/* -----------------------------------------
+    INPUTS & SELECTS — System themed
+----------------------------------------- */
+.wt-dialog-form input[type="number"], 
+.wt-dialog-form input[type="text"], 
+.wt-dialog-form select {
+    width: 100%; 
+    border: var(--wt-border-medium);
+    background: var(--wt-bg-paper); 
+    color: var(--wt-text-dark); 
+    border-radius: var(--wt-radius-md); 
+    padding: 7px 10px; 
+    font-family: var(--wt-font-flavor); 
+    box-shadow: var(--wt-shadow-inset);
+    font-size: var(--wt-text-base);
+    transition: border-color var(--wt-transition-fast), box-shadow var(--wt-transition-fast);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Select — custom arrow using blood-red svg */
+.wt-dialog-form select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238b1f1f' fill-opacity='0.7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+}
+
+/* Focus — blood-red ring, matching sheet */
+.wt-dialog-form input[type="number"]:focus,
+.wt-dialog-form input[type="text"]:focus,
+.wt-dialog-form select:focus {
+    outline: none;
+    border-color: var(--wt-color-blood);
+    box-shadow: var(--wt-focus-glow), var(--wt-shadow-inset);
+}
+
+/* Disabled / readonly */
+.wt-dialog-form input[readonly],
+.wt-dialog-form input:disabled,
+.wt-dialog-form select:disabled {
+    background: var(--wt-bg-vellum);
+    color: var(--wt-text-muted);
+    cursor: default;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+/* -----------------------------------------
+    FORM GRIDS
+----------------------------------------- */
+.wt-dialog-form .dialog-grid { 
+    display: grid; 
+    gap: 12px; 
+    width: 100%; 
+}
+
+.wt-dialog-form .dialog-grid-2 { grid-template-columns: 1fr 1fr; }
+.wt-dialog-form .dialog-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* -----------------------------------------
+    CHECKBOXES
+----------------------------------------- */
+.wt-dialog-form .checkbox-group { 
+    display: flex; 
+    gap: 15px; 
+    padding-top: 5px; 
+}
+
+.wt-dialog-form .checkbox-group label { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    font-size: var(--wt-text-sm); 
+    cursor: pointer; 
+    text-transform: none;
+    font-family: var(--wt-font-flavor);
+    font-weight: bold; 
+    color: var(--wt-text-muted); 
+}
+
+.wt-dialog-form .checkbox-group input[type="checkbox"] { 
+    margin: 0; 
+    width: 16px; 
+    height: 16px; 
+    accent-color: var(--wt-color-blood); 
+}
+
+/* -----------------------------------------
+    SECTION DIVIDERS — Diamond motif
+----------------------------------------- */
+.wt-dialog-section { 
+    padding-top: 12px;
+    border-top: none;
+    /* Use the system diamond divider instead of a plain dashed line */
+    background-image: var(--wt-divider);
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 8px;
+}
+
+/* -----------------------------------------
+    FOOTER BUTTONS
+----------------------------------------- */
+.wt-dialog-window footer.window-footer {
+    background: var(--wt-bg-iron);
+    border-top: 1px solid var(--wt-bg-iron-light);
+    flex-shrink: 0;
+}
+
+.wt-dialog-window footer.window-footer button {
+    font-family: var(--wt-font-display); 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    background: var(--wt-color-blood);
+    border: 1px solid var(--wt-color-blood-dark);
+    color: var(--wt-text-light); 
+    border-radius: var(--wt-radius-md);
+    transition: filter var(--wt-transition-fast), transform var(--wt-transition-fast);
+    cursor: pointer; 
+    padding: 10px 16px;
+    letter-spacing: 0.08em;
+    box-shadow: var(--wt-shadow-drop);
+}
+
+.wt-dialog-window footer.window-footer button:hover { 
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+/* Cancel / secondary buttons */
+.wt-dialog-window footer.window-footer button.dialog-button--secondary,
+.wt-dialog-window footer.window-footer button[data-action="close"] {
+    background: var(--wt-bg-ash);
+    border-color: var(--wt-bg-iron);
+}
+
+/* -----------------------------------------
+    UTILITIES
+----------------------------------------- */
+.wt-dialog-form .wt-mt-0 { margin-top: 0 !important; }
+.wt-dialog-form .wt-mb-small { margin-bottom: 5px; }
+.wt-dialog-form .wt-mb-medium { margin-bottom: 12px; }
+
+.wt-dialog-form .wt-text-large { font-size: var(--wt-text-lg); }
+.wt-dialog-form .wt-text-small { font-size: var(--wt-text-sm); }
+.wt-dialog-form .wt-text-center { text-align: center; }
+.wt-dialog-form .wt-text-bold { font-weight: bold; }
+
+.wt-text-danger  { color: var(--wt-red) !important; }
+.wt-text-info    { color: var(--wt-blue) !important; }
+.wt-text-magic   { color: var(--wt-purple) !important; }
+.wt-text-muted   { color: var(--wt-text-muted) !important; }
+.wt-text-success { color: var(--wt-color-emerald) !important; }
+
+.wt-cursor-help { cursor: help; }
+
+/* -----------------------------------------
+    RESPONSIVE
+----------------------------------------- */
+@media (max-width: 600px) {
+    .wt-dialog-form .dialog-grid-2, 
+    .wt-dialog-form .dialog-grid-3 { 
+        grid-template-columns: 1fr !important; 
+    }
+}
+
+/* -----------------------------------------
+    POOL PREVIEW BAR
+----------------------------------------- */
+.wt-dialog-pool-preview { 
+    background: var(--wt-bg-iron);
+    background-image: var(--wt-grain);
+    color: var(--wt-text-light); 
+    padding: 10px 16px; 
+    text-align: center; 
+    font-size: var(--wt-text-lg);
+    font-weight: bold; 
+    border-radius: var(--wt-radius-md);
+    border: 2px solid var(--wt-bg-iron-light);
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.4), var(--wt-shadow-drop);
+    font-family: var(--wt-font-display);
+    letter-spacing: 0.06em;
+}
+
+.wt-dialog-warchest { 
+    font-size: var(--wt-text-xs);
+    color: var(--wt-color-brass); 
+    margin-top: 8px; 
+    font-weight: normal; 
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 5px; 
+    font-family: var(--wt-font-flavor);
+}
+
+/* -----------------------------------------
+    MISCELLANEOUS FORM UTILITIES
+----------------------------------------- */
+.wt-checkbox-group { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+    margin-top: 8px; 
+}
+.wt-checkbox-row { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+}
+.wt-flex-2 { flex: 2; }
+.wt-flex-1 { flex: 1; text-align: center; }
+
+/* -----------------------------------------
+    SPELL DIALOG INFO BANNER
+----------------------------------------- */
+.wt-spell-dialog-info {
+    background: linear-gradient(135deg, var(--wt-bg-blood-wash), var(--wt-bg-sorcery-muted));
+    border: 1px solid var(--wt-color-blood);
+    border-radius: var(--wt-radius-md);
+    padding: 8px 12px;
+    font-size: var(--wt-text-sm);
+}
+.wt-spell-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--wt-text-sm);
+    margin-bottom: 6px;
+    color: var(--wt-color-blood);
+    font-family: var(--wt-font-display);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.wt-spell-dialog-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+    font-size: 0.88em;
+    color: var(--wt-text-dark);
+}
+.wt-spell-dialog-intensity {
+    color: var(--wt-color-blood);
+    font-family: var(--wt-font-data);
+}
+.wt-spell-dialog-tag {
+    font-size: var(--wt-text-xs);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.wt-spell-dialog-tag.attune  { background: var(--wt-bg-blue-subtle); color: var(--wt-color-blue-dark); border: 1px solid var(--wt-blue); }
+.wt-spell-dialog-tag.locked  { background: var(--wt-bg-brass-subtle); color: var(--wt-color-amber); border: 1px solid var(--wt-color-amber); }
+
+/* ====================================================
+   BATCH A — Roll Dialog Enhancements
+   ITEM-7: Maneuver Live Rules Preview
+   ITEM-12: Passion Toggle Buttons
+==================================================== */
+
+/* ── ITEM-7: Maneuver preview panel ────────────────── */
+.wt-maneuver-preview {
+    margin-top: 8px;
+    background: var(--wt-bg-vellum);
+    border: 1px solid var(--wt-bg-iron-light);
+    border-left: 3px solid var(--wt-color-blood);
+    border-radius: 0 var(--wt-radius-md) var(--wt-radius-md) 0;
+    padding: 8px 12px;
+    font-size: var(--wt-text-sm);
+    line-height: 1.4;
+}
+
+.wt-maneuver-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.wt-maneuver-preview-cat {
+    font-family: var(--wt-font-display);
+    font-weight: bold;
+    color: var(--wt-color-blood);
+    text-transform: uppercase;
+    font-size: 0.82em;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.wt-maneuver-preview-meta {
+    color: var(--wt-text-muted);
+    font-size: 0.9em;
+}
+
+.wt-maneuver-preview-rules {
+    margin: 0;
+    color: var(--wt-text-dark);
+}
+
+/* ── ITEM-12: Passion toggle buttons ───────────────── */
+.wt-passion-hint {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 0.85em;
+    font-weight: normal;
+    color: var(--wt-text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 3px;
+    font-family: var(--wt-font-flavor);
+}
+
+.wt-passion-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.wt-passion-label {
+    font-family: var(--wt-font-display);
+    font-weight: bold;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--wt-text-dark);
+}
+
+.wt-passion-text {
+    font-size: var(--wt-text-xs);
+    color: var(--wt-text-muted);
+    font-style: italic;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.3;
+    font-family: var(--wt-font-flavor);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2em;
+}
+
+.wt-passion-toggles {
+    display: flex;
+    gap: 2px;
+}
+
+.wt-passion-btn {
+    flex: 1;
+    padding: 5px 3px;
+    font-size: var(--wt-text-xs);
+    font-family: var(--wt-font-display);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--wt-border-light);
+    border-radius: var(--wt-radius-sm);
+    background: var(--wt-bg-paper);
+    color: var(--wt-text-muted);
+    cursor: pointer;
+    transition: background var(--wt-transition-fast), color var(--wt-transition-fast), border-color var(--wt-transition-fast);
+    line-height: 1.2;
+}
+
+.wt-passion-btn:hover:not(.active) {
+    background: var(--wt-bg-vellum);
+    color: var(--wt-text-dark);
+    border-color: var(--wt-bg-iron-light);
+}
+
+.wt-passion-btn.neutral.active {
+    background: var(--wt-bg-iron);
+    color: var(--wt-text-light);
+    border-color: var(--wt-bg-iron);
+}
+
+.wt-passion-btn.aligned.active {
+    background: var(--wt-color-emerald);
+    color: var(--wt-text-light);
+    border-color: var(--wt-color-emerald);
+}
+
+.wt-passion-btn.against.active {
+    background: var(--wt-color-blood);
+    color: var(--wt-text-light);
+    border-color: var(--wt-color-blood-dark);
+}
+
+/* ====================================================
+   G1 + G2: HAZARD ROLLER — Tab Styles
+==================================================== */
+
+.wt-hazard-roller .hazard-tab-bar {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--wt-bg-iron);
+}
+
+.wt-hazard-roller .hazard-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--wt-bg-vellum);
+    border: 1px solid var(--wt-bg-iron-light);
+    border-bottom: none;
+    border-radius: var(--wt-radius-md) var(--wt-radius-md) 0 0;
+    font-family: var(--wt-font-display);
+    font-size: var(--wt-text-sm);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--wt-text-muted);
+    cursor: pointer;
+    transition: all var(--wt-transition-fast);
+}
+
+.wt-hazard-roller .hazard-tab-btn:hover {
+    background: var(--wt-bg-paper);
+    color: var(--wt-text-dark);
+}
+
+.wt-hazard-roller .hazard-tab-btn.active {
+    background: var(--wt-bg-parchment);
+    color: var(--wt-color-blood);
+    border-color: var(--wt-bg-iron);
+    border-bottom: 2px solid var(--wt-bg-parchment);
+    margin-bottom: -2px;
+}
+
+.wt-hazard-roller .hazard-tab-btn i {
+    margin-right: 4px;
+}
+
+.wt-hazard-roller .hazard-tab-panel {
+    display: none;
+}
+
+.wt-hazard-roller .hazard-tab-panel.active {
+    display: block;
+}
+
+.wt-hazard-roller .wt-btn-execute {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: var(--wt-color-blood);
+    color: var(--wt-text-light);
+    border: 2px solid var(--wt-color-blood-dark);
+    border-radius: var(--wt-radius-md);
+    font-family: var(--wt-font-display);
+    font-weight: bold;
+    font-size: var(--wt-text-base);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: filter var(--wt-transition-fast), transform var(--wt-transition-fast);
+    box-shadow: var(--wt-shadow-drop);
+}
+
+.wt-hazard-roller .wt-btn-execute:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+.wt-hazard-roller .wt-btn-execute i {
+    margin-right: 6px;
+}
+
+/* ── Poison Effects in Chat ──────────────────────── */
+.wt-poison-effects {
+    background: var(--wt-bg-blood-muted);
+    border: 1px solid var(--wt-bg-blood-subtle);
+    border-radius: var(--wt-radius-md);
+    padding: 8px 12px;
+    margin: 8px 0;
+}
+
+.wt-poison-effects p {
+    margin: 4px 0;
+    font-size: var(--wt-text-sm);
+}
+

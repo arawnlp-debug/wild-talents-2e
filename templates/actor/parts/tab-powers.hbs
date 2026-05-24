@@ -1,0 +1,57 @@
+<div class="tab powers {{tabs.powers}}" data-tab="powers">
+  <div class="stat-block wt-p10">
+    <h2>Powers & Talents</h2>
+
+    {{!-- Willpower Display --}}
+    <div class="wt-willpower-bar wt-mb20">
+      <div class="wt-wp-row">
+        <span class="wt-wp-label">Willpower</span>
+        <span class="wt-wp-derived" title="Base Will (derived from Command + Charm)">Base: {{system.willpower.base}}</span>
+        <div class="wt-wp-inputs">
+          <input type="number" name="system.willpower.current" value="{{system.willpower.current}}" min="0" class="wt-wp-input" title="Current Will Points"/>
+          <span class="wt-wp-sep">/</span>
+          <input type="number" name="system.willpower.max" value="{{system.willpower.max}}" min="0" class="wt-wp-input" title="Maximum Will Points"/>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Power List --}}
+    {{#if powers.length}}
+      <div class="wt-power-list">
+        {{#each powers as |power|}}
+        <div class="wt-power-row">
+          <img src="{{power.img}}" class="wt-power-icon" alt="{{power.name}}" />
+          <span class="wt-power-name">
+            <a data-action="itemEdit" data-item-id="{{power._id}}" title="Edit Power">{{power.name}}</a>
+          </span>
+          <span class="wt-power-quality wt-badge wt-badge-{{power.system.quality}}">{{power.system.quality}}</span>
+          <span class="wt-power-dice" title="Dice Pool">
+            {{power.system.dice.normal}}d
+            {{#if power.system.dice.hard}}+{{power.system.dice.hard}}hd{{/if}}
+            {{#if power.system.dice.wiggle}}+{{power.system.dice.wiggle}}wd{{/if}}
+          </span>
+          <span class="wt-power-cost" title="Point Cost">{{power.system.totalCost}} pts</span>
+          <div class="wt-power-actions">
+            <a class="rollable" data-action="rollStat" data-type="power" data-key="{{power._id}}" data-label="{{power.name}}" title="Roll Power">
+              <i class="fas fa-dice-d10"></i>
+            </a>
+            <a data-action="itemDelete" data-item-id="{{power._id}}" title="Delete"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="wt-text-muted wt-text-center">No powers yet. Create a Power item to add one.</p>
+    {{/if}}
+
+    <div class="wt-mt10">
+      <a class="control-btn" data-action="itemCreate" data-type="power"><i class="fas fa-plus"></i> Add Power</a>
+    </div>
+
+    <p class="wt-text-small wt-text-muted wt-mt20">
+      <i class="fas fa-info-circle"></i>
+      Power construction with Extras, Flaws, and Capacities is coming in a future update.
+      For now, create Power items and fill in the details manually.
+    </p>
+  </div>
+</div>

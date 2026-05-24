@@ -1,0 +1,144 @@
+{
+  "id": "wild-talents-2e",
+  "title": "Wild Talents 2nd Edition",
+  "description": "An unofficial fan-made system for playing Wild Talents (2nd Edition) on Foundry VTT, fully automating the One-Roll Engine (ORE).",
+  "version": "0.9.0-beta.1",
+  "authors": [
+    {
+      "name": "Llew ap Hywel",
+      "discord": "Llew ap Hywel",
+      "url": "https://github.com/arawnlp-debug",
+      "flags": {}
+    }
+  ],
+  "url": "https://github.com/arawnlp-debug/foundry-wild-talents-2e",
+  "manifest": "https://raw.githubusercontent.com/arawnlp-debug/foundry-wild-talents-2e/main/system.json",
+  "download": "https://github.com/arawnlp-debug/foundry-wild-talents-2e/releases/download/v0.9.0-beta.1/wild-talents-2e.zip",
+  "license": "MIT",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "esmodules": [
+    "scripts/wild-talents-2e.mjs"
+  ],
+  "styles": [
+    { "src": "styles/variables.css" },
+    { "src": "styles/base.css" },
+    { "src": "styles/comic.css" },
+    { "src": "styles/dashboard.css" },
+    { "src": "styles/actor-sheet.css" },
+    { "src": "styles/item-sheet.css" },
+    { "src": "styles/chat.css" },
+    { "src": "styles/dialogs.css" },
+    { "src": "styles/hazards.css" },
+    { "src": "styles/gm-toolbar.css" },
+    { "src": "styles/combat-dashboard.css" },
+    { "src": "styles/crucible.css" }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json",
+      "flags": {}
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "system.biography.background"
+        ]
+      },
+      "threat": {
+        "htmlFields": [
+          "system.description"
+        ]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": [
+          "system.notes"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "system.notes"
+        ]
+      },
+      "shield": {
+        "htmlFields": [
+          "system.notes"
+        ]
+      },
+      "power": {
+        "htmlFields": [
+          "system.notes",
+          "system.effect"
+        ]
+      },
+      "gear": {
+        "htmlFields": [
+          "system.notes"
+        ]
+      },
+      "advantage": {
+        "htmlFields": [
+          "system.effect"
+        ]
+      },
+      "problem": {
+        "htmlFields": [
+          "system.effect"
+        ]
+      },
+      "poison": {
+        "htmlFields": [
+          "system.notes"
+        ]
+      }
+    }
+  },
+  "packs": [
+    {
+      "name": "weapons",
+      "label": "Weapons & Equipment",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "wild-talents-2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    },
+    {
+      "name": "powers",
+      "label": "Sample Powers",
+      "path": "packs/powers",
+      "type": "Item",
+      "system": "wild-talents-2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    },
+    {
+      "name": "archetypes",
+      "label": "Archetypes",
+      "path": "packs/archetypes",
+      "type": "JournalEntry",
+      "system": "wild-talents-2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    }
+  ],
+  "flags": {}
+}

@@ -1,0 +1,99 @@
+<div class="tab stats {{tabs.stats}}" data-tab="stats">
+  {{!-- XP Tracker --}}
+  <div class="xp-tracker stat-block wt-mb20">
+    <div class="stat-header wt-flex-between wt-p10">
+      <div class="wt-xp-group">
+        <div class="wt-xp-item">
+          <span class="wt-xp-label">Unspent XP</span>
+          <input type="number" name="system.xp.value" value="{{system.xp.value}}" class="wt-xp-input" title="Available to spend"/>
+        </div>
+        <div class="wt-xp-item">
+          <span class="wt-xp-label">Total XP Spent</span>
+          <input type="number" name="system.xp.spent" value="{{system.xp.spent}}" class="wt-xp-input" title="Lifetime spent"/>
+        </div>
+        <div class="wt-xp-item">
+          <span class="wt-xp-label">Total Points</span>
+          <span class="wt-xp-display" title="Sum of stat + skill + power costs">{{totalPoints}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Archetype / Source / Permission --}}
+  <div class="wt-chargen-meta stat-block wt-mb20">
+    <div class="wt-meta-row wt-p10">
+      <div class="wt-meta-field">
+        <label>Archetype</label>
+        <input type="text" name="system.archetype" value="{{system.archetype}}" placeholder="e.g. Veteran, Scientist"/>
+      </div>
+      <div class="wt-meta-field">
+        <label>Source</label>
+        <input type="text" name="system.source" value="{{system.source}}" placeholder="e.g. Genetic, Technological"/>
+      </div>
+      <div class="wt-meta-field">
+        <label>Permission</label>
+        <input type="text" name="system.permission" value="{{system.permission}}" placeholder="e.g. Intrinsic, Power Theme"/>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Dice Type Legend --}}
+  <div class="wt-dice-legend wt-mb10">
+    <span class="wt-dice-badge wt-dice-normal" title="Normal Dice — rolled randomly">N</span> Normal
+    <span class="wt-dice-badge wt-dice-hard" title="Hard Dice — always show their locked face">HD</span> Hard
+    <span class="wt-dice-badge wt-dice-wiggle" title="Wiggle Dice — set to any face after rolling">WD</span> Wiggle
+  </div>
+
+  {{!-- Stat Blocks --}}
+  <div class="stat-grid">
+    {{#each wtStatBlocks as |block|}}
+    <div class="stat-block">
+      <div class="stat-header wt-stat-header">
+        <h2 class="rollable" data-action="rollStat" data-type="attribute" data-key="{{block.key}}" data-label="{{block.label}}">
+          {{block.label}} <i class="fas fa-dice-d10"></i>
+        </h2>
+        <div class="wt-stat-dice">
+          <div class="wt-dice-input-group">
+            <label class="wt-dice-badge wt-dice-normal" title="Normal Dice">N</label>
+            <input type="number" name="system.attributes.{{block.key}}.normal" value="{{block.normal}}" min="0" max="10" class="wt-stat-input"/>
+          </div>
+          <div class="wt-dice-input-group">
+            <label class="wt-dice-badge wt-dice-hard" title="Hard Dice">HD</label>
+            <input type="number" name="system.attributes.{{block.key}}.hard" value="{{block.hard}}" min="0" max="5" class="wt-stat-input"/>
+          </div>
+          <div class="wt-dice-input-group">
+            <label class="wt-dice-badge wt-dice-wiggle" title="Wiggle Dice">WD</label>
+            <input type="number" name="system.attributes.{{block.key}}.wiggle" value="{{block.wiggle}}" min="0" max="5" class="wt-stat-input"/>
+          </div>
+          <span class="wt-stat-total" title="Total dice in pool">= {{block.total}}d</span>
+        </div>
+      </div>
+
+      <div class="stat-skills">
+        {{#each block.skills as |skill|}}
+        <div class="skill-row">
+          <div class="wt-skill-name">
+            <a class="delete-custom-skill" data-action="deleteSkill" data-skill-id="{{skill.key}}" title="Delete Skill"><i class="fas fa-trash wt-text-muted"></i></a>
+            <input type="text" name="system.skills.{{skill.key}}.label" value="{{skill.label}}" class="wt-skill-label-input" placeholder="Skill Name"/>
+            <a class="rollable wt-skill-roll-btn" data-action="rollStat" data-type="skill" data-key="{{skill.key}}" data-label="{{skill.label}}" title="Roll {{skill.label}}">
+              <i class="fas fa-dice-d10"></i>
+            </a>
+          </div>
+          <div class="wt-skill-dice">
+            <input type="number" name="system.skills.{{skill.key}}.value" value="{{skill.normal}}" min="0" max="10" class="wt-skill-input" title="Normal Dice"/>
+            <input type="number" name="system.skills.{{skill.key}}.hard" value="{{skill.hard}}" min="0" max="5" class="wt-skill-input wt-input-hard" title="Hard Dice"/>
+            <input type="number" name="system.skills.{{skill.key}}.wiggle" value="{{skill.wiggle}}" min="0" max="5" class="wt-skill-input wt-input-wiggle" title="Wiggle Dice"/>
+          </div>
+        </div>
+        {{/each}}
+
+        <div class="custom-add-container">
+          <a class="add-custom-skill control-btn" data-action="addSkill" data-attr="{{block.key}}">
+            <i class="fas fa-plus"></i> Add Skill
+          </a>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

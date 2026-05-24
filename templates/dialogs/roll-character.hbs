@@ -1,0 +1,136 @@
+<div class="wt-dialog-pool-preview">
+  Expected Pool: <span id="pool-value" class="wt-pool-value">...</span>
+</div>
+
+{{!-- WT Pool Composition (read-only — HD/WD come from character data) --}}
+{{#if showPoolComposition}}
+<div class="wt-pool-composition">
+  <div class="wt-pool-dice-row">
+    {{#if (gt poolNormal 0)}}
+    <span class="wt-pool-badge wt-dice-normal">{{poolNormal}}d</span>
+    {{/if}}
+    {{#if (gt poolHard 0)}}
+    <span class="wt-pool-badge wt-dice-hard">{{poolHard}}hd</span>
+    {{/if}}
+    {{#if (gt poolWiggle 0)}}
+    <span class="wt-pool-badge wt-dice-wiggle">{{poolWiggle}}wd</span>
+    {{/if}}
+  </div>
+  <span class="wt-pool-source wt-text-small wt-text-muted">{{poolSource}}</span>
+</div>
+{{/if}}
+
+<form class="wt-dialog-form">
+  <div class="form-group">
+    <label>Attribute:</label>
+    <select name="attr">
+      {{selectOptions attrOptions selected=defaultAttr}}
+    </select>
+  </div>
+  
+  {{#if showSkillSelect}}
+  <div class="form-group">
+    <label>Skill:</label>
+    <select name="skillKey">
+      {{selectOptions skillOptions selected=defaultSkill}}
+    </select>
+  </div>
+  {{/if}}
+
+  <div class="dialog-grid {{#if isCombatRoll}}dialog-grid-2{{/if}}">
+    {{#if isCombatRoll}}
+    <div class="form-group">
+      <label>Called Shot (-1d):</label>
+      <select name="calledShot">
+        {{selectOptions calledShotOptions selected="0"}}
+      </select>
+    </div>
+    {{/if}}
+    <div class="form-group">
+      <label>Difficulty (Min Height):</label>
+      <input type="number" name="difficulty" value="{{difficulty}}" min="0" max="10"/>
+    </div>
+  </div>
+  
+  {{#if showEnvContext}}
+  <div class="form-group wt-dialog-section">
+      <label>Environment Context:</label>
+      <select name="envContext">
+          <option value="none">Normal Environment</option>
+          <option value="swimming">Swimming (Highly restricted by Armor/Shields)</option>
+      </select>
+  </div>
+  {{/if}}
+
+  {{#if isCombatRoll}}
+  <div class="form-group wt-dialog-section">
+      <label>{{localize 'WT.ManeuverLabel'}}:</label>
+      <select name="maneuver">
+          <option value="none">{{localize 'WT.ManeuverNone'}}</option>
+          {{#if maneuverOptions.simple.length}}
+          <optgroup label="{{localize 'WT.ManeuverCategorySimple'}}">
+              {{#each maneuverOptions.simple as |m|}}
+              <option value="{{m.id}}">{{localize m.label}}</option>
+              {{/each}}
+          </optgroup>
+          {{/if}}
+          {{#if maneuverOptions.advanced.length}}
+          <optgroup label="{{localize 'WT.ManeuverCategoryAdvanced'}}">
+              {{#each maneuverOptions.advanced as |m|}}
+              <option value="{{m.id}}">{{localize m.label}}</option>
+              {{/each}}
+          </optgroup>
+          {{/if}}
+          {{#if maneuverOptions.expert.length}}
+          <optgroup label="{{localize 'WT.ManeuverCategoryExpert'}}">
+              {{#each maneuverOptions.expert as |m|}}
+              <option value="{{m.id}}">{{localize m.label}}</option>
+              {{/each}}
+          </optgroup>
+          {{/if}}
+      </select>
+      <div id="maneuver-preview" class="wt-maneuver-preview" style="display:none"></div>
+  </div>
+  {{/if}}
+
+  <div class="dialog-grid dialog-grid-3">
+    <div class="form-group"><label>Total Actions:</label><input type="number" name="multiActions" value="1" min="1" title="Penalty: -1d per extra action"/></div>
+    <div class="form-group"><label>Bonus Dice (+d):</label><input type="number" name="bonus" value="{{autoBonus}}"/></div>
+    <div class="form-group"><label>Penalty Dice (-d):</label><input type="number" name="penalty" value="{{autoPenalty}}" title="{{penaltyTitle}}"/></div>
+  </div>
+
+  {{!-- 📖 WT Rulebook Ch3 p.52: "Inspiration: spend a point of Willpower to gain one bonus die" --}}
+  {{#if canInspire}}
+  <div class="form-group wt-dialog-section">
+    <label class="wt-inspiration-label">
+      <input type="checkbox" name="inspiration" value="1"/>
+      <i class="fas fa-star"></i> <strong>Inspiration</strong> — spend 1 WP for +1 bonus die
+      <span class="wt-text-muted wt-text-small">(WP: {{currentWP}})</span>
+    </label>
+  </div>
+  {{/if}}
+
+  {{!-- 📖 WT Rulebook Ch1 p.25: Special Maneuvers (each costs −1d from pool) --}}
+  <fieldset class="wt-dialog-section wt-special-maneuvers">
+    <legend class="wt-text-small wt-text-muted">Special Maneuvers (−1d each)</legend>
+    <div class="wt-special-maneuver-grid">
+      <label title="Set one die to any face value after rolling. Costs −1d.">
+        <input type="checkbox" name="expertAction"/>
+        <i class="fas fa-bullseye"></i> Expert Action
+      </label>
+      <label title="Ignore botch/fumble effects on this roll. Costs −1d.">
+        <input type="checkbox" name="determinedAction"/>
+        <i class="fas fa-fist-raised"></i> Determined Action
+      </label>
+      <label title="+1 Width for speed/initiative only (not damage). Costs −1d.">
+        <input type="checkbox" name="fastAction"/>
+        <i class="fas fa-bolt"></i> Fast Action
+      </label>
+    </div>
+  </fieldset>
+
+  {{!-- WT: No Expert/Master Dice inputs — HD and WD come from the character's
+       stat and skill dice composition, not from dialog toggles.
+       No Passion (Mission/Duty/Craving) toggles — WT uses Motivations
+       which are narrative, not mechanical pool modifiers. --}}
+</form>

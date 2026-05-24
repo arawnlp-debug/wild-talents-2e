@@ -1,0 +1,25 @@
+name: Release Foundry System
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Zip System Files
+      # Exclude the git folder, the github workflows, and zip everything else into wild-talents-2e.zip
+      run: zip -r wild-talents-2e.zip . -x ".git/*" ".github/*" ".gitignore"
+
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          system.json
+          wild-talents-2e.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

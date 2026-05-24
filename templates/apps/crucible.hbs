@@ -1,0 +1,399 @@
+<div class="crucible-wrapper cr-wrapper">
+
+  {{!-- ── Step Indicator Bar ── --}}
+  <nav class="cr-step-bar" aria-label="Creation steps">
+    {{#each steps}}
+    <div class="cr-step-dot {{#if active}}cr-step-active{{/if}} {{#if completed}}cr-step-done{{/if}}" title="{{label}}">
+      <span class="cr-step-number">{{#if completed}}<i class="fas fa-check"></i>{{else}}{{number}}{{/if}}</span>
+      <span class="cr-step-label">{{label}}</span>
+    </div>
+    {{#unless @last}}<div class="cr-step-connector {{#if completed}}cr-step-connector-done{{/if}}"></div>{{/unless}}
+    {{/each}}
+  </nav>
+
+  <div class="cr-workspace">
+    <div class="cr-editor">
+
+      {{!-- ═══ STEP 1: POINT TOTAL ═══ --}}
+      {{#if (eq currentStep 1)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-fire"></i> The Crucible</h2>
+          <p class="cr-step-subtitle">Where heroes are forged under pressure.</p>
+        </div>
+        <div class="cr-info-card">
+          <h3 class="cr-info-title"><i class="fas fa-bolt"></i> Campaign Power Level</h3>
+          <div class="cr-info-row cr-info-highlight">
+            <span class="cr-info-label">{{presetLabel}}</span>
+            <span class="cr-info-value cr-info-points">{{pointTotal}} Points</span>
+          </div>
+          {{#if statBudget}}<div class="cr-info-row"><span class="cr-info-label">Stat Budget:</span><span class="cr-info-value">{{statBudget}} pts</span></div>{{/if}}
+          {{#if skillBudget}}<div class="cr-info-row"><span class="cr-info-label">Skill Budget:</span><span class="cr-info-value">{{skillBudget}} pts</span></div>{{/if}}
+          {{#if powerBudget}}<div class="cr-info-row"><span class="cr-info-label">Power Budget:</span><span class="cr-info-value">{{powerBudget}} pts</span></div>{{/if}}
+        </div>
+        <div class="cr-info-card cr-info-muted">
+          <h3 class="cr-info-title"><i class="fas fa-book"></i> Creation Steps</h3>
+          <ol class="cr-step-list">
+            <li><strong>Stats</strong> — Six attributes, Normal/Hard/Wiggle dice</li>
+            <li><strong>Skills</strong> — Trained abilities tied to Stats</li>
+            <li><strong>Archetype</strong> — Source, Permission, and Intrinsic Meta-Qualities</li>
+            <li><strong>Powers</strong> — Hyperstats, Hyperskills, and Miracles</li>
+            <li><strong>Willpower</strong> — Base Will, Motivations, and starting Willpower</li>
+            <li><strong>Review</strong> — Verify and forge your character</li>
+          </ol>
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 2: STATS ═══ --}}
+      {{#if (eq currentStep 2)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-dice-d20"></i> Stats</h2>
+          <p class="cr-step-subtitle">Normal 5 pts · Hard 10 pts · Wiggle 20 pts per die</p>
+        </div>
+        <div class="cr-stats-grid">
+          {{#each stats}}
+          <div class="cr-stat-card">
+            <div class="cr-stat-header"><span class="cr-stat-name">{{label}}</span><span class="cr-stat-total">{{total}}d</span></div>
+            <div class="cr-stat-body">
+              {{#each (array "normal" "hard" "wiggle") as |dtype|}}
+              <div class="cr-dice-row {{#if (eq dtype "hard")}}cr-dice-hard{{/if}} {{#if (eq dtype "wiggle")}}cr-dice-wiggle{{/if}}">
+                <span class="cr-dice-label">{{#if (eq dtype "normal")}}Normal{{else if (eq dtype "hard")}}Hard{{else}}Wiggle{{/if}}</span>
+                <div class="cr-dice-controls">
+                  <button type="button" data-action="adjustStat" data-stat="{{../key}}" data-dice-type="{{dtype}}" data-dir="down" class="cr-dice-btn" {{#unless (lookup .. dtype)}}disabled{{/unless}}><i class="fas fa-minus"></i></button>
+                  <span class="cr-dice-val">{{lookup .. dtype}}</span>
+                  <button type="button" data-action="adjustStat" data-stat="{{../key}}" data-dice-type="{{dtype}}" data-dir="up" class="cr-dice-btn" {{#if ../atMax}}disabled{{/if}}><i class="fas fa-plus"></i></button>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+            <div class="cr-stat-footer"><span class="cr-stat-cost">{{cost}} pts</span></div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 3: SKILLS ═══ --}}
+      {{#if (eq currentStep 3)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-graduation-cap"></i> Skills</h2>
+          <p class="cr-step-subtitle">Normal 2 pts · Hard 4 pts · Wiggle 8 pts per die</p>
+        </div>
+        <div class="cr-skills-list">
+          {{#each skills}}
+          <div class="cr-skill-row {{#if isCustom}}cr-skill-custom{{/if}}">
+            <div class="cr-skill-info">
+              <span class="cr-skill-name">{{label}}</span>
+              <select class="cr-skill-attr-select" data-skill="{{key}}">
+                {{#each ../attrOptions}}<option value="{{value}}" {{#if (eq value ../attribute)}}selected{{/if}}>{{label}}</option>{{/each}}
+              </select>
+            </div>
+            <div class="cr-skill-dice">
+              {{#each (array "normal" "hard" "wiggle") as |dtype|}}
+              <div class="cr-dice-mini {{#if (eq dtype "hard")}}cr-dice-hard{{/if}} {{#if (eq dtype "wiggle")}}cr-dice-wiggle{{/if}}">
+                <button type="button" data-action="adjustSkill" data-skill="{{../key}}" data-dice-type="{{dtype}}" data-dir="down" class="cr-dice-btn-sm" {{#unless (lookup .. dtype)}}disabled{{/unless}}>−</button>
+                <span class="cr-dice-val-sm {{#if (eq dtype "hard")}}cr-text-hard{{/if}} {{#if (eq dtype "wiggle")}}cr-text-wiggle{{/if}}">{{lookup .. dtype}}</span>
+                <button type="button" data-action="adjustSkill" data-skill="{{../key}}" data-dice-type="{{dtype}}" data-dir="up" class="cr-dice-btn-sm" {{#if ../atMax}}disabled{{/if}}>+</button>
+              </div>
+              {{/each}}
+            </div>
+            <span class="cr-skill-cost">{{#if cost}}{{cost}}{{/if}}</span>
+            {{#if isCustom}}<button type="button" data-action="removeSkill" data-skill="{{key}}" class="cr-skill-delete"><i class="fas fa-trash"></i></button>
+            {{else}}<span class="cr-skill-delete-spacer"></span>{{/if}}
+          </div>
+          {{/each}}
+        </div>
+        <div class="cr-add-skill">
+          <input type="text" id="cr-new-skill-name" placeholder="New skill name..." class="cr-add-skill-input"/>
+          <select id="cr-new-skill-attr" class="cr-add-skill-attr">{{#each attrOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+          <button type="button" data-action="addSkill" class="cr-add-skill-btn"><i class="fas fa-plus"></i> Add</button>
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 4: ARCHETYPE ═══ --}}
+      {{#if (eq currentStep 4)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-mask"></i> Archetype</h2>
+          <p class="cr-step-subtitle">Define your origin with Source, Permission, and Intrinsic Meta-Qualities.</p>
+        </div>
+
+        <div class="cr-archetype-name-row">
+          <label for="cr-archetype-name">Archetype Name</label>
+          <input type="text" id="cr-archetype-name" value="{{archetypeName}}" placeholder="e.g. Mutant, Gadgeteer, Super-Normal..." class="cr-archetype-name-input"/>
+        </div>
+
+        {{!-- Sources --}}
+        <div class="cr-mq-section">
+          <h3 class="cr-mq-section-title">Sources <span class="cr-mq-note">First Source is free · 📖 Ch5 p.97</span></h3>
+          <div class="cr-mq-add-row">
+            <select id="cr-mq-select-source" class="cr-mq-select">
+              <option value="">— Add Source —</option>
+              {{#each sourceCatalog}}<option value="{{id}}">{{name}} ({{cost}} pts)</option>{{/each}}
+            </select>
+            <button type="button" data-action="addMetaQuality" data-mq-type="source" class="cr-mq-add-btn"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+
+        {{!-- Permissions --}}
+        <div class="cr-mq-section">
+          <h3 class="cr-mq-section-title">Permissions <span class="cr-mq-note">📖 Ch5 p.97–98</span></h3>
+          <div class="cr-mq-add-row">
+            <select id="cr-mq-select-permission" class="cr-mq-select">
+              <option value="">— Add Permission —</option>
+              {{#each permissionCatalog}}<option value="{{id}}">{{name}} ({{cost}} pts)</option>{{/each}}
+            </select>
+            <button type="button" data-action="addMetaQuality" data-mq-type="permission" class="cr-mq-add-btn"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+
+        {{!-- Intrinsics --}}
+        <div class="cr-mq-section">
+          <h3 class="cr-mq-section-title">Intrinsics <span class="cr-mq-note">📖 Ch5 p.98–101</span></h3>
+          <div class="cr-mq-add-row">
+            <select id="cr-mq-select-intrinsic" class="cr-mq-select">
+              <option value="">— Add Intrinsic —</option>
+              {{#each intrinsicCatalog}}<option value="{{id}}">{{name}} ({{cost}} pts)</option>{{/each}}
+            </select>
+            <button type="button" data-action="addMetaQuality" data-mq-type="intrinsic" class="cr-mq-add-btn"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+
+        {{!-- Selected Meta-Qualities List --}}
+        {{#if selectedMQs.length}}
+        <div class="cr-mq-selected">
+          <h3 class="cr-mq-section-title">Selected Meta-Qualities</h3>
+          {{#each selectedMQs}}
+          <div class="cr-mq-item cr-mq-type-{{type}}">
+            <span class="cr-mq-type-badge">{{typeLabel}}</span>
+            <span class="cr-mq-item-name">{{name}}</span>
+            <span class="cr-mq-item-cost">{{#if isFirstSource}}<em>free</em>{{else}}{{cost}} pts{{/if}}</span>
+            <span class="cr-mq-item-ref">{{ref}}</span>
+            <button type="button" data-action="removeMetaQuality" data-index="{{index}}" class="cr-mq-remove"><i class="fas fa-times"></i></button>
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+
+        <div class="cr-archetype-total">
+          <span>Archetype Cost:</span>
+          <span class="cr-archetype-total-val">{{archetypeCost}} pts</span>
+        </div>
+
+        {{#if archetypeWarnings.length}}
+        <div class="cr-warnings" role="alert">
+          {{#each archetypeWarnings}}<p class="cr-warning-item"><i class="fas fa-info-circle"></i> {{this}}</p>{{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 5: POWERS ═══ --}}
+      {{#if (eq currentStep 5)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-bolt"></i> Powers</h2>
+          <p class="cr-step-subtitle">{{permissionNote}}</p>
+        </div>
+
+        {{#if hasPermission}}
+        <div class="cr-power-add-row">
+          <input type="text" id="cr-power-name" placeholder="Power name..." class="cr-power-name-input"/>
+          <select id="cr-power-type" class="cr-power-type-select">
+            <option value="miracle">Miracle (2/die)</option>
+            <option value="hyperstat">Hyperstat (4/die)</option>
+            <option value="hyperskill">Hyperskill (1/die)</option>
+          </select>
+          <button type="button" data-action="addPower" class="cr-power-add-btn"><i class="fas fa-plus"></i> Add Power</button>
+        </div>
+        {{/if}}
+
+        {{#if powers.length}}
+        <div class="cr-powers-list">
+          {{#each powers}}
+          <div class="cr-power-card">
+            <div class="cr-power-header">
+              <span class="cr-power-name">{{name}}</span>
+              <span class="cr-power-type-label">{{typeLabel}}</span>
+              <button type="button" data-action="removePower" data-index="{{index}}" class="cr-power-remove"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="cr-power-dice-row">
+              <div class="cr-dice-mini">
+                <span class="cr-dice-label-sm">N</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="normal" data-dir="down" class="cr-dice-btn-sm">−</button>
+                <span class="cr-dice-val-sm">{{dice.normal}}</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="normal" data-dir="up" class="cr-dice-btn-sm">+</button>
+              </div>
+              <div class="cr-dice-mini cr-dice-hard">
+                <span class="cr-dice-label-sm">HD</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="hard" data-dir="down" class="cr-dice-btn-sm">−</button>
+                <span class="cr-dice-val-sm cr-text-hard">{{dice.hard}}</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="hard" data-dir="up" class="cr-dice-btn-sm">+</button>
+              </div>
+              <div class="cr-dice-mini cr-dice-wiggle">
+                <span class="cr-dice-label-sm">WD</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="wiggle" data-dir="down" class="cr-dice-btn-sm">−</button>
+                <span class="cr-dice-val-sm cr-text-wiggle">{{dice.wiggle}}</span>
+                <button type="button" data-action="adjustPowerDice" data-index="{{index}}" data-dice-type="wiggle" data-dir="up" class="cr-dice-btn-sm">+</button>
+              </div>
+              <span class="cr-power-cost">{{totalCost}} pts</span>
+            </div>
+            <p class="cr-power-note">Full Quality/Extra/Flaw editing available on the power item sheet after forging.</p>
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="cr-empty-note">{{#if hasPermission}}No powers added yet.{{else}}Select a Permission Meta-Quality on the Archetype step to unlock powers.{{/if}}</p>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 6: WILLPOWER ═══ --}}
+      {{#if (eq currentStep 6)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-brain"></i> Willpower</h2>
+          <p class="cr-step-subtitle">📖 WT Rulebook Ch3 p.51 — Base Will = Charm + Command</p>
+        </div>
+
+        <div class="cr-wp-section">
+          <div class="cr-wp-row">
+            <span class="cr-wp-label">Computed Base Will (Charm + Command):</span>
+            <span class="cr-wp-value">{{computedBW}}</span>
+          </div>
+          <div class="cr-wp-row">
+            <span class="cr-wp-label">Extra Base Will (3 pts each):</span>
+            <div class="cr-dice-controls">
+              <button type="button" data-action="adjustExtraBW" data-dir="down" class="cr-dice-btn" {{#unless extraBW}}disabled{{/unless}}><i class="fas fa-minus"></i></button>
+              <span class="cr-dice-val">{{extraBW}}</span>
+              <button type="button" data-action="adjustExtraBW" data-dir="up" class="cr-dice-btn"><i class="fas fa-plus"></i></button>
+            </div>
+            <span class="cr-wp-cost">{{extraBWCost}} pts</span>
+          </div>
+          <div class="cr-wp-row cr-wp-total">
+            <span class="cr-wp-label">Total Base Will:</span>
+            <span class="cr-wp-value cr-wp-big">{{totalBW}}</span>
+          </div>
+          <div class="cr-wp-row">
+            <span class="cr-wp-label">Remaining points → Willpower (1:1):</span>
+            <span class="cr-wp-value">+{{remainingToWP}}</span>
+          </div>
+          <div class="cr-wp-row cr-wp-total">
+            <span class="cr-wp-label">Starting Willpower:</span>
+            <span class="cr-wp-value cr-wp-big">{{startingWP}}</span>
+          </div>
+        </div>
+
+        <div class="cr-motivation-section">
+          <h3 class="cr-mq-section-title">Motivations <span class="cr-mq-note">📖 Ch3 p.54 — Passion + Loyalty ratings should equal Base Will</span></h3>
+          <div class="cr-motivation-row">
+            <label>Passion</label>
+            <input type="text" id="cr-passion-desc" value="{{passion.description}}" placeholder="What drives you..." class="cr-motivation-input"/>
+            <label class="cr-motivation-rating-label">Rating</label>
+            <input type="number" id="cr-passion-rating" value="{{passion.rating}}" min="0" class="cr-motivation-rating"/>
+          </div>
+          <div class="cr-motivation-row">
+            <label>Loyalty</label>
+            <input type="text" id="cr-loyalty-desc" value="{{loyalty.description}}" placeholder="Who or what you serve..." class="cr-motivation-input"/>
+            <label class="cr-motivation-rating-label">Rating</label>
+            <input type="number" id="cr-loyalty-rating" value="{{loyalty.rating}}" min="0" class="cr-motivation-rating"/>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- ═══ STEP 7: REVIEW ═══ --}}
+      {{#if (eq currentStep 7)}}
+      <div class="cr-step-content">
+        <div class="cr-step-header">
+          <h2 class="cr-step-title"><i class="fas fa-scroll"></i> Review</h2>
+          <p class="cr-step-subtitle">Verify your build before forging.</p>
+        </div>
+
+        {{#if validationErrors.length}}
+        <div class="cr-validation-errors" role="alert">
+          <h4><i class="fas fa-exclamation-circle"></i> Errors (must fix)</h4>
+          {{#each validationErrors}}<p>{{this}}</p>{{/each}}
+        </div>
+        {{/if}}
+
+        {{#if validationWarnings.length}}
+        <div class="cr-warnings" role="alert">
+          {{#each validationWarnings}}<p class="cr-warning-item"><i class="fas fa-exclamation-triangle"></i> {{this}}</p>{{/each}}
+        </div>
+        {{/if}}
+
+        <div class="cr-review-grid">
+          <div class="cr-review-section">
+            <h4>Stats</h4>
+            {{#each reviewStats}}<div class="cr-review-row"><span>{{label}}</span><span class="cr-review-val">{{display}}</span></div>{{/each}}
+          </div>
+          <div class="cr-review-section">
+            <h4>Skills</h4>
+            {{#each reviewSkills}}<div class="cr-review-row"><span>{{label}} <small>({{attribute}})</small></span><span class="cr-review-val">{{display}}</span></div>{{/each}}
+            {{#unless reviewSkills.length}}<p class="cr-empty-note">No skills with dice.</p>{{/unless}}
+          </div>
+          <div class="cr-review-section">
+            <h4>Archetype</h4>
+            <div class="cr-review-row"><span>Name</span><span class="cr-review-val">{{reviewArchetype}}</span></div>
+            <div class="cr-review-row"><span>Meta-Qualities</span><span class="cr-review-val">{{reviewMQs}}</span></div>
+          </div>
+          <div class="cr-review-section">
+            <h4>Powers</h4>
+            {{#each reviewPowers}}<div class="cr-review-row"><span>{{name}} <small>({{typeLabel}})</small></span><span class="cr-review-val">{{display}} — {{cost}} pts</span></div>{{/each}}
+            {{#unless reviewPowers.length}}<p class="cr-empty-note">No powers.</p>{{/unless}}
+          </div>
+          <div class="cr-review-section">
+            <h4>Willpower</h4>
+            <div class="cr-review-row"><span>Base Will</span><span class="cr-review-val">{{reviewBW}}</span></div>
+            <div class="cr-review-row"><span>Starting Willpower</span><span class="cr-review-val">{{reviewWP}}</span></div>
+            <div class="cr-review-row"><span>Passion</span><span class="cr-review-val">{{reviewPassion}}</span></div>
+            <div class="cr-review-row"><span>Loyalty</span><span class="cr-review-val">{{reviewLoyalty}}</span></div>
+          </div>
+        </div>
+      </div>
+      {{/if}}
+
+    </div>
+
+    {{!-- ── Sidebar ── --}}
+    <aside class="cr-sidebar">
+      <div class="cr-points-box {{#if overBudget}}cr-over-budget{{/if}}">
+        <div class="cr-points-label">Points Remaining</div>
+        <div class="cr-points-value">{{pointsRemaining}}</div>
+        <div class="cr-points-total">of {{pointTotal}}</div>
+      </div>
+      <div class="cr-breakdown">
+        <h4 class="cr-breakdown-title">Cost Breakdown</h4>
+        <div class="cr-breakdown-row"><span>Stats</span><span class="cr-breakdown-val">{{breakdown.stats}}</span></div>
+        <div class="cr-breakdown-row"><span>Skills</span><span class="cr-breakdown-val">{{breakdown.skills}}</span></div>
+        <div class="cr-breakdown-row"><span>Archetype</span><span class="cr-breakdown-val">{{breakdown.archetype}}</span></div>
+        <div class="cr-breakdown-row"><span>Powers</span><span class="cr-breakdown-val">{{breakdown.powers}}</span></div>
+        <div class="cr-breakdown-row"><span>Base Will</span><span class="cr-breakdown-val">{{breakdown.baseWill}}</span></div>
+        <div class="cr-breakdown-row cr-breakdown-total"><span>Total Spent</span><span class="cr-breakdown-val">{{pointsSpent}}</span></div>
+      </div>
+      {{#if budgetWarnings.length}}
+      <div class="cr-warnings" role="alert">
+        {{#each budgetWarnings}}<p class="cr-warning-item"><i class="fas fa-exclamation-triangle"></i> {{this}}</p>{{/each}}
+      </div>
+      {{/if}}
+    </aside>
+  </div>
+
+  {{!-- ── Navigation Footer ── --}}
+  <footer class="cr-nav-footer">
+    {{#if canGoBack}}
+    <button type="button" data-action="prevStep" class="cr-nav-btn cr-nav-back"><i class="fas fa-arrow-left"></i> Previous</button>
+    {{else}}<span class="cr-nav-spacer"></span>{{/if}}
+    {{#if isLastStep}}
+    <button type="button" data-action="forgeCharacter" class="cr-nav-btn cr-nav-forge {{#unless isValid}}cr-nav-disabled{{/unless}}"><i class="fas fa-hammer"></i> Forge Character</button>
+    {{else}}
+    <button type="button" data-action="nextStep" class="cr-nav-btn cr-nav-next">Next <i class="fas fa-arrow-right"></i></button>
+    {{/if}}
+  </footer>
+
+</div>

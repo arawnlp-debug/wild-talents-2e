@@ -1,0 +1,288 @@
+{{!-- ════════════════════════════════════════════════════════════════════════
+  WT GM TOOLBAR — Frameless HUD (Tier 1)
+  Layer 1: Persistent Bar (always visible)
+  Layer 2: Context Panel (drops down when a section is toggled)
+════════════════════════════════════════════════════════════════════════ --}}
+
+{{!-- ══ Layer 1: Persistent Bar ══ --}}
+<div class="gt-bar">
+
+    {{!-- World Month --}}
+    <div class="gt-bar-section gt-month-badge" title="Current World Month">
+        <button type="button" class="gt-month-advance gt-month-retreat" data-gt-action="retreat-month" title="Retreat Month">
+            <i class="fas fa-backward"></i>
+        </button>
+        <i class="fas fa-calendar-alt"></i>
+        <span class="gt-month-label">Month</span>
+        <span class="gt-month-value">{{worldMonth}}</span>
+        <button type="button" class="gt-month-advance" data-gt-action="advance-month" title="Advance Month">
+            <i class="fas fa-forward"></i>
+        </button>
+    </div>
+
+    {{!-- Combat Phase Indicator --}}
+    <div class="gt-bar-section gt-combat-indicator {{#unless hasCombat}}gt-hidden{{/unless}}"
+         data-gt-action="open-combat-tracker" title="Click to open Combat Tracker">
+        {{#if hasCombat}}
+            <i class="fas {{#if combat.isDeclaring}}fa-eye{{else}}fa-bolt{{/if}}"></i>
+            R{{combat.round}} · {{#if combat.isDeclaring}}Declare {{combat.declared}}/{{combat.total}} ✓{{else}}Resolve{{/if}}
+        {{/if}}
+    </div>
+
+    {{!-- Divider --}}
+    <div class="gt-bar-divider"></div>
+
+    {{!-- Section Toggles --}}
+    <button type="button" class="gt-bar-btn {{#if (eq activeSection 'quickroll')}}gt-active{{/if}}"
+            data-gt-action="toggle-quickroll" title="Quick Roll">
+        <svg viewBox="0 0 20 24" width="12" height="14"><polygon points="10,0 20,12 10,24 0,12" fill="currentColor"/><text x="10" y="14" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff" font-family="sans-serif">10</text></svg>
+    </button>
+    <button type="button" class="gt-bar-btn {{#if (eq activeSection 'tokenpeek')}}gt-active{{/if}}"
+            data-gt-action="toggle-tokenpeek" title="Token Peek">
+        <i class="fas fa-id-card"></i>
+    </button>
+    <button type="button" class="gt-bar-btn" data-gt-action="request-roll" title="Request Roll / Contest">
+        <i class="fas fa-bullhorn"></i>
+    </button>
+
+    {{!-- Divider --}}
+    <div class="gt-bar-divider"></div>
+
+    {{!-- Shortcuts --}}
+    <button type="button" class="gt-bar-btn" data-gt-action="open-factions" title="Faction Dashboard">
+        <i class="fas fa-globe"></i>
+    </button>
+    <button type="button" class="gt-bar-btn" data-gt-action="open-hazards" title="Hazard Roller">
+        <i class="fas fa-skull-crossbones"></i>
+    </button>
+    <button type="button" class="gt-bar-btn" data-gt-action="open-spell-tracker" title="Active Spell Tracker">
+        <i class="fas fa-hat-wizard"></i>
+    </button>
+    <button type="button" class="gt-bar-btn" data-gt-action="open-xp-awards" title="Session XP Awards">
+        <i class="fas fa-award"></i>
+    </button>
+
+    {{!-- Divider --}}
+    <div class="gt-bar-divider"></div>
+
+    {{!-- Theater Mode --}}
+    <button type="button" class="gt-bar-btn gt-theater-btn {{#if theaterMode}}gt-active{{/if}}"
+            data-gt-action="theater-toggle" title="Theater Mode (hide UI)">
+        <i class="fas fa-masks-theater"></i>
+    </button>
+</div>
+
+{{!-- ══ Party Vitals Row ══ --}}
+{{#if hasVitals}}
+<div class="gt-vitals-row">
+    {{#each vitals}}
+    <div class="gt-vitals-portrait gt-health-{{this.worstState}} {{#if this.isThreat}}gt-vitals-threat{{/if}} {{#if this.isGMC}}gt-vitals-gmc{{/if}}" data-actor-id="{{this.id}}" data-gt-action="vitals-select" title="{{this.name}}{{#if this.isThreat}} (Threat){{/if}}{{#if this.isGMC}} (GMC){{/if}}{{#if this.hasConditions}} — {{#each this.conditions}}{{this}} {{/each}}{{/if}}">
+        <img src="{{this.img}}" alt="{{this.name}}" />
+        {{#if this.inCombat}}
+            {{#unless this.isResolvePhase}}
+                {{#if this.declared}}
+                <span class="gt-vitals-badge gt-badge-declared" title="Declared">✓</span>
+                {{else}}
+                <span class="gt-vitals-badge gt-badge-undeclared" title="Not yet declared">?</span>
+                {{/if}}
+            {{/unless}}
+        {{/if}}
+        {{#if this.hasConditions}}
+        <span class="gt-vitals-badge gt-badge-condition" title="{{#each this.conditions}}{{this}} {{/each}}">!</span>
+        {{/if}}
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+{{!-- ══ Layer 2: Context Panel ══ --}}
+{{#if activeSection}}
+<div class="gt-panel gt-panel-{{activeSection}}">
+
+    {{!-- ── Quick Roll Panel ── --}}
+    {{#if (eq activeSection "quickroll")}}
+    <div class="gt-qr-layout">
+
+        {{!-- Pool Preview --}}
+        <div class="gt-qr-preview">
+            <span class="gt-qr-preview-label">Pool</span>
+            <span class="gt-qr-preview-value">...</span>
+        </div>
+
+        {{!-- Main Inputs --}}
+        <div class="gt-qr-row">
+            <label class="gt-qr-field">
+                <span>Label</span>
+                <input type="text" name="qrLabel" value="{{qr.label}}" placeholder="Quick Roll" class="gt-input gt-input-label"/>
+            </label>
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>Pool</span>
+                <input type="number" name="qrPool" value="{{qr.pool}}" min="1" max="20" class="gt-input"/>
+            </label>
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>Diff</span>
+                <input type="number" name="qrDiff" value="{{qr.difficulty}}" min="0" max="10" class="gt-input"/>
+            </label>
+        </div>
+
+        <div class="gt-qr-row">
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>Bonus</span>
+                <input type="number" name="qrBonus" value="{{qr.bonus}}" min="0" class="gt-input"/>
+            </label>
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>Penalty</span>
+                <input type="number" name="qrPenalty" value="{{qr.penalty}}" min="0" class="gt-input"/>
+            </label>
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>HD</span>
+                <input type="number" name="qrHd" value="{{qr.hd}}" min="0" max="5" class="gt-input"/>
+            </label>
+            <label class="gt-qr-field gt-qr-narrow">
+                <span>WD</span>
+                <input type="number" name="qrWd" value="{{qr.wd}}" min="0" max="5" class="gt-input"/>
+            </label>
+        </div>
+
+        {{!-- Actions --}}
+        <div class="gt-qr-actions">
+            {{#if hasTokenHint}}
+            <button type="button" class="gt-qr-btn gt-qr-btn-token" data-gt-action="qr-populate-token" title="Pre-populate from {{tokenHint.actorName}}">
+                <i class="fas fa-crosshairs"></i> {{tokenHint.actorName}}
+            </button>
+            {{/if}}
+            {{#if hasLastRoll}}
+            <button type="button" class="gt-qr-btn gt-qr-btn-reroll" data-gt-action="qr-reroll" title="Re-roll: {{lastRoll.label}} ({{lastRoll.pool}}d)">
+                <i class="fas fa-redo"></i> Re-roll
+            </button>
+            {{/if}}
+            <button type="button" class="gt-qr-btn gt-qr-btn-roll" data-gt-action="qr-roll">
+                <i class="fas fa-dice-d20"></i> Roll
+            </button>
+        </div>
+    </div>
+    {{/if}}
+
+    {{!-- ── Token Peek Panel ── --}}
+    {{#if (eq activeSection "tokenpeek")}}
+    <div class="gt-peek-layout">
+        {{#if hasPeek}}
+
+        {{!-- Header --}}
+        <div class="gt-peek-header">
+            <img src="{{peek.img}}" alt="{{peek.name}}" class="gt-peek-portrait" />
+            <div class="gt-peek-name">
+                {{peek.name}}
+                <div class="gt-peek-type">{{peek.type}}</div>
+            </div>
+            <button type="button" class="gt-peek-sheet-btn" data-gt-action="peek-open-sheet" title="Open Sheet">
+                <i class="fas fa-external-link-alt"></i>
+            </button>
+        </div>
+
+        {{!-- ═══ CHARACTER LAYOUT ═══ --}}
+        {{#if peek.isCharacter}}
+        <div class="gt-peek-body">
+            <div class="gt-peek-attrs">
+                {{#each peek.attrs}}
+                <div class="gt-peek-attr {{#if this.isExpanded}}gt-attr-expanded{{/if}}" data-gt-action="peek-expand-attr" data-attr-key="{{this.key}}" title="{{this.key}} {{this.value}} — click to expand skills">
+                    <span class="gt-peek-attr-label">{{this.label}}</span>
+                    <span class="gt-peek-attr-value">{{this.value}}</span>
+                </div>
+                {{/each}}
+            </div>
+            {{#if peek.hasExpandedSkills}}
+            <div class="gt-peek-skills-dropdown">
+                {{#each peek.expandedSkills}}
+                <div class="gt-peek-skill-row" data-gt-action="peek-roll-skill" data-skill-key="{{this.key}}" data-is-custom="{{this.isCustom}}" title="Roll {{this.label}} (pool {{this.pool}}d)">
+                    <span class="gt-peek-skill-name">{{this.label}}</span>
+                    <span class="gt-peek-skill-val">{{this.value}}</span>
+                    {{#if this.hd}}<span class="gt-peek-skill-badge gt-badge-hd">{{this.hd}}hd</span>{{/if}}
+                    {{#if this.wd}}<span class="gt-peek-skill-badge gt-badge-wd">{{this.wd}}wd</span>{{/if}}
+                    <span class="gt-peek-skill-pool">{{this.pool}}d</span>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+            <div class="gt-peek-equip">
+                {{#if peek.hasWeapons}}{{#each peek.weapons}}<div class="gt-peek-equip-row"><i class="fas fa-sword"></i><strong>{{this.name}}</strong><span class="gt-peek-sep">·</span><span>{{this.damage}}</span></div>{{/each}}{{/if}}
+                {{#if peek.hasShields}}{{#each peek.shields}}<div class="gt-peek-equip-row"><i class="fas fa-shield-alt"></i><strong>{{this.name}}</strong>{{#if this.parryBonus}}<span class="gt-peek-sep">·</span><span>+{{this.parryBonus}} Parry</span>{{/if}}</div>{{/each}}{{/if}}
+                <div class="gt-peek-equip-row" title="{{peek.armorLocStr}}"><i class="fas fa-tshirt"></i><span>{{peek.armorWeight}} armor</span><span class="gt-peek-sep">·</span><i class="fas fa-coins"></i><span>Wealth {{peek.wealth}}</span></div>
+            </div>
+            {{#if peek.hasTechniques}}<div class="gt-peek-esoterica">{{#each peek.techniques}}<div class="gt-peek-eso-row" title="{{this.effect}}"><i class="fas fa-scroll"></i> {{this.name}} <span class="gt-peek-hover-hint">(hover)</span></div>{{/each}}</div>{{/if}}
+            {{#if peek.hasSorcery}}
+            <div class="gt-peek-sorcery">
+                <div class="gt-peek-sorcery-header" data-gt-action="peek-toggle-spells" title="Click to {{#if peek.showSpells}}hide{{else}}show{{/if}} spells">
+                    <i class="fas fa-hat-wizard"></i><span>Sorcery: {{peek.sorceryVal}}</span>
+                    {{#if peek.sorceryEd}}<span class="gt-peek-skill-badge gt-badge-ed">ED</span>{{/if}}
+                    {{#if peek.sorceryMd}}<span class="gt-peek-skill-badge gt-badge-md">MD</span>{{/if}}
+                    {{#if peek.hasSpells}}<i class="fas fa-caret-{{#if peek.showSpells}}up{{else}}down{{/if}} gt-peek-caret"></i>{{/if}}
+                </div>
+                {{#if peek.showSpells}}<div class="gt-peek-spell-list">{{#each peek.spells}}<div class="gt-peek-spell-row" title="{{this.school}}{{#if this.duration}} · {{this.duration}}{{/if}}{{#if this.attReq}} · Attunement Required{{/if}}"><span class="gt-peek-spell-int">{{this.intensity}}</span><span class="gt-peek-spell-name">{{this.name}}</span>{{#if this.school}}<span class="gt-peek-spell-school">{{this.school}}</span>{{/if}}{{#if this.attReq}}<i class="fas fa-lock gt-peek-spell-lock" title="Attunement Required"></i>{{/if}}</div>{{/each}}</div>{{/if}}
+            </div>
+            {{/if}}
+            <div class="gt-peek-conditions">{{#each peek.conditions}}<button type="button" class="gt-peek-cond {{#if this.active}}gt-cond-active{{/if}}" data-gt-action="peek-toggle-condition" data-condition-id="{{this.id}}" title="{{this.label}}: {{this.effect}}"><i class="{{this.icon}}"></i></button>{{/each}}</div>
+            <div class="gt-peek-utility">
+                <button type="button" class="gt-peek-util-btn" data-gt-action="peek-rest" title="Rest & Recover (Vigor / Daily / Weekly)"><i class="fas fa-campground"></i> Rest</button>
+                <button type="button" class="gt-peek-util-btn" data-gt-action="peek-first-aid" title="First Aid (select healer, target patient)"><i class="fas fa-notes-medical"></i> First Aid</button>
+                <button type="button" class="gt-peek-util-btn" data-gt-action="peek-wp-damage" title="Apply Willpower Damage (Trauma/Defeat/Flat)"><i class="fas fa-heart-broken"></i> WP Damage</button>
+            </div>
+            {{#if peek.hasCombatPools}}
+            <div class="gt-peek-combat-pools">
+                <button type="button" class="gt-peek-pool-btn gt-pool-attack" data-gt-action="peek-roll-character" data-roll-type="attack"><i class="fas fa-fist-raised"></i> Attack {{peek.combatPools.attack}}d</button>
+                <button type="button" class="gt-peek-pool-btn gt-pool-dodge" data-gt-action="peek-roll-character" data-roll-type="dodge"><i class="fas fa-running"></i> Dodge {{peek.combatPools.dodge}}d</button>
+                <button type="button" class="gt-peek-pool-btn gt-pool-parry" data-gt-action="peek-roll-character" data-roll-type="parry"><i class="fas fa-shield-alt"></i> Parry {{peek.combatPools.parry}}d</button>
+            </div>
+            {{/if}}
+        </div>
+        {{/if}}
+
+        {{!-- ═══ THREAT LAYOUT ═══ --}}
+        {{#if peek.isThreat}}
+        <div class="gt-peek-body">
+            {{#unless peek.isCreature}}
+            <div class="gt-peek-bars">
+                <div class="gt-peek-bar-row"><span class="gt-peek-bar-label"><i class="fas fa-users"></i> Magnitude</span><div class="gt-peek-bar"><div class="gt-peek-bar-fill gt-bar-mag" style="width:{{peek.magnitude.pct}}%"></div></div><span class="gt-peek-bar-num">{{peek.magnitude.value}}/{{peek.magnitude.max}}</span></div>
+                <div class="gt-peek-bar-row"><span class="gt-peek-bar-label"><i class="fas fa-heart"></i> Morale</span><div class="gt-peek-bar"><div class="gt-peek-bar-fill gt-bar-mor" style="width:{{peek.morale.pct}}%"></div></div><span class="gt-peek-bar-num">{{peek.morale.value}}/{{peek.morale.max}}</span></div>
+                <div class="gt-peek-equip-row"><i class="fas fa-star"></i> Threat {{peek.threatRating}}<span class="gt-peek-sep">·</span><i class="fas fa-crosshairs"></i> {{peek.damageFormula}}</div>
+            </div>
+            <div class="gt-peek-combat-pools">
+                <button type="button" class="gt-peek-pool-btn gt-pool-attack" data-gt-action="peek-roll-threat"><i class="fas fa-fist-raised"></i> Roll Attack</button>
+                <button type="button" class="gt-peek-pool-btn gt-pool-morale" data-gt-action="peek-roll-morale"><i class="fas fa-heart"></i> Roll Morale</button>
+            </div>
+            {{else}}
+            <div class="gt-peek-creature-locs">{{#each peek.creatureLocs}}<div class="gt-peek-cloc gt-health-{{this.state}}"><span class="gt-peek-cloc-name">{{this.name}}</span><span class="gt-peek-cloc-hp">{{this.shock}}S / {{this.killing}}K ({{this.max}})</span>{{#if this.ar}}<span class="gt-peek-cloc-ar">AR{{this.ar}}</span>{{/if}}</div>{{/each}}</div>
+            <div class="gt-peek-combat-pools">
+                {{#each peek.creatureAttacks}}<button type="button" class="gt-peek-pool-btn gt-pool-attack" data-gt-action="peek-roll-threat"><i class="fas fa-paw"></i> {{this.name}}</button>{{/each}}
+                <button type="button" class="gt-peek-pool-btn gt-pool-morale" data-gt-action="peek-roll-morale"><i class="fas fa-heart"></i> Morale</button>
+            </div>
+            {{/unless}}
+        </div>
+        {{/if}}
+
+        {{!-- ═══ COMPANY LAYOUT ═══ --}}
+        {{#if peek.isCompany}}
+        <div class="gt-peek-body">
+            <div class="gt-peek-qualities">
+                {{#each peek.qualities}}
+                <div class="gt-peek-quality-row">
+                    <i class="{{this.icon}} gt-peek-qicon"></i><span class="gt-peek-qlabel">{{this.label}}</span><span class="gt-peek-qval">{{this.value}}</span>
+                    {{#if this.isDamaged}}<span class="gt-peek-qmod gt-text-danger">−{{this.damage}}</span>{{/if}}
+                    {{#if this.isUsed}}<span class="gt-peek-qmod gt-text-warn">−{{this.uses}}</span>{{/if}}
+                    <span class="gt-peek-qeff">= {{this.effective}}</span>
+                    <button type="button" class="gt-peek-qroll" data-gt-action="peek-roll-quality" data-quality="{{this.key}}" title="Roll {{this.label}}"><i class="fas fa-dice-d20"></i></button>
+                </div>
+                {{/each}}
+            </div>
+            {{#if peek.hasPledges}}<div class="gt-peek-pledges"><i class="fas fa-handshake"></i> Pledges: {{#if peek.pledges.bonus}}+{{peek.pledges.bonus}}d {{/if}}{{#if peek.pledges.ed}}+{{peek.pledges.ed}} ED {{/if}}{{#if peek.pledges.md}}+{{peek.pledges.md}} MD{{/if}}</div>{{/if}}
+        </div>
+        {{/if}}
+
+        {{else}}
+        <div class="gt-peek-empty"><i class="fas fa-mouse-pointer"></i> Select a token</div>
+        {{/if}}
+    </div>
+    {{/if}}
+
+</div>
+{{/if}}

@@ -1,0 +1,275 @@
+<div class="wt-sheet-root wt-sheet-v2 {{#if (eq view "dashboard")}}wt-comic wt-view-dashboard{{/if}}">
+{{#if (eq view "dashboard")}}
+  {{> "systems/wild-talents-2e/templates/actor/parts/dashboard.hbs"}}
+{{else}}
+  <header class="wt-header-bar">
+    <div class="wt-header-portrait">
+      <div class="wt-portrait-frame">
+        <img src="{{actor.img}}" data-action="editImage" title="{{actor.name}}" class="wt-portrait-img"/>
+      </div>
+      <button type="button" data-action="toggleGMC" class="wt-gmc-badge {{#if system.isGMC}}wt-gmc-active{{/if}}" title="{{#if system.isGMC}}GMC{{else}}PC{{/if}}">
+        {{#if system.isGMC}}GMC{{else}}PC{{/if}}
+      </button>
+    </div>
+    <div class="wt-header-identity">
+      <div class="wt-header-name-row">
+        <input name="name" type="text" value="{{actor.name}}" placeholder="CHARACTER NAME" class="wt-name-input"/>
+        <button type="button" data-action="openCrucible" class="wt-crucible-btn" title="The Crucible"><i class="fas fa-fire"></i></button>
+        <button type="button" data-action="toggleView" class="wt-view-toggle-btn" title="Switch to Dashboard view" aria-label="Switch to Dashboard view"><i class="fas fa-grip"></i></button>
+      </div>
+      <div class="wt-header-meta">
+        <span class="wt-meta-chip wt-meta-archetype" title="Archetype">{{#if system.archetype}}{{system.archetype}}{{else}}No Archetype{{/if}}</span>
+        {{#if system.source}}<span class="wt-meta-sep">&middot;</span><span class="wt-meta-chip" title="Source">{{system.source}}</span>{{/if}}
+        {{#if system.permission}}<span class="wt-meta-sep">&middot;</span><span class="wt-meta-chip" title="Permission">{{system.permission}}</span>{{/if}}
+        <span class="wt-meta-sep">&middot;</span>
+        <span class="wt-pts-badge {{#if overBudget}}wt-pts-over{{/if}}" title="Stats {{characterCost.breakdown.stats}} &middot; Skills {{characterCost.breakdown.skills}} &middot; Archetype {{characterCost.breakdown.archetype}} &middot; Powers {{characterCost.breakdown.powers}} &middot; Base Will {{characterCost.breakdown.baseWill}}">
+          {{characterCost.total}}{{#if hasPointBudget}}/{{pointBudget}}{{/if}} pts
+        </span>
+      </div>
+    </div>
+    <div class="wt-header-wp">
+      <div class="wt-wp-label-row">
+        <span class="wt-wp-title">WILLPOWER</span>
+        <span class="wt-wp-bw" title="Base Will = Charm + Command">BW {{system.willpower.base}}</span>
+      </div>
+      <div class="wt-wp-gauge {{#if (eq system.willpower.current 0)}}wt-wp-empty{{/if}}">
+        <div class="wt-wp-gauge-fill" style="width: {{wpPercent}}%"></div>
+        <div class="wt-wp-gauge-text">
+          <input type="number" name="system.willpower.current" value="{{system.willpower.current}}" min="0" class="wt-wp-gauge-input" title="Current Willpower"/>
+          <span class="wt-wp-gauge-sep">/</span>
+          <input type="number" name="system.willpower.max" value="{{system.willpower.max}}" min="0" class="wt-wp-gauge-input" title="Maximum Willpower"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wt-body-grid">
+    <nav class="wt-tab-rail" role="tablist" aria-label="Sheet tabs">
+      <a class="wt-tab-icon {{tabs.stats}}" data-action="changeTab" data-tab="stats" title="Stats &amp; Skills" role="tab"><i class="fas fa-dice-d20"></i><span class="wt-tab-label">Stats</span></a>
+      <a class="wt-tab-icon {{tabs.powers}}" data-action="changeTab" data-tab="powers" title="Powers" role="tab"><i class="fas fa-bolt"></i><span class="wt-tab-label">Powers</span></a>
+      <a class="wt-tab-icon {{tabs.combat}}" data-action="changeTab" data-tab="combat" title="Gear" role="tab"><i class="fas fa-shield-alt"></i><span class="wt-tab-label">Gear</span></a>
+      <div class="wt-tab-divider"></div>
+      <a class="wt-tab-icon {{tabs.biography}}" data-action="changeTab" data-tab="biography" title="Identity" role="tab"><i class="fas fa-scroll"></i><span class="wt-tab-label">Bio</span></a>
+      <a class="wt-tab-icon {{tabs.effects}}" data-action="changeTab" data-tab="effects" title="Effects" role="tab"><i class="fas fa-magic"></i><span class="wt-tab-label">FX</span></a>
+    </nav>
+
+    <div class="wt-center-zone">
+      <div class="wt-center-scroll">
+        <div class="wt-panel wt-panel-stats">
+          <div class="wt-panel-header"><span class="wt-panel-title">ORE STATS</span><span class="wt-xp-chip" title="Unspent XP"><i class="fas fa-star"></i> {{system.xp.value}} XP</span></div>
+          {{#each wtStatBlocks as |block|}}
+          <div class="wt-stat-row">
+            <div class="wt-stat-head">
+              <a class="wt-stat-name rollable" data-action="rollStat" data-type="attribute" data-key="{{block.key}}" data-label="{{block.label}}" title="Roll {{block.label}}"><span class="wt-stat-icon wt-stat-icon-{{block.key}}">{{#if (eq block.key "body")}}<i class="fas fa-arrow-up"></i>{{/if}}{{#if (eq block.key "coordination")}}<i class="fas fa-running"></i>{{/if}}{{#if (eq block.key "sense")}}<i class="fas fa-eye"></i>{{/if}}{{#if (eq block.key "mind")}}<i class="fas fa-brain"></i>{{/if}}{{#if (eq block.key "charm")}}<i class="fas fa-heart"></i>{{/if}}{{#if (eq block.key "command")}}<i class="fas fa-users"></i>{{/if}}</span>{{block.label}}</a>
+              <span class="wt-stat-dice-display">
+                <span class="wt-stat-big">{{block.total}}d</span>
+                {{#if block.hard}}<span class="wt-dice-hd">+{{block.hard}}hd</span>{{/if}}
+                {{#if block.wiggle}}<span class="wt-dice-wd">+{{block.wiggle}}wd</span>{{/if}}
+              </span>
+            </div>
+            {{#if block.skills.length}}
+            <div class="wt-skill-grid">
+              {{#each block.skills as |skill|}}
+              <a class="wt-skill-pill rollable" data-action="rollStat" data-type="skill" data-key="{{skill.key}}" data-label="{{skill.label}}" title="Roll {{skill.label}}">
+                <span class="wt-skill-pill-name">{{skill.label}}</span>
+                <span class="wt-skill-pill-val">{{skill.normal}}{{#if skill.hard}}+{{skill.hard}}hd{{/if}}{{#if skill.wiggle}}+{{skill.wiggle}}wd{{/if}}</span>
+              </a>
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+
+        <div class="wt-panel wt-panel-health">
+          <div class="wt-panel-header"><span class="wt-panel-title">HIT LOCATIONS</span></div>
+          {{> "systems/wild-talents-2e/templates/actor/parts/combat-health.hbs"}}
+        </div>
+
+        <div class="wt-panel wt-panel-combat">
+          <div class="wt-combat-actions-bar">
+            <a class="wt-action-chip rollable" data-action="rollStat" data-type="skill" data-key="dodge" data-label="Dodge" title="Coord {{preferredMoves.coord}} + Dodge {{preferredMoves.dodge}}"><i class="fas fa-running"></i> Dodge <strong>{{preferredMoves.dodgeTotal}}d</strong></a>
+            <a class="wt-action-chip rollable" data-action="rollStat" data-type="skill" data-key="parry" data-label="Parry" title="Body {{preferredMoves.body}} + Parry {{preferredMoves.parry}}"><i class="fas fa-fist-raised"></i> Parry <strong>{{preferredMoves.parryTotal}}d</strong></a>
+            {{#if hasShields}}<a class="wt-action-chip" data-action="assignShield" title="Shield coverage"><i class="fas fa-shield-alt"></i> Shield</a>{{/if}}
+            <a class="wt-action-chip" data-action="declareAim" title="Aim (+1d, max +2d)"><i class="fas fa-crosshairs"></i> Aim{{#if aimBonus}} <strong class="wt-text-success">+{{aimBonus}}d</strong>{{/if}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wt-tab-panel">
+      <div class="tab stats {{tabs.stats}}" data-tab="stats" role="tabpanel">
+        <div class="wt-tab-section">
+          <h3 class="wt-tab-heading">Stats &amp; Skills Editor</h3>
+          <div class="wt-dice-legend"><span class="wt-dice-badge wt-dice-normal">N</span> Normal <span class="wt-dice-badge wt-dice-hard">HD</span> Hard <span class="wt-dice-badge wt-dice-wiggle">WD</span> Wiggle</div>
+          {{#each wtStatBlocks as |block|}}
+          <div class="wt-stat-edit-block">
+            <div class="wt-stat-edit-header">
+              <span class="wt-stat-edit-name">{{block.label}}</span>
+              <div class="wt-stat-edit-dice">
+                <label class="wt-dice-badge wt-dice-normal wt-dice-badge-sm">N</label><input type="number" name="system.attributes.{{block.key}}.normal" value="{{block.normal}}" min="0" max="10" class="wt-stat-input"/>
+                <label class="wt-dice-badge wt-dice-hard wt-dice-badge-sm">HD</label><input type="number" name="system.attributes.{{block.key}}.hard" value="{{block.hard}}" min="0" max="5" class="wt-stat-input wt-input-hard"/>
+                <label class="wt-dice-badge wt-dice-wiggle wt-dice-badge-sm">WD</label><input type="number" name="system.attributes.{{block.key}}.wiggle" value="{{block.wiggle}}" min="0" max="5" class="wt-stat-input wt-input-wiggle"/>
+                <span class="wt-stat-total-sm">={{block.total}}d</span>
+              </div>
+            </div>
+            <div class="wt-skill-edit-list">
+              {{#each block.skills as |skill|}}
+              <div class="wt-skill-edit-row">
+                <a class="wt-skill-delete" data-action="deleteSkill" data-skill-id="{{skill.key}}" title="Delete"><i class="fas fa-times"></i></a>
+                <input type="text" name="system.skills.{{skill.key}}.label" value="{{skill.label}}" class="wt-skill-label-edit" placeholder="Skill Name"/>
+                <input type="number" name="system.skills.{{skill.key}}.value" value="{{skill.normal}}" min="0" max="10" class="wt-skill-input-sm" title="N"/>
+                <input type="number" name="system.skills.{{skill.key}}.hard" value="{{skill.hard}}" min="0" max="5" class="wt-skill-input-sm wt-input-hard" title="HD"/>
+                <input type="number" name="system.skills.{{skill.key}}.wiggle" value="{{skill.wiggle}}" min="0" max="5" class="wt-skill-input-sm wt-input-wiggle" title="WD"/>
+              </div>
+              {{/each}}
+              <a class="wt-add-link" data-action="addSkill" data-attr="{{block.key}}"><i class="fas fa-plus"></i> Skill</a>
+            </div>
+          </div>
+          {{/each}}
+          <h3 class="wt-tab-heading wt-mt-md">Archetype</h3>
+          <div class="wt-meta-edit-grid">
+            <div class="wt-meta-edit-field"><label>Archetype</label><input type="text" name="system.archetype" value="{{system.archetype}}" placeholder="e.g. Mutant"/></div>
+            <div class="wt-meta-edit-field"><label>Source</label><input type="text" name="system.source" value="{{system.source}}" placeholder="e.g. Genetic" readonly/></div>
+            <div class="wt-meta-edit-field"><label>Permission</label><input type="text" name="system.permission" value="{{system.permission}}" placeholder="e.g. Super" readonly/></div>
+          </div>
+          <h3 class="wt-tab-heading wt-mt-md">Experience</h3>
+          <div class="wt-xp-edit-row">
+            <div class="wt-xp-field"><label>Unspent</label><input type="number" name="system.xp.value" value="{{system.xp.value}}" class="wt-xp-edit-input"/></div>
+            <div class="wt-xp-field"><label>Spent</label><input type="number" name="system.xp.spent" value="{{system.xp.spent}}" class="wt-xp-edit-input"/></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab powers {{tabs.powers}}" data-tab="powers" role="tabpanel">
+        <div class="wt-tab-section">
+          <h3 class="wt-tab-heading">Powers &amp; Talents</h3>
+          {{#if powers.length}}
+          <div class="wt-power-cards">
+            {{#each powers as |power|}}
+            <div class="wt-power-card">
+              <div class="wt-power-card-header">
+                <img src="{{power.img}}" class="wt-power-card-img" alt="{{power.name}}"/>
+                <div class="wt-power-card-title">
+                  <a data-action="itemEdit" data-item-id="{{power._id}}" title="Edit" class="wt-power-card-name">{{power.name}}</a>
+                  <div class="wt-power-card-sub">
+                    <span class="wt-power-type-badge wt-ptype-{{power.system.powerType}}">{{power.system.powerType}}</span>
+                    <span class="wt-power-card-dice">{{power.system.dice.normal}}d{{#if power.system.dice.hard}}+{{power.system.dice.hard}}hd{{/if}}{{#if power.system.dice.wiggle}}+{{power.system.dice.wiggle}}wd{{/if}}</span>
+                  </div>
+                </div>
+                <a class="wt-power-roll-btn rollable" data-action="rollStat" data-type="power" data-key="{{power._id}}" data-label="{{power.name}}" title="Roll"><i class="fas fa-dice-d10"></i></a>
+              </div>
+              <div class="wt-power-card-body">
+                {{#each power.system.qualities as |q|}}
+                <span class="wt-quality-badge wt-quality-{{q.type}}">{{#if (eq q.type "attacks")}}<i class="fas fa-crosshairs"></i>{{/if}}{{#if (eq q.type "defends")}}<i class="fas fa-shield-alt"></i>{{/if}}{{#if (eq q.type "useful")}}<i class="fas fa-bolt"></i>{{/if}} {{q.type}}{{#if q.level}} +{{q.level}}{{/if}}</span>
+                {{/each}}
+                {{#if power.system.willpowerCost}}<span class="wt-power-wp-cost"><i class="fas fa-brain"></i> {{power.system.willpowerCost}}</span>{{/if}}
+                <span class="wt-power-pts">{{power.system.totalCost}} pts</span>
+              </div>
+              <div class="wt-power-card-actions">
+                <a data-action="itemToChat" data-item-id="{{power._id}}" title="Post to Chat"><i class="fas fa-comment"></i></a>
+                <a data-action="itemDelete" data-item-id="{{power._id}}" title="Delete"><i class="fas fa-trash"></i></a>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="wt-empty-state"><i class="fas fa-bolt wt-empty-icon"></i><p>No powers defined yet.</p><p class="wt-empty-hint">Miracles, Hyperstats, and Hyperskills go here.</p></div>
+          {{/if}}
+          <a class="wt-add-link wt-mt-sm" data-action="itemCreate" data-type="power"><i class="fas fa-plus"></i> Add Power</a>
+        </div>
+      </div>
+
+      <div class="tab combat {{tabs.combat}}" data-tab="combat" role="tabpanel">
+        <div class="wt-tab-section">
+          <h3 class="wt-tab-heading">Weapons</h3>
+          {{#each weapons as |item|}}
+          <div class="wt-gear-row">
+            <a class="wt-gear-roll rollable" data-action="rollStat" data-type="item" data-key="{{item.id}}" data-label="{{item.name}}" title="Roll"><i class="fas fa-dice-d10"></i></a>
+            <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-equip-check" title="Equipped"/>
+            <span class="wt-gear-name">{{item.name}}</span>
+            <span class="wt-gear-detail">{{item.system.damage}}</span>
+            <div class="wt-gear-controls"><a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div>
+          </div>
+          {{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="weapon"><i class="fas fa-plus"></i> Weapon</a>
+
+          <h3 class="wt-tab-heading wt-mt-md">Shields</h3>
+          {{#each shields as |item|}}
+          <div class="wt-gear-row">
+            <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-equip-check" title="Equipped"/>
+            <span class="wt-gear-name">{{item.name}}</span>
+            <span class="wt-gear-detail">+{{item.system.parryBonus}}d Parry</span>
+            <div class="wt-gear-controls"><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div>
+          </div>
+          {{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="shield"><i class="fas fa-plus"></i> Shield</a>
+
+          <h3 class="wt-tab-heading wt-mt-md">Armor</h3>
+          {{#each armors as |item|}}
+          <div class="wt-gear-row">
+            <input type="checkbox" data-action="toggleEquip" data-item-id="{{item.id}}" {{checked item.system.equipped}} class="wt-equip-check" title="Equipped"/>
+            <span class="wt-gear-name">{{item.name}}</span>
+            <span class="wt-gear-detail">{{#if item.system.har}}HAR {{item.system.har}} {{/if}}{{#if item.system.lar}}LAR {{item.system.lar}}{{/if}}</span>
+            <div class="wt-gear-controls"><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div>
+          </div>
+          {{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="armor"><i class="fas fa-plus"></i> Armor</a>
+
+          <h3 class="wt-tab-heading wt-mt-md">Equipment</h3>
+          {{#each gear as |item|}}
+          <div class="wt-gear-row">
+            <span class="wt-gear-name">{{item.name}}</span>
+            <span class="wt-gear-detail">&times;{{item.system.quantity}}</span>
+            <div class="wt-gear-controls"><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div>
+          </div>
+          {{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="gear"><i class="fas fa-plus"></i> Equipment</a>
+
+          {{> "systems/wild-talents-2e/templates/actor/parts/combat-moves.hbs"}}
+        </div>
+      </div>
+
+      <div class="tab biography {{tabs.biography}}" data-tab="biography" role="tabpanel">
+        <div class="wt-tab-section">
+          <h3 class="wt-tab-heading">Motivations</h3>
+          <p class="wt-hint-text">Divide Base Will ({{system.willpower.base}}) between Passion and Loyalty.</p>
+          <div class="wt-motivation-compact">
+            <div class="wt-mot-row"><label class="wt-mot-label">Passion</label><input type="text" name="system.biography.passion.description" value="{{system.biography.passion.description}}" placeholder="What drives you?" class="wt-mot-desc"/><input type="number" name="system.biography.passion.rating" value="{{system.biography.passion.rating}}" min="0" class="wt-mot-rating"/></div>
+            <div class="wt-mot-row"><label class="wt-mot-label">Loyalty</label><input type="text" name="system.biography.loyalty.description" value="{{system.biography.loyalty.description}}" placeholder="Who or what do you serve?" class="wt-mot-desc"/><input type="number" name="system.biography.loyalty.rating" value="{{system.biography.loyalty.rating}}" min="0" class="wt-mot-rating"/></div>
+          </div>
+          <h3 class="wt-tab-heading wt-mt-md">Advantages</h3>
+          {{#each advantages as |item|}}<div class="wt-item-compact-row"><span class="wt-item-compact-name">{{item.name}}</span><div class="wt-item-compact-controls"><a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div></div>{{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="advantage"><i class="fas fa-plus"></i> Advantage</a>
+          <h3 class="wt-tab-heading wt-mt-md">Problems</h3>
+          {{#each problems as |item|}}<div class="wt-item-compact-row"><span class="wt-item-compact-name">{{item.name}}</span><div class="wt-item-compact-controls"><a data-action="itemToChat" data-item-id="{{item.id}}"><i class="fas fa-comment"></i></a><a data-action="itemEdit" data-item-id="{{item.id}}"><i class="fas fa-edit"></i></a><a data-action="itemDelete" data-item-id="{{item.id}}"><i class="fas fa-trash"></i></a></div></div>{{/each}}
+          <a class="wt-add-link" data-action="itemCreate" data-type="problem"><i class="fas fa-plus"></i> Problem</a>
+          <h3 class="wt-tab-heading wt-mt-md">Background</h3>
+          {{editor system.biography.background target="system.biography.background" button=true}}
+          <h3 class="wt-tab-heading wt-mt-md">Notes</h3>
+          <textarea name="system.biography.notes" rows="4" class="wt-notes-area" placeholder="Freeform notes...">{{system.biography.notes}}</textarea>
+        </div>
+      </div>
+
+      <div class="tab effects {{tabs.effects}}" data-tab="effects" role="tabpanel">
+        <div class="wt-tab-section">
+          <h3 class="wt-tab-heading">Conditions &amp; Effects <a data-action="createEffect" title="Create Effect" class="wt-add-link-inline"><i class="fas fa-plus"></i></a></h3>
+          {{#if effects.length}}
+          <div class="wt-effects-list">
+            {{#each effects as |effect|}}
+            <div class="wt-effect-row {{#if effect.disabled}}wt-effect-disabled{{/if}}" data-effect-id="{{effect.id}}">
+              <img src="{{effect.img}}" class="wt-effect-icon" alt="{{effect.name}}"/>
+              <span class="wt-effect-name">{{effect.name}}</span>
+              <div class="wt-effect-controls"><a data-action="toggleEffect" title="Toggle"><i class="fas {{#if effect.disabled}}fa-check-circle{{else}}fa-times-circle{{/if}}"></i></a><a data-action="editEffect" title="Edit"><i class="fas fa-edit"></i></a><a data-action="advancedEditEffect" title="Advanced"><i class="fas fa-cogs"></i></a><a data-action="deleteEffect" title="Delete" class="wt-ctrl-danger"><i class="fas fa-trash"></i></a></div>
+            </div>
+            {{/each}}
+          </div>
+          {{else}}
+          <div class="wt-empty-state"><i class="fas fa-magic wt-empty-icon"></i><p>No active effects.</p></div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+{{/if}}
+</div>

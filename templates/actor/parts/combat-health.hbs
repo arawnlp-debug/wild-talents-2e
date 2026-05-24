@@ -1,0 +1,74 @@
+<div class="wt-health-container wt-mb20">
+  <div class="health-actions-sub-header">
+      <span class="health-hint">(L-Click: Add Shock, R-Click: Add Kill, Shift-Click: Remove)</span>
+      
+      <div class="label-center wt-flex-gap5">
+          <button type="button" data-action="recoverShock" class="recovery-btn" title="Halve current Shock damage (Post-Combat)">
+            <i class="fas fa-heartbeat"></i> Short Rest
+          </button>
+          <button type="button" data-action="restAndRecover" class="recovery-btn" title="Natural Healing (1 Day / 1 Week)">
+            <i class="fas fa-campground"></i> Long Rest
+          </button>
+      </div>
+
+      <div class="label-right">
+          {{#if activeShields.length}}
+            <div class="shield-badge" title="Active Shield Protection">
+              <i class="fas fa-shield-alt"></i> {{activeShields.[0].system.shieldSize}}
+            </div>
+          {{/if}}
+      </div>
+  </div>
+
+  <div class="wt-health-split">
+    <div class="silhouette-wrapper">
+       {{> "systems/wild-talents-2e/templates/parts/damage-silhouette.hbs"}}
+    </div>
+    <div class="wt-health-data-list">
+       {{#each wtHealth as |loc|}}
+       <div class="wt-health-row wt-health-grid {{loc.status}}" data-status="{{loc.statusKey}}">
+         <div class="location-label-group">
+           {{!-- PACKAGE C: Passive shield indicator — lights up based on Shield Coverage assignment --}}
+           {{#if @root.activeShields.length}}
+             <span class="shield-toggle {{#if loc.isShielded}}active{{/if}}" 
+                   title="{{#if loc.isShielded}}Shield protecting this location{{else}}Not shielded — use Shield Coverage to assign{{/if}}">
+                <i class="fas fa-shield-alt"></i>
+             </span>
+           {{/if}}
+
+           {{!-- WT Armor indicators: separate HAR (heavy) and LAR (light) badges --}}
+           {{#if loc.hasHAR}}
+           <span class="shield-toggle active" title="Heavy Armor (HAR): {{loc.har}} — reduces attack Width">
+              <i class="fas fa-shield-alt"></i>
+           </span>
+           {{/if}}
+           {{#if loc.hasLAR}}
+           <span class="shield-toggle active" title="Light Armor (LAR): {{loc.lar}} — reduces Shock to 1, converts Killing to Shock">
+              <i class="fas fa-tshirt"></i>
+           </span>
+           {{/if}}
+           {{#unless loc.hasArmor}}
+           <span class="shield-toggle" title="No armor on this location">
+              <i class="fas fa-tshirt"></i>
+           </span>
+           {{/unless}}
+
+           <span class="loc-text">{{loc.label}}</span>
+         </div>
+         
+         <div class="wt-ar-badge-col">
+             {{#if loc.hasHAR}}
+             <span class="wt-ar-badge wt-ar-har" title="Heavy Armor Rating">H{{loc.har}}</span>
+             {{/if}}
+             {{#if loc.hasLAR}}
+             <span class="wt-ar-badge wt-ar-lar" title="Light Armor Rating">L{{loc.lar}}</span>
+             {{/if}}
+             {{#unless loc.hasArmor}}
+             <span class="wt-ar-badge wt-ar-none">—</span>
+             {{/unless}}
+         </div>
+       </div>
+       {{/each}}
+    </div>
+  </div>
+</div>
