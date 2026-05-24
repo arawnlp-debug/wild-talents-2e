@@ -21,7 +21,7 @@ No copyrighted rules text is reproduced in this system. All rulebook references 
 1. In Foundry VTT, go to **Game Systems** → **Install System**
 2. Paste the manifest URL into the **Manifest URL** field:
    ```
-   https://raw.githubusercontent.com/arawnlp-debug/foundry-wild-talents-2e/main/system.json
+https://raw.githubusercontent.com/arawnlp-debug/wild-talents-2e/main/system.json
    ```
 3. Click **Install**
 
